@@ -1,3 +1,4 @@
+import socket from "@/lib/socket";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { create } from "zustand";
@@ -44,6 +45,9 @@ export const useAuthStore = create((set, get) => ({
         const fullUser = userRes.data.user;
 
         set({ isAuthenticated: true, user: fullUser });
+
+        socket.emit("join", fullUser.id);
+
         toast.success(parsedRes.message);
       } else {
         toast.error(parsedRes.message);
@@ -58,6 +62,7 @@ export const useAuthStore = create((set, get) => ({
       };
     }
   },
+
   verifyOtp: async (user) => {
     try {
       const res = await axios.post(`${API_URL}/auth/verify-otp`, user);
@@ -93,11 +98,15 @@ export const useAuthStore = create((set, get) => ({
     try {
       const res = await axios.get(`${API_URL}/auth/me`);
       const parsedRes = res.data;
+
       if (parsedRes.user) {
         set({ isAuthenticated: true, user: parsedRes.user });
+
+        socket.emit("join", parsedRes.user.id);
       } else {
         set({ isAuthenticated: false, user: null });
       }
+
       return parsedRes;
     } catch (error) {
       set({ isAuthenticated: false, user: null });
@@ -108,6 +117,7 @@ export const useAuthStore = create((set, get) => ({
       };
     }
   },
+
   uploadImage: async (imageFile) => {
     try {
       const formData = new FormData();
@@ -181,7 +191,9 @@ export const useAuthStore = create((set, get) => ({
       return response.data;
     } catch (error) {
       console.error(error);
-      toast.error(error?.response?.data?.message || "Upload cover image failed");
+      toast.error(
+        error?.response?.data?.message || "Upload cover image failed"
+      );
     }
   },
 }));

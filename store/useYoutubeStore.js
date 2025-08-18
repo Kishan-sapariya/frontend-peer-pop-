@@ -29,14 +29,15 @@ export const useYoutubeStore = create((set, get) => ({
     }
   },
 
-  getYoutubeStats: async () => {
+  getYoutubeStats: async (profileId) => {
     try {
-      const response = await axios.get(`${API_URL}/youtube/stats`);
+      const response = await axios.get(`${API_URL}/youtube/stats/${profileId}`);
+
       const stats = response.data.stats.stats;
       set({ stats: stats });
       return stats;
     } catch (error) {
-      console.error("Error creating YouTube profile:", error);
+      console.error("Error fetching YouTube profile stats:", error);
     }
   },
 

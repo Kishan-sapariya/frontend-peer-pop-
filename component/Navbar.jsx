@@ -15,6 +15,8 @@ import {
   Building2,
   User2,
   Users,
+  Plus,
+  MessageCircle,
 } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useRouter } from "next/navigation";
@@ -127,6 +129,26 @@ const Navbar = () => {
                         <User className="mr-2 h-4 w-4" /> profile
                       </Button>
                     </Link>
+                    <Link
+                      href="/connections"
+                    >
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start text-gray-700 hover:bg-muted/60"
+                      >
+                        <Plus className="mr-2 h-4 w-4" /> Connections
+                      </Button>
+                    </Link>
+                    <Link
+                      href="/conversations"
+                    >
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start text-gray-700 hover:bg-muted/60"
+                      >
+                        <MessageCircle className="mr-2 h-4 w-4" /> Messages
+                      </Button>
+                    </Link>
 
                     {!user.creatorType && (
                       <Link href="/onboarding" passHref>
@@ -232,6 +254,28 @@ const Navbar = () => {
                       >
                         <User className="mr-2 h-4 w-4" />
                         Profile
+                      </Button>
+                    </Link>
+                    <Link
+                      href="/connections"
+                    >
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start text-gray-700 hover:text-cyan-600"
+                      >
+                        <User className="mr-2 h-4 w-4" />
+                        Connections
+                      </Button>
+                    </Link>
+                    <Link
+                      href="/conversations"
+                    >
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start text-gray-700 hover:text-cyan-600"
+                      >
+                        <MessageCircle className="mr-2 h-4 w-4" />
+                        Messages
                       </Button>
                     </Link>
                     {!user.creatorType && (

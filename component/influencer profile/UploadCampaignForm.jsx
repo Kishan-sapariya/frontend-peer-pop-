@@ -24,7 +24,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useInfluencerStore } from "@/store/useInfluencerStore";
 
-export function UploadCampaignForm() {
+export function UploadCampaignForm({ isOwnProfile }) {
   const { addCampaign } = useInfluencerStore();
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
@@ -61,11 +61,13 @@ export function UploadCampaignForm() {
     <Dialog open={open} onOpenChange={setOpen}>
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-medium">Campaigns</h1>
-        <DialogTrigger asChild>
-          <Button className="flex items-center gap-2">
-            <Plus className="w-4 h-4" /> Add Campaign
-          </Button>
-        </DialogTrigger>
+        {isOwnProfile && (
+          <DialogTrigger asChild>
+            <Button className="flex items-center gap-2">
+              <Plus className="w-4 h-4" /> Add Campaign
+            </Button>
+          </DialogTrigger>
+        )}
       </div>
       <DialogContent className="sm:max-w-[420px]">
         <DialogHeader>

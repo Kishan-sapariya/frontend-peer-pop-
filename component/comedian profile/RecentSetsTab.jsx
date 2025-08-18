@@ -20,7 +20,7 @@ import { Button } from "@/components/ui/button";
 import RecentSetsModal from "./RecentSetsModal";
 import { capitalizeInitials, formatDate } from "@/utils/formatDate";
 
-export default function RecentSetsTab() {
+export default function RecentSetsTab({ isOwnProfile }) {
   const { profile, deleteRecentSets } = useComedianStore();
   const recentSets = profile?.data?.recentSets || [];
 
@@ -31,7 +31,7 @@ export default function RecentSetsTab() {
         <h2 className="text-xl font-semibold text-gray-900">
           Your Recent Sets
         </h2>
-        <RecentSetsModal />
+        {isOwnProfile && <RecentSetsModal />}
       </div>
 
       {/* Set List */}
@@ -43,24 +43,26 @@ export default function RecentSetsTab() {
               className="relative bg-white rounded-xl shadow-sm p-4 pr-16"
             >
               {/* Fixed Three-dot Menu */}
-              <div className="absolute top-4 right-4">
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant="ghost" size="icon">
-                      <MoreVertical className="h-5 w-5 text-muted-foreground" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-36 px-3 py-2">
-                    <Button
-                      className="w-full justify-start text-sm bg-red-50 hover:bg-red-100 text-red-500 hover:text-red-600 transition-colors py-1.5"
-                      onClick={() => deleteRecentSets(set.id)}
-                    >
-                      <Trash2 className="mr-2 h-4 w-4" />
-                      Delete
-                    </Button>
-                  </PopoverContent>
-                </Popover>
-              </div>
+              {isOwnProfile && (
+                <div className="absolute top-4 right-4">
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant="ghost" size="icon">
+                        <MoreVertical className="h-5 w-5 text-muted-foreground" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-36 px-3 py-2">
+                      <Button
+                        className="w-full justify-start text-sm bg-red-50 hover:bg-red-100 text-red-500 hover:text-red-600 transition-colors py-1.5"
+                        onClick={() => deleteRecentSets(set.id)}
+                      >
+                        <Trash2 className="mr-2 h-4 w-4" />
+                        Delete
+                      </Button>
+                    </PopoverContent>
+                  </Popover>
+                </div>
+              )}
 
               {/* Title */}
               <h3 className="font-semibold text-lg text-gray-900 mb-2">

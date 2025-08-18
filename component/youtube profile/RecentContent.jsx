@@ -25,7 +25,7 @@ import {
 import { formatDate } from "@/utils/formatDate";
 import { useYoutubeStore } from "@/store/useYoutubeStore";
 
-export default function RecentContent({ contents = [], onDeleteContent }) {
+export default function RecentContent({ contents = [], isOwnProfile }) {
   const router = useRouter();
   const { user } = useAuthStore();
   const { deleteRecentContentById } = useYoutubeStore();
@@ -52,13 +52,15 @@ export default function RecentContent({ contents = [], onDeleteContent }) {
         <h2 className="text-2xl font-bold text-gray-800">
           Your Recent Content
         </h2>
-        <Button
-          onClick={handleAddContent}
-          className="bg-black text-white shadow-md "
-        >
-          <Plus className="w-5 h-5 mr-2" />
-          Add New Content
-        </Button>
+        {isOwnProfile && (
+          <Button
+            onClick={handleAddContent}
+            className="bg-black text-white shadow-md "
+          >
+            <Plus className="w-5 h-5 mr-2" />
+            Add New Content
+          </Button>
+        )}
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -100,28 +102,30 @@ export default function RecentContent({ contents = [], onDeleteContent }) {
                     />
                   )}
 
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="absolute top-2 right-2 bg-white/70 hover:bg-white rounded-full p-1 shadow-sm"
-                      aria-label="Content options"
-                    >
-                      <MoreVertical className="w-5 h-5 text-gray-700" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-30 px-2 py-1">
-                    <Button
-                      variant="ghost"
-                      className="w-full justify-start bg-red-50 hover:bg-red-100 text-red-500 hover:text-red-600 transition-colors"
-                      onClick={() => handleDelete(content.id)}
-                    >
-                      <Trash2 />
-                      Delete
-                    </Button>
-                  </PopoverContent>
-                </Popover>
+                {isOwnProfile && (
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="absolute top-2 right-2 bg-white/70 hover:bg-white rounded-full p-1 shadow-sm"
+                        aria-label="Content options"
+                      >
+                        <MoreVertical className="w-5 h-5 text-gray-700" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-30 px-2 py-1">
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start bg-red-50 hover:bg-red-100 text-red-500 hover:text-red-600 transition-colors"
+                        onClick={() => handleDelete(content.id)}
+                      >
+                        <Trash2 />
+                        Delete
+                      </Button>
+                    </PopoverContent>
+                  </Popover>
+                )}
               </CardContent>
 
               <div className="px-4 py-2 space-y-2">

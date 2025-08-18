@@ -42,10 +42,12 @@ export default function AddCollaborationModal() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="flex items-center gap-2">
-          <Plus className="w-4 h-4" />
-          Add Collaboration
-        </Button>
+        {isOwnProfile && (
+          <Button className="flex items-center gap-2">
+            <Plus className="w-4 h-4" />
+            Add Collaboration
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent className="max-w-sm">
         <DialogHeader>

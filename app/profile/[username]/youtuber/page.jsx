@@ -39,6 +39,8 @@ import { useAuthStore } from "@/store/useAuthStore";
 import CollaborationTab from "@/component/youtube profile/CollaborationTab";
 import AchievementTab from "@/component/youtube profile/AchievementTab";
 import ShareDialog from "@/component/ShareDialog";
+import { useConnectionStore } from "@/store/useConnectionStore";
+import ConnectBtn from "@/component/Connection/ConnectBtn";
 
 export default function YouTuberProfile() {
   const {
@@ -51,11 +53,10 @@ export default function YouTuberProfile() {
     stats,
     getYoutubeStats,
   } = useYoutubeStore();
-  const [isFollowing, setIsFollowing] = useState(false);
+  const { connections } = useConnectionStore();
   const [activeTab, setActiveTab] = useState("content");
   const { username } = useParams();
   const { user } = useAuthStore();
-
   useEffect(() => {
     if (username) {
       getYoutubeProfileByUsername(username);
@@ -64,8 +65,10 @@ export default function YouTuberProfile() {
   }, [username]);
 
   useEffect(() => {
-    getYoutubeStats();
-  }, [getYoutubeStats]);
+    if (profile?.userProfile?.id) {
+      getYoutubeStats(profile.userProfile.id);
+    }
+  }, [getYoutubeStats, profile?.userProfile?.id]);
 
   const avgViews = stats.totalViews / stats.videoCount;
 
@@ -214,6 +217,7 @@ export default function YouTuberProfile() {
       : fallback;
   };
 
+  const isOwnProfile = profile?.userProfile?.id === user?.id;
   return (
     <div className="min-h-screen bg-gray-50 relative">
       {/* Cover Image */}
@@ -234,7 +238,7 @@ export default function YouTuberProfile() {
                 <Avatar className="relative w-40 h-40 border-4 border-white shadow-xl">
                   <AvatarImage
                     className="object-cover"
-                    src={user?.image}
+                    src={profile?.userProfile?.image}
                     onError={(e) => {
                       e.target.src = "";
                     }}
@@ -247,7 +251,7 @@ export default function YouTuberProfile() {
                       .toUpperCase() || "C"}
                   </AvatarFallback>
                 </Avatar>
-                <UploadImageModal />
+                {isOwnProfile && <UploadImageModal />}
                 {creator.verified && (
                   <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-red-500 rounded-full flex items-center justify-center">
                     <Play className="w-4 h-4 text-white fill-white" />
@@ -315,32 +319,25 @@ export default function YouTuberProfile() {
                   </div>
 
                   <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-3 sm:space-y-0 sm:space-x-3">
-                    <Button
-                      onClick={() => setIsFollowing(!isFollowing)}
-                      variant={isFollowing ? "outline" : "default"}
-                      size="lg"
-                      className="w-full sm:w-auto bg-red-600 hover:bg-red-700"
-                    >
-                      <UserPlus className="w-4 h-4 mr-2" />
-                      {isFollowing ? "Connected" : "Connect"}
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="lg"
-                      className="w-full sm:w-auto bg-transparent"
-                    >
-                      <MessageCircle className="w-4 h-4 mr-2" />
-                      Collaborate
-                    </Button>
-                    <ShareDialog
-                      username={profile?.userProfile?.username}
-                      creatorType={profile?.creatorType}
-                    />
+                    {!isOwnProfile && (
+                      <ConnectBtn
+                        profileId={profile?.userProfile?.id}
+                        isOwnProfile={isOwnProfile}
+                        creatorType={profile?.creatorType}
+                      />
+                    )}
+                    {isOwnProfile && (
+                      <>
+                        <ShareDialog
+                          username={profile?.userProfile?.username}
+                          creatorType={profile?.creatorType}
+                        />
 
-                    <UploadCoverImageModal />
+                        <UploadCoverImageModal />
+                      </>
+                    )}
                   </div>
                 </div>
-
                 {/* YouTube Stats */}
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mt-8 pt-6 border-t">
                   <div className="text-center">
@@ -653,13 +650,16 @@ export default function YouTuberProfile() {
                 <TabsTrigger value="achievements">Achievements</TabsTrigger>
               </TabsList>
               <TabsContent value="content">
-                <RecentContent contents={recentContent} />
+                <RecentContent
+                  contents={recentContent}
+                  isOwnProfile={isOwnProfile}
+                />
               </TabsContent>
               <TabsContent value="collaborations">
-                <CollaborationTab />
+                <CollaborationTab isOwnProfile={isOwnProfile} />
               </TabsContent>
               <TabsContent value="achievements">
-                <AchievementTab />
+                <AchievementTab isOwnProfile={isOwnProfile} />
               </TabsContent>
             </Tabs>
           </div>

@@ -11,7 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import AchievementModal from "./AchievementModal";
 
-export default function AchievementTab() {
+export default function AchievementTab({ isOwnProfile }) {
   const { profile, deleteAchievement } = useComedianStore();
   const achievements = profile?.data?.achievements || [];
 
@@ -22,7 +22,7 @@ export default function AchievementTab() {
         <h2 className="text-xl font-semibold text-gray-900">
           Your Recent achievements
         </h2>
-        <AchievementModal />
+        {isOwnProfile && <AchievementModal />}
       </div>
 
       {/* Achievement List */}
@@ -50,24 +50,26 @@ export default function AchievementTab() {
               </div>
 
               {/* Actions Popover */}
-              <div className="absolute top-2 right-2">
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant="ghost" size="icon" className="w-8 h-8">
-                      <MoreVertical className="h-4 w-4 text-muted-foreground" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-36 p-1">
-                    <Button
-                      className="w-full justify-start text-sm bg-red-50 hover:bg-red-100 text-red-500 hover:text-red-600 transition-colors py-1.5"
-                      onClick={() => deleteAchievement(achievement.id)}
-                    >
-                      <Trash2 className="mr-2 h-4 w-4" />
-                      Delete
-                    </Button>
-                  </PopoverContent>
-                </Popover>
-              </div>
+              {isOwnProfile && (
+                <div className="absolute top-2 right-2">
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant="ghost" size="icon" className="w-8 h-8">
+                        <MoreVertical className="h-4 w-4 text-muted-foreground" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-36 p-1">
+                      <Button
+                        className="w-full justify-start text-sm bg-red-50 hover:bg-red-100 text-red-500 hover:text-red-600 transition-colors py-1.5"
+                        onClick={() => deleteAchievement(achievement.id)}
+                      >
+                        <Trash2 className="mr-2 h-4 w-4" />
+                        Delete
+                      </Button>
+                    </PopoverContent>
+                  </Popover>
+                </div>
+              )}
             </div>
           ))
         ) : (

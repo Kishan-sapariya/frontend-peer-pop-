@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 
-export default function RecentCollaborations() {
+export default function RecentCollaborations({ isOwnProfile }) {
   const { profile, deleteCollaboration } = useYoutubeStore();
   const collaborations = profile?.data.collaborations || [];
 
@@ -24,7 +24,7 @@ export default function RecentCollaborations() {
             Successful partnerships with other creators
           </p>
         </div>
-        <AddCollaborationModal />
+        {isOwnProfile && <AddCollaborationModal />}
       </div>
 
       <div className="space-y-4">
@@ -54,24 +54,26 @@ export default function RecentCollaborations() {
                 </p>
               </div>
 
-              <div className="absolute top-4 right-4">
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant="ghost" size="icon">
-                      <MoreVertical className="h-5 w-5 text-muted-foreground" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-30 px-3 py-2">
-                    <Button
-                      className="w-full justify-start bg-red-50 hover:bg-red-100 text-red-500 hover:text-red-600 transition-colors"
-                      onClick={()=>deleteCollaboration(collab.id)}
-                    >
-                      <Trash2 />
-                      Delete
-                    </Button>
-                  </PopoverContent>
-                </Popover>
-              </div>
+              {isOwnProfile && (
+                <div className="absolute top-4 right-4">
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant="ghost" size="icon">
+                        <MoreVertical className="h-5 w-5 text-muted-foreground" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-30 px-3 py-2">
+                      <Button
+                        className="w-full justify-start bg-red-50 hover:bg-red-100 text-red-500 hover:text-red-600 transition-colors"
+                        onClick={() => deleteCollaboration(collab.id)}
+                      >
+                        <Trash2 />
+                        Delete
+                      </Button>
+                    </PopoverContent>
+                  </Popover>
+                </div>
+              )}
             </Card>
           ))
         )}

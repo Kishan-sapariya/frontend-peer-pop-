@@ -14,13 +14,8 @@ import {
   Calendar,
   Globe,
   Mail,
-  Award,
   Users,
-  Star,
-  Share2,
-  UserPlus,
   Mic,
-  Clock,
   LocateIcon as LocationIcon,
   Ticket,
   Laugh,
@@ -29,10 +24,6 @@ import {
   Instagram,
   Twitter,
   Youtube,
-  MessageCircle,
-  Upload,
-  MoreVertical,
-  Trash2,
 } from "lucide-react";
 import { formatNumber } from "@/utils/formatDate";
 import UploadImageModal from "@/component/profile/UploadImageModal";
@@ -42,15 +33,15 @@ import UpcomingShowsTab from "@/component/comedian profile/UpcomingShowsTab";
 import RecentSetsTab from "@/component/comedian profile/RecentSetsTab";
 import AchievementTab from "@/component/comedian profile/AchievementTab";
 import ShareDialog from "@/component/ShareDialog";
+import ConnectBtn from "@/component/Connection/ConnectBtn";
 
 export default function ComedianProfile() {
-  const [isFollowing, setIsFollowing] = useState(false);
+  const { user } = useAuthStore();
   const [activeTab, setActiveTab] = useState("shows");
   const { username } = useParams();
   const { profile, getComedianProfileByUsername } = useComedianStore();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const { deleteImage } = useAuthStore();
 
   useEffect(() => {
     async function fetchProfile() {
@@ -162,6 +153,9 @@ export default function ComedianProfile() {
   const mediaAppearances = Array.isArray(performanceStats.mediaAppearances)
     ? performanceStats.mediaAppearances
     : [];
+
+  const isOwnProfile = profile?.userProfile?.id === user?.id;
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Cover Image */}
@@ -195,14 +189,13 @@ export default function ComedianProfile() {
                       .toUpperCase() || "C"}
                   </AvatarFallback>
                 </Avatar>
-                <UploadImageModal />
+                {isOwnProfile && <UploadImageModal />}
                 {comedian.verified && (
                   <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center">
                     <Laugh className="w-4 h-4 text-white" />
                   </div>
                 )}
               </div>
-
               <div className="flex-1">
                 <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between">
                   <div className="mb-4 lg:mb-0">
@@ -271,28 +264,21 @@ export default function ComedianProfile() {
                   </div>
 
                   <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-3 sm:space-y-0 sm:space-x-3">
-                    <Button
-                      onClick={() => setIsFollowing(!isFollowing)}
-                      variant={isFollowing ? "outline" : "default"}
-                      size="lg"
-                      className="w-full sm:w-auto bg-yellow-600 hover:bg-yellow-700"
-                    >
-                      <UserPlus className="w-4 h-4 mr-2" />
-                      {isFollowing ? "Connected" : "Connect"}
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="lg"
-                      className="w-full sm:w-auto bg-transparent"
-                    >
-                      <MessageCircle className="w-4 h-4 mr-2" />
-                      Collaborate
-                    </Button>
-                    <ShareDialog
-                      username={profile?.userProfile?.username}
+                    <ConnectBtn
+                      profileId={profile?.userProfile?.id}
+                      isOwnProfile={isOwnProfile}
                       creatorType={profile?.creatorType}
                     />
-                    <UploadCoverImageModal />
+
+                    {isOwnProfile && (
+                      <>
+                        <ShareDialog
+                          username={profile?.userProfile?.username}
+                          creatorType={profile?.creatorType}
+                        />
+                        <UploadCoverImageModal />
+                      </>
+                    )}
                   </div>
                 </div>
 
@@ -558,15 +544,15 @@ export default function ComedianProfile() {
               </TabsList>
 
               <TabsContent value="shows">
-                <UpcomingShowsTab />
+                <UpcomingShowsTab isOwnProfile={isOwnProfile}/>
               </TabsContent>
 
               <TabsContent value="recent">
-                <RecentSetsTab />
+                <RecentSetsTab isOwnProfile={isOwnProfile}/>
               </TabsContent>
 
               <TabsContent value="achievements">
-                <AchievementTab />
+                <AchievementTab isOwnProfile={isOwnProfile}/>
               </TabsContent>
             </Tabs>
           </div>

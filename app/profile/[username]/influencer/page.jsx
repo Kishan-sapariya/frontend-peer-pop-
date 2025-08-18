@@ -31,6 +31,8 @@ import UploadRecentContent from "@/component/influencer profile/UploadContentFor
 import RecentContent from "@/component/influencer profile/RecentContentTab";
 import { UploadCampaignForm } from "@/component/influencer profile/UploadCampaignForm";
 import CampaignTab from "@/component/influencer profile/CampaignTab";
+import ConnectBtn from "@/component/Connection/ConnectBtn";
+import { useConnectionStore } from "@/store/useConnectionStore";
 
 export default function InfluencerProfile() {
   const [isFollowing, setIsFollowing] = useState(false);
@@ -170,18 +172,18 @@ export default function InfluencerProfile() {
     }
     return num.toString();
   };
+  const isOwnProfile = profile?.userProfile?.id === user?.id;
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Cover Image */}
       <div className="relative h-64">
         <img
-          src={user?.coverImage || "/placeholder.svg"}
+          src={isOwnProfile?user?.coverImage:profile?.userProfile?.coverImage}
           alt="Cover"
           className="w-full h-full object-cover"
         />
       </div>
-
       <div className="max-w-7xl mx-auto px-4 -mt-20 relative z-10">
         {/* Profile Header */}
         <Card className="mb-6">
@@ -191,7 +193,7 @@ export default function InfluencerProfile() {
                 <Avatar className="relative w-40 h-40 border-4 border-white shadow-xl">
                   <AvatarImage
                     className="object-cover"
-                    src={user?.image}
+                    src={isOwnProfile?user?.image:profile?.userProfile?.image}
                     onError={(e) => {
                       e.target.src = "";
                     }}
@@ -205,7 +207,7 @@ export default function InfluencerProfile() {
                   </AvatarFallback>
                 </Avatar>
 
-                <UploadImageModal />
+                {isOwnProfile && <UploadImageModal />}
                 {influencer.verified && (
                   <CheckCircle className="absolute -bottom-1 -right-1 w-8 h-8 text-blue-500 bg-white rounded-full" />
                 )}
@@ -262,28 +264,21 @@ export default function InfluencerProfile() {
                   </div>
 
                   <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-3 sm:space-y-0 sm:space-x-3">
-                    <Button
-                      onClick={() => setIsFollowing(!isFollowing)}
-                      variant={isFollowing ? "outline" : "default"}
-                      size="lg"
-                      className="w-full sm:w-auto"
-                    >
-                      <UserPlus className="w-4 h-4 mr-2" />
-                      {isFollowing ? "Connected" : "Connect"}
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="lg"
-                      className="w-full sm:w-auto bg-transparent"
-                    >
-                      <MessageCircle className="w-4 h-4 mr-2" />
-                      Collaborate
-                    </Button>
-                    <ShareDialog
-                      username={profile?.userProfile?.username}
-                      influencerType={profile?.influencerType}
+                    <ConnectBtn
+                      profileId={profile?.userProfile?.id}
+                      isOwnProfile={isOwnProfile}
+                      creatorType={profile?.creatorType}
                     />
-                    <UploadCoverImageModal />
+
+                    {isOwnProfile && (
+                      <>
+                        <ShareDialog
+                          username={profile?.userProfile?.username}
+                          influencerType={profile?.influencerType}
+                        />
+                        <UploadCoverImageModal />
+                      </>
+                    )}
                   </div>
                 </div>
 
@@ -549,13 +544,13 @@ export default function InfluencerProfile() {
                 <TabsTrigger value="audience">Audience</TabsTrigger>
               </TabsList>
               <TabsContent value="content" className="mt-6">
-                <UploadRecentContent />
-                <RecentContent />
+                <UploadRecentContent isOwnProfile={isOwnProfile}/>
+                <RecentContent isOwnProfile={isOwnProfile}/>
               </TabsContent>
 
               <TabsContent value="campaigns" className="mt-6">
-                <UploadCampaignForm />
-                <CampaignTab />
+                <UploadCampaignForm isOwnProfile={isOwnProfile}/>
+                <CampaignTab isOwnProfile={isOwnProfile}/>
               </TabsContent>
               <TabsContent value="audience" className="mt-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

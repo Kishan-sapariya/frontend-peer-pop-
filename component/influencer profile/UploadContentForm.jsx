@@ -20,7 +20,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-export default function UploadRecentContentDialog() {
+export default function UploadRecentContentDialog({ isOwnProfile }) {
   const router = useRouter();
   const { user } = useAuthStore();
   const { addRecentContent } = useInfluencerStore();
@@ -77,7 +77,7 @@ export default function UploadRecentContentDialog() {
     setIsUploading(false);
 
     if (result) {
-      setOpen(false); 
+      setOpen(false);
       router.push(
         `/profile/${user?.username}/${user?.creatorType?.toLowerCase()}`
       );
@@ -97,11 +97,13 @@ export default function UploadRecentContentDialog() {
     <Dialog open={open} onOpenChange={setOpen}>
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-medium">Recent Content</h1>
-        <DialogTrigger asChild>
-          <Button className="flex items-center gap-2">
-            <Plus className="w-4 h-4" /> Add Recent Content
-          </Button>
-        </DialogTrigger>
+        {isOwnProfile && (
+          <DialogTrigger asChild>
+            <Button className="flex items-center gap-2">
+              <Plus className="w-4 h-4" /> Add Recent Content
+            </Button>
+          </DialogTrigger>
+        )}
       </div>
       <DialogContent className="sm:max-w-[600px] p-6">
         <DialogHeader>

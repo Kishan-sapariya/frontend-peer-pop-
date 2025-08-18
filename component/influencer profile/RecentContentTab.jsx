@@ -24,20 +24,10 @@ import {
 import { formatDate } from "@/utils/formatDate";
 import { useInfluencerStore } from "@/store/useInfluencerStore";
 
-export default function RecentContent() {
+export default function RecentContent({ isOwnProfile }) {
   const router = useRouter();
   const { user } = useAuthStore();
   const { profile, deleteRecentContent } = useInfluencerStore();
-
-  const handleAddContent = () => {
-    if (user.username && user.creatorType) {
-      router.push(
-        `/profile/${
-          user.username
-        }/${user.creatorType.toLowerCase()}/upload-recent-content`
-      );
-    }
-  };
 
   const handleDelete = (contentId) => {
     if (contentId) {
@@ -85,28 +75,30 @@ export default function RecentContent() {
                     />
                   )}
 
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="absolute top-2 right-2 bg-white/70 hover:bg-white rounded-full p-1 shadow-sm"
-                      aria-label="Content options"
-                    >
-                      <MoreVertical className="w-5 h-5 text-gray-700" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-30 px-2 py-1">
-                    <Button
-                      variant="ghost"
-                      className="w-full justify-start bg-red-50 hover:bg-red-100 text-red-500 hover:text-red-600 transition-colors"
-                      onClick={() => handleDelete(content.id)}
-                    >
-                      <Trash2 className="mr-2 w-4 h-4" />
-                      Delete
-                    </Button>
-                  </PopoverContent>
-                </Popover>
+                {isOwnProfile && (
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="absolute top-2 right-2 bg-white/70 hover:bg-white rounded-full p-1 shadow-sm"
+                        aria-label="Content options"
+                      >
+                        <MoreVertical className="w-5 h-5 text-gray-700" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-30 px-2 py-1">
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start bg-red-50 hover:bg-red-100 text-red-500 hover:text-red-600 transition-colors"
+                        onClick={() => handleDelete(content.id)}
+                      >
+                        <Trash2 className="mr-2 w-4 h-4" />
+                        Delete
+                      </Button>
+                    </PopoverContent>
+                  </Popover>
+                )}
               </CardContent>
 
               <div className="px-4 py-2 space-y-2">
