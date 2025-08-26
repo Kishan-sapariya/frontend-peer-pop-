@@ -13,7 +13,7 @@ import { useState } from "react";
 import { Plus } from "lucide-react";
 import { useYoutubeStore } from "@/store/useYoutubeStore";
 
-export default function AddCollaborationModal() {
+export default function AddCollaborationModal({isOwnProfile}) {
   const { addCollaboration } = useYoutubeStore();
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({

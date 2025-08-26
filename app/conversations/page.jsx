@@ -12,14 +12,8 @@ import { useRouter } from "next/navigation";
 
 export default function ConversationsPage() {
   const { user } = useAuthStore();
-  const {
-    conversations,
-    getAllConversation,
-    setActiveConversation,
-    loading,
-    error,
-  } = useConversationStore();
-  console.log(conversations);
+  const { conversations, getAllConversation, loading, error } =
+    useConversationStore();
 
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -36,10 +30,12 @@ export default function ConversationsPage() {
       ?.user;
   };
 
-  // Search filter
   const filteredConversations =
     conversations?.filter((c) => {
-      const otherUser = getOtherUser(c.conversation, user?.id);
+      if (!c?.conversation?.participants) {
+        return null;
+      }
+      const otherUser = getOtherUser(c?.conversation, user?.id);
       if (!searchTerm) return true;
       return (
         otherUser?.username?.toLowerCase().includes(searchTerm.toLowerCase()) ||

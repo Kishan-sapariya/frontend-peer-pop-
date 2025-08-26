@@ -102,7 +102,7 @@ export default function ConnectBtn({ profileId, isOwnProfile, creatorType }) {
         onClick={handleCreateConversation}
       >
         <MessageCircle className="w-4 h-4 mr-2" />
-        Collaborate
+        Message
       </Button>
     </div>
   );

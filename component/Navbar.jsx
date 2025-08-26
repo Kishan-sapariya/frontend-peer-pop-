@@ -13,10 +13,11 @@ import {
   User,
   Sparkle,
   Building2,
-  User2,
   Users,
   Plus,
   MessageCircle,
+  Telescope,
+  Search,
 } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useRouter } from "next/navigation";
@@ -27,6 +28,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import NotificationBell from "./notifications/NotificationBell";
+import { NavbarSearch } from "./NavbarSearch";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -65,149 +68,157 @@ const Navbar = () => {
               <Sparkle className="text-white" />
             </div>
             <Link href="/">
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-cyan-500 to-blue-600 bg-clip-text text-transparent">
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-cyan-500 to-blue-600 bg-clip-text text-transparent hidden sm:block">
                 Peerpop
               </h1>
             </Link>
+            <NavbarSearch />
           </div>
-          <div className="hidden md:flex items-center space-x-4">
-            {isAuthenticated ? (
-              <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    className="relative h-10 rounded-full flex items-center justify-center hover:bg-muted/50 transition-colors"
-                  >
-                    <Avatar className="h-9 w-9">
-                      {user?.image && (
-                        <AvatarImage
-                          className="object-cover"
-                          src={user.image}
-                          alt={user.username || "User Avatar"}
-                        />
+          <div className="flex items-center gap-3">
+            <NotificationBell />
+            <div className="hidden md:flex items-center space-x-4">
+              {isAuthenticated ? (
+                <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      className="relative h-10 rounded-full flex items-center justify-center hover:bg-muted/50 transition-colors"
+                    >
+                      <Avatar className="h-9 w-9">
+                        {user?.image && (
+                          <AvatarImage
+                            className="object-cover"
+                            src={user.image}
+                            alt={user.username || "User Avatar"}
+                          />
+                        )}
+                        <AvatarFallback className="font-semibold text-white bg-gradient-to-r from-cyan-400 to-blue-400">
+                          {getInitials(user.username || user.email)}
+                        </AvatarFallback>
+                      </Avatar>
+                      {user?.username && (
+                        <span className="text-gray-700 font-medium ml-2 mr-1 hidden sm:inline-block">
+                          {user.username}
+                        </span>
                       )}
-                      <AvatarFallback className="font-semibold text-white bg-gradient-to-r from-cyan-400 to-blue-400">
-                        {getInitials(user.username || user.email)}
-                      </AvatarFallback>
-                    </Avatar>
-                    {user?.username && (
-                      <span className="text-gray-700 font-medium ml-2 mr-1 hidden sm:inline-block">
-                        {user.username}
-                      </span>
-                    )}
-                    {isPopoverOpen ? (
-                      <ChevronUp className="h-4 w-4 text-gray-700" />
-                    ) : (
-                      <ChevronDown className="h-4 w-4 text-gray-700" />
-                    )}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent
-                  align="end"
-                  className="w-56 rounded-md border bg-white shadow-md p-2"
-                >
-                  <div className="flex flex-col space-y-1">
-                    <div className="py-2 px-2">
-                      <p className="text-sm font-medium leading-none truncate">
-                        {user.username}
-                      </p>
-                      <p className="text-xs leading-none text-muted-foreground truncate">
-                        {user.email}
-                      </p>
-                    </div>
-                    <div className="border-t my-2"></div>
-                    <Link
-                      href={`/profile/${
-                        user?.username
-                      }/${user?.creatorType?.toLowerCase()}`}
-                      passHref
-                    >
-                      <Button
-                        variant="ghost"
-                        className="w-full justify-start text-gray-700 hover:bg-muted/60"
+                      {isPopoverOpen ? (
+                        <ChevronUp className="h-4 w-4 text-gray-700" />
+                      ) : (
+                        <ChevronDown className="h-4 w-4 text-gray-700" />
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent
+                    align="end"
+                    className="w-56 rounded-md border bg-white shadow-md p-2"
+                  >
+                    <div className="flex flex-col space-y-1">
+                      <div className="py-2 px-2">
+                        <p className="text-sm font-medium leading-none truncate">
+                          {user.username}
+                        </p>
+                        <p className="text-xs leading-none text-muted-foreground truncate">
+                          {user.email}
+                        </p>
+                      </div>
+                      <div className="border-t my-2"></div>
+                      <Link
+                        href={`/profile/${
+                          user?.username
+                        }/${user?.creatorType?.toLowerCase()}`}
+                        passHref
                       >
-                        <User className="mr-2 h-4 w-4" /> profile
-                      </Button>
-                    </Link>
-                    <Link
-                      href="/connections"
-                    >
-                      <Button
-                        variant="ghost"
-                        className="w-full justify-start text-gray-700 hover:bg-muted/60"
-                      >
-                        <Plus className="mr-2 h-4 w-4" /> Connections
-                      </Button>
-                    </Link>
-                    <Link
-                      href="/conversations"
-                    >
-                      <Button
-                        variant="ghost"
-                        className="w-full justify-start text-gray-700 hover:bg-muted/60"
-                      >
-                        <MessageCircle className="mr-2 h-4 w-4" /> Messages
-                      </Button>
-                    </Link>
-
-                    {!user.creatorType && (
-                      <Link href="/onboarding" passHref>
                         <Button
                           variant="ghost"
                           className="w-full justify-start text-gray-700 hover:bg-muted/60"
                         >
-                          <Settings className="mr-2 h-4 w-4" /> Onboarding
+                          <User className="mr-2 h-4 w-4" /> profile
                         </Button>
                       </Link>
-                    )}
-                    <div className="border-t my-2"></div>
-                    <Button
-                      onClick={handleLogout}
-                      className="w-full justify-start bg-red-50 hover:bg-red-100 text-red-500 hover:text-red-600 transition-colors"
-                    >
-                      <LogOut className="mr-2 h-4 w-4" /> Logout
-                    </Button>
-                  </div>
-                </PopoverContent>
-              </Popover>
-            ) : (
-              <>
-                <Link href="/feed">
-                  <Button variant="ghost" className="hover:bg-cyan-50">
-                    Explore
-                  </Button>
-                </Link>
-                <Link href="/login/business">
-                  <Button
-                    variant="outline"
-                    className="border-orange-300 hover:bg-orange-50 text-orange-600 bg-transparent"
-                  >
-                    <Building2 />
-                    Business Login
-                  </Button>
-                </Link>
-                <Link href="/signup">
-                  <Button className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white shadow-lg">
-                    <Users />
-                    Join as Creator
-                  </Button>
-                </Link>
-              </>
-            )}
-          </div>
+                      <Link href="/feed">
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-start text-gray-700 hover:bg-muted/60"
+                        >
+                          <Telescope className="mr-2 h-4 w-4" /> Explore
+                        </Button>
+                      </Link>
+                      <Link href="/connections">
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-start text-gray-700 hover:bg-muted/60"
+                        >
+                          <Plus className="mr-2 h-4 w-4" /> Peers
+                        </Button>
+                      </Link>
+                      <Link href="/conversations">
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-start text-gray-700 hover:bg-muted/60"
+                        >
+                          <MessageCircle className="mr-2 h-4 w-4" /> Messages
+                        </Button>
+                      </Link>
 
-          <div className="md:hidden">
-            <Button
-              variant="ghost"
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-gray-700"
-            >
-              {isMenuOpen ? (
-                <X className="h-8 w-8" />
+                      {!user.creatorType && (
+                        <Link href="/onboarding" passHref>
+                          <Button
+                            variant="ghost"
+                            className="w-full justify-start text-gray-700 hover:bg-muted/60"
+                          >
+                            <Settings className="mr-2 h-4 w-4" /> Onboarding
+                          </Button>
+                        </Link>
+                      )}
+                      <div className="border-t my-2"></div>
+                      <Button
+                        onClick={handleLogout}
+                        className="w-full justify-start bg-red-50 hover:bg-red-100 text-red-500 hover:text-red-600 transition-colors"
+                      >
+                        <LogOut className="mr-2 h-4 w-4" /> Logout
+                      </Button>
+                    </div>
+                  </PopoverContent>
+                </Popover>
               ) : (
-                <Menu className="h-8 w-8" />
+                <>
+                  <Link href="/feed">
+                    <Button variant="ghost" className="hover:bg-cyan-50">
+                      Explore
+                    </Button>
+                  </Link>
+                  <Link href="/login/business">
+                    <Button
+                      variant="outline"
+                      className="border-orange-300 hover:bg-orange-50 text-orange-600 bg-transparent"
+                    >
+                      <Building2 />
+                      Business Login
+                    </Button>
+                  </Link>
+                  <Link href="/signup">
+                    <Button className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white shadow-lg">
+                      <Users />
+                      Join as Creator
+                    </Button>
+                  </Link>
+                </>
               )}
-            </Button>
+            </div>
+
+            <div className="md:hidden">
+              <Button
+                variant="ghost"
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                className="text-gray-700"
+              >
+                {isMenuOpen ? (
+                  <X className="h-8 w-8" />
+                ) : (
+                  <Menu className="h-8 w-8" />
+                )}
+              </Button>
+            </div>
           </div>
         </div>
 
@@ -256,20 +267,25 @@ const Navbar = () => {
                         Profile
                       </Button>
                     </Link>
-                    <Link
-                      href="/connections"
-                    >
+                    <Link href="/feed">
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start text-gray-700 hover:text-cyan-600"
+                      >
+                        <Telescope className="mr-2 h-4 w-4" />
+                        Explore
+                      </Button>
+                    </Link>
+                    <Link href="/connections">
                       <Button
                         variant="ghost"
                         className="w-full justify-start text-gray-700 hover:text-cyan-600"
                       >
                         <User className="mr-2 h-4 w-4" />
-                        Connections
+                        Peers
                       </Button>
                     </Link>
-                    <Link
-                      href="/conversations"
-                    >
+                    <Link href="/conversations">
                       <Button
                         variant="ghost"
                         className="w-full justify-start text-gray-700 hover:text-cyan-600"

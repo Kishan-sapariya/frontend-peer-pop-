@@ -10,6 +10,13 @@ export const useAuthStore = create((set, get) => ({
   isAuthenticated: false,
   user: null,
   signedUpEmail: "",
+  results: [],
+  loading: false,
+  hasMore: true,
+  cursor: null,
+  query: "",
+  creatorType: undefined,
+  location: undefined,
 
   signup: async (user) => {
     try {
@@ -46,6 +53,10 @@ export const useAuthStore = create((set, get) => ({
 
         set({ isAuthenticated: true, user: fullUser });
 
+        // Connect socket if not already connected
+        if (!socket.connected) {
+          socket.connect();
+        }
         socket.emit("join", fullUser.id);
 
         toast.success(parsedRes.message);
@@ -88,6 +99,10 @@ export const useAuthStore = create((set, get) => ({
       const res = await axios.post(`${API_URL}/auth/logout`);
       const parsedRes = res.data;
       set({ isAuthenticated: false, user: null, signedUpEmail: "" });
+
+      // Disconnect socket on logout
+      socket.disconnect();
+
       toast.success(parsedRes.message || "Logged out successfully!");
     } catch (error) {
       toast.error(error?.response?.data?.message || "Logout failed");
@@ -102,6 +117,10 @@ export const useAuthStore = create((set, get) => ({
       if (parsedRes.user) {
         set({ isAuthenticated: true, user: parsedRes.user });
 
+        // Connect socket if not already connected
+        if (!socket.connected) {
+          socket.connect();
+        }
         socket.emit("join", parsedRes.user.id);
       } else {
         set({ isAuthenticated: false, user: null });
@@ -194,6 +213,67 @@ export const useAuthStore = create((set, get) => ({
       toast.error(
         error?.response?.data?.message || "Upload cover image failed"
       );
+    }
+  },
+
+  resetSearch: () =>
+    set({
+      results: [],
+      loading: false,
+      hasMore: true,
+      cursor: null,
+    }),
+
+  fetchSearchResults: async (q, creatorType, location, limit = 10) => {
+    try {
+      set({ loading: true });
+
+      const res = await axios.get(`${API_URL}/auth/search`, {
+        params: {
+          q: q || undefined, // only add if not empty
+          creatorType: creatorType || undefined,
+          location: location || undefined,
+          limit,
+        },
+      });
+
+      set({
+        results: res.data.users || [],
+        cursor: res.data.nextCursor,
+        hasMore: !!res.data.nextCursor,
+        query: q,
+        creatorType,
+        location,
+      });
+    } catch (err) {
+      console.error("Search error:", err);
+      toast.error(err.response?.data?.message || "Failed to search users");
+    } finally {
+      set({ loading: false });
+    }
+  },
+
+  loadMore: async () => {
+    const { cursor, hasMore, query, creatorType, location, results } = get();
+    if (!hasMore || !cursor) return;
+
+    try {
+      set({ loading: true });
+
+      const res = await axios.get(`${API_URL}/search`, {
+        params: { q: query, creatorType, location, cursor, limit: 10 },
+      });
+
+      set({
+        results: [...results, ...(res.data.users || [])],
+        cursor: res.data.nextCursor,
+        hasMore: !!res.data.nextCursor,
+      });
+    } catch (err) {
+      console.error("Load more search error:", err);
+      toast.error(err.response?.data?.message || "Failed to load more results");
+    } finally {
+      set({ loading: false });
     }
   },
 }));

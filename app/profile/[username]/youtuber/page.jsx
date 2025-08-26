@@ -41,6 +41,8 @@ import AchievementTab from "@/component/youtube profile/AchievementTab";
 import ShareDialog from "@/component/ShareDialog";
 import { useConnectionStore } from "@/store/useConnectionStore";
 import ConnectBtn from "@/component/Connection/ConnectBtn";
+import FeedsPostSections from "@/component/feeds/FeedsPostSections";
+import MyPostsSection from "@/component/feeds/MyPostsSection";
 
 export default function YouTuberProfile() {
   const {
@@ -54,7 +56,7 @@ export default function YouTuberProfile() {
     getYoutubeStats,
   } = useYoutubeStore();
   const { connections } = useConnectionStore();
-  const [activeTab, setActiveTab] = useState("content");
+  const [activeTab, setActiveTab] = useState("my posts");
   const { username } = useParams();
   const { user } = useAuthStore();
   useEffect(() => {
@@ -644,11 +646,17 @@ export default function YouTuberProfile() {
               onValueChange={setActiveTab}
               className="w-full"
             >
-              <TabsList className="grid w-full grid-cols-3 mb-6">
+              <TabsList className="grid w-full grid-cols-4 mb-6">
+                <TabsTrigger value="my posts">
+                  {isOwnProfile ? "My Posts" : "Posts"}
+                </TabsTrigger>
                 <TabsTrigger value="content">Recent Content</TabsTrigger>
                 <TabsTrigger value="collaborations">Collaborations</TabsTrigger>
                 <TabsTrigger value="achievements">Achievements</TabsTrigger>
               </TabsList>
+              <TabsContent value="my posts">
+                <MyPostsSection profileId={profile?.userProfile?.id} />
+              </TabsContent>
               <TabsContent value="content">
                 <RecentContent
                   contents={recentContent}

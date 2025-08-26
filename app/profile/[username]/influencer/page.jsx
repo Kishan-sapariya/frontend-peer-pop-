@@ -32,11 +32,11 @@ import RecentContent from "@/component/influencer profile/RecentContentTab";
 import { UploadCampaignForm } from "@/component/influencer profile/UploadCampaignForm";
 import CampaignTab from "@/component/influencer profile/CampaignTab";
 import ConnectBtn from "@/component/Connection/ConnectBtn";
-import { useConnectionStore } from "@/store/useConnectionStore";
+import MyPostsSection from "@/component/feeds/MyPostsSection";
 
 export default function InfluencerProfile() {
   const [isFollowing, setIsFollowing] = useState(false);
-  const [activeTab, setActiveTab] = useState("content");
+  const [activeTab, setActiveTab] = useState("my posts");
   const { username } = useParams();
   const { profile, getInfluencerProfileByUsername } = useInfluencerStore();
   const [isLoading, setIsLoading] = useState(false);
@@ -179,7 +179,9 @@ export default function InfluencerProfile() {
       {/* Cover Image */}
       <div className="relative h-64">
         <img
-          src={isOwnProfile?user?.coverImage:profile?.userProfile?.coverImage}
+          src={
+            isOwnProfile ? user?.coverImage : profile?.userProfile?.coverImage
+          }
           alt="Cover"
           className="w-full h-full object-cover"
         />
@@ -193,7 +195,9 @@ export default function InfluencerProfile() {
                 <Avatar className="relative w-40 h-40 border-4 border-white shadow-xl">
                   <AvatarImage
                     className="object-cover"
-                    src={isOwnProfile?user?.image:profile?.userProfile?.image}
+                    src={
+                      isOwnProfile ? user?.image : profile?.userProfile?.image
+                    }
                     onError={(e) => {
                       e.target.src = "";
                     }}
@@ -538,19 +542,43 @@ export default function InfluencerProfile() {
               onValueChange={setActiveTab}
               className="w-full"
             >
-              <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="content">Recent Content</TabsTrigger>
-                <TabsTrigger value="campaigns">Campaigns</TabsTrigger>
-                <TabsTrigger value="audience">Audience</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 relative z-10 mb-4 bg-gray-100 dark:bg-gray-800">
+                <TabsTrigger
+                  value="my posts"
+                  className="data-[state=active]:bg-background"
+                >
+                  {isOwnProfile ? "My Posts" : "Posts"}
+                </TabsTrigger>
+                <TabsTrigger
+                  value="content"
+                  className="data-[state=active]:bg-background"
+                >
+                  Recent Content
+                </TabsTrigger>
+                <TabsTrigger
+                  value="campaigns"
+                  className="data-[state=active]:bg-background"
+                >
+                  Campaigns
+                </TabsTrigger>
+                <TabsTrigger
+                  value="audience"
+                  className="data-[state=active]:bg-background"
+                >
+                  Audience
+                </TabsTrigger>
               </TabsList>
+              <TabsContent value="my posts">
+                <MyPostsSection profileId={profile?.userProfile?.id} />
+              </TabsContent>
               <TabsContent value="content" className="mt-6">
-                <UploadRecentContent isOwnProfile={isOwnProfile}/>
-                <RecentContent isOwnProfile={isOwnProfile}/>
+                <UploadRecentContent isOwnProfile={isOwnProfile} />
+                <RecentContent isOwnProfile={isOwnProfile} />
               </TabsContent>
 
               <TabsContent value="campaigns" className="mt-6">
-                <UploadCampaignForm isOwnProfile={isOwnProfile}/>
-                <CampaignTab isOwnProfile={isOwnProfile}/>
+                <UploadCampaignForm isOwnProfile={isOwnProfile} />
+                <CampaignTab isOwnProfile={isOwnProfile} />
               </TabsContent>
               <TabsContent value="audience" className="mt-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

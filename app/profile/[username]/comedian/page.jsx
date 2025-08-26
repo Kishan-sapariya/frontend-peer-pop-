@@ -34,10 +34,11 @@ import RecentSetsTab from "@/component/comedian profile/RecentSetsTab";
 import AchievementTab from "@/component/comedian profile/AchievementTab";
 import ShareDialog from "@/component/ShareDialog";
 import ConnectBtn from "@/component/Connection/ConnectBtn";
+import MyPostsSection from "@/component/feeds/MyPostsSection";
 
 export default function ComedianProfile() {
   const { user } = useAuthStore();
-  const [activeTab, setActiveTab] = useState("shows");
+  const [activeTab, setActiveTab] = useState("my posts");
   const { username } = useParams();
   const { profile, getComedianProfileByUsername } = useComedianStore();
   const [isLoading, setIsLoading] = useState(false);
@@ -538,21 +539,27 @@ export default function ComedianProfile() {
               className="w-full"
             >
               <TabsList className="grid w-full grid-cols-3 mb-6">
+                <TabsTrigger value="my posts">
+                  {isOwnProfile ? "My Posts" : "Posts"}
+                </TabsTrigger>
                 <TabsTrigger value="shows">Upcoming Shows</TabsTrigger>
                 <TabsTrigger value="recent">Recent Sets</TabsTrigger>
                 <TabsTrigger value="achievements">Achievements</TabsTrigger>
               </TabsList>
 
+              <TabsContent value="my posts">
+                <MyPostsSection profileId={profile?.userProfile?.id} />
+              </TabsContent>
               <TabsContent value="shows">
-                <UpcomingShowsTab isOwnProfile={isOwnProfile}/>
+                <UpcomingShowsTab isOwnProfile={isOwnProfile} />
               </TabsContent>
 
               <TabsContent value="recent">
-                <RecentSetsTab isOwnProfile={isOwnProfile}/>
+                <RecentSetsTab isOwnProfile={isOwnProfile} />
               </TabsContent>
 
               <TabsContent value="achievements">
-                <AchievementTab isOwnProfile={isOwnProfile}/>
+                <AchievementTab isOwnProfile={isOwnProfile} />
               </TabsContent>
             </Tabs>
           </div>

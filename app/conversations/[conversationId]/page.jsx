@@ -219,7 +219,7 @@ const MessagesArea = () => {
           </Button>
 
           <Avatar className="h-10 w-10 sm:h-12 sm:w-12">
-            <AvatarImage src={otherUser.image} alt={otherUser.username} />
+            <AvatarImage src={otherUser.image} alt={otherUser.username} className="object-cover" />
             <AvatarFallback className="bg-gray-100 text-gray-600">
               {otherUser.username?.charAt(0).toUpperCase() || "?"}
             </AvatarFallback>
@@ -229,11 +229,6 @@ const MessagesArea = () => {
             <h2 className="text-lg font-semibold text-gray-900 truncate">
               {otherUser.username}
             </h2>
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-500">
-                {otherUser.isOnline ? "Online" : "Offline"}
-              </span>
-            </div>
           </div>
         </div>
       </div>
@@ -273,6 +268,7 @@ const MessagesArea = () => {
                             <AvatarImage
                               src={sender.image}
                               alt={sender.username}
+                              className="object-cover"
                             />
                             <AvatarFallback className="bg-gray-100 text-gray-600 text-xs">
                               {sender.username?.charAt(0).toUpperCase() || "?"}
@@ -473,7 +469,7 @@ const MessagesArea = () => {
       {selectedFile && (
         <div className="bg-white border-t border-gray-200 p-3">
           <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-            <div className="relative">
+            <div className="relative mb-18">
               {isImageFile(selectedFile) && filePreview ? (
                 <img
                   src={filePreview}

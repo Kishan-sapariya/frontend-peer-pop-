@@ -20,7 +20,7 @@ export default function ConnectionsPage() {
     deleteRequest,
   } = useConnectionStore();
 
-  const [filter, setFilter] = useState("PENDING");
+  const [filter, setFilter] = useState("ALL");
 
   useEffect(() => {
     getConnections();
@@ -34,19 +34,6 @@ export default function ConnectionsPage() {
       return conn.senderId === user?.id && conn.status === "PENDING";
     return true;
   });
-
-  const getStatusBadgeStyle = (status) => {
-    switch (status) {
-      case "ACCEPTED":
-        return "bg-green-50 text-green-700 border-green-200";
-      case "PENDING":
-        return "bg-yellow-50 text-yellow-700 border-yellow-200";
-      case "REJECTED":
-        return "bg-red-50 text-red-700 border-red-200";
-      default:
-        return "bg-gray-50 text-gray-700 border-gray-200";
-    }
-  };
 
   if (!user) {
     return <LoadingSpinner />;
