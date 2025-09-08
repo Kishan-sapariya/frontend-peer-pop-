@@ -70,7 +70,7 @@ const UserDetailsCard = () => {
 
             {/* Creator Type */}
             <p className="text-sm text-gray-600 mb-2">
-              {userDetails.creatorType.toLowerCase() || "Creator"}
+              {userDetails?.creatorType?.toLowerCase() || "Creator"}
             </p>
 
             {/* Location */}

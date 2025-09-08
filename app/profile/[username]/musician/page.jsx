@@ -53,7 +53,6 @@ export default function profileDataProfile() {
   }, [username]);
 
   const profileData = profile?.data || {};
-  console.log(profile);
 
   const formatNumber = (num) => {
     if (num === undefined) return;

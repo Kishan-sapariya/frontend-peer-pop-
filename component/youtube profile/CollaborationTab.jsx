@@ -24,7 +24,7 @@ export default function RecentCollaborations({ isOwnProfile }) {
             Successful partnerships with other creators
           </p>
         </div>
-        {isOwnProfile && <AddCollaborationModal />}
+        {isOwnProfile && <AddCollaborationModal isOwnProfile={isOwnProfile} />}
       </div>
 
       <div className="space-y-4">
@@ -62,7 +62,7 @@ export default function RecentCollaborations({ isOwnProfile }) {
                         <MoreVertical className="h-5 w-5 text-muted-foreground" />
                       </Button>
                     </PopoverTrigger>
-                    <PopoverContent className="w-30 px-3 py-2">
+                    <PopoverContent className="w-30 px-1 py-1">
                       <Button
                         className="w-full justify-start bg-red-50 hover:bg-red-100 text-red-500 hover:text-red-600 transition-colors"
                         onClick={() => deleteCollaboration(collab.id)}

@@ -292,7 +292,7 @@ export default function YouTuberOnboarding() {
       const result = await createYoutubeProfile(profileData);
 
       if (result) {
-        router.push("/dashboard");
+        router.push("/feed");
       }
     } catch (error) {
       console.error("Error creating YouTube profile:", error);

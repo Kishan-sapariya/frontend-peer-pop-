@@ -29,6 +29,8 @@ export default function ConnectBtn({ profileId, isOwnProfile, creatorType }) {
         return "bg-yellow-600 hover:bg-yellow-700";
       case "INFLUENCER":
         return "bg-purple-700 hover:bg-purple-800";
+      default:
+        "bg-black"
     }
   };
   if (!user) return null;

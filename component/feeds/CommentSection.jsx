@@ -42,7 +42,7 @@ export const CommentSection = ({ comments, postId }) => {
               className="flex items-start space-x-3 group relative"
             >
               <Avatar className="w-8 h-8 flex-shrink-0 border-2 border-blue-200">
-                <AvatarImage src={c.user?.image} alt={c.user?.username} />
+                <AvatarImage src={c.user?.image} alt={c.user?.username} className="object-cover" />
                 <AvatarFallback className="bg-gradient-to-r from-blue-500 to-sky-600 text-white text-xs">
                   {c.user?.username?.[0]?.toUpperCase() || "U"}
                 </AvatarFallback>

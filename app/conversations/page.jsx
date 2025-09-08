@@ -6,8 +6,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useConversationStore } from "../../store/useConversationStore"; // Corrected import path
-import { useAuthStore } from "../../store/useAuthStore"; // Corrected import path
+import { useConversationStore } from "../../store/useConversationStore";
+import { useAuthStore } from "../../store/useAuthStore";
 import { useRouter } from "next/navigation";
 
 export default function ConversationsPage() {
@@ -16,26 +16,23 @@ export default function ConversationsPage() {
     useConversationStore();
 
   const [searchTerm, setSearchTerm] = useState("");
+  const router = useRouter();
 
   useEffect(() => {
     getAllConversation();
   }, [getAllConversation]);
 
-  const router = useRouter();
-
-  // A helper function to find the other participant in a conversation
+  // Get the "other" user from participants
   const getOtherUser = (conversation, currentUserId) => {
-    if (!conversation || !conversation.participants) return null;
-    return conversation.participants.find((p) => p.userId !== currentUserId)
+    return conversation?.participants?.find((p) => p.userId !== currentUserId)
       ?.user;
   };
 
   const filteredConversations =
     conversations?.filter((c) => {
-      if (!c?.conversation?.participants) {
-        return null;
-      }
-      const otherUser = getOtherUser(c?.conversation, user?.id);
+      const otherUser = getOtherUser(c, user?.id);
+      if (!otherUser) return false;
+
       if (!searchTerm) return true;
       return (
         otherUser?.username?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -70,10 +67,14 @@ export default function ConversationsPage() {
   };
 
   const getLastMessagePreview = (message) => {
-    if (!message?.content) return "No messages yet";
-    return message.content.length > 50
-      ? message.content.substring(0, 50) + "..."
-      : message.content;
+    if (!message?.content && !message?.attachmentUrl) return "No messages yet";
+    if (message?.content) {
+      return message.content.length > 50
+        ? message.content.substring(0, 50) + "..."
+        : message.content;
+    }
+    if (message?.attachmentUrl) return "📎 Attachment";
+    return "";
   };
 
   // Loading skeleton
@@ -168,7 +169,7 @@ export default function ConversationsPage() {
             </Card>
           ) : (
             filteredConversations.map((c) => {
-              const otherUser = getOtherUser(c.conversation, user?.id);
+              const otherUser = getOtherUser(c, user?.id);
               const isUnread = c.unreadCount > 0;
               const isLastMessageFromOther =
                 c.lastMessage?.senderId !== user?.id;
@@ -181,7 +182,7 @@ export default function ConversationsPage() {
                   className={`cursor-pointer hover:shadow-sm py-1 px-3 ${
                     isUnread ? "bg-blue-50" : "bg-white hover:bg-gray-50"
                   }`}
-                  onClick={() => handleConversationClick(c.conversationId)}
+                  onClick={() => handleConversationClick(c.id)}
                 >
                   <CardContent className="p-3 sm:p-4 flex items-center gap-3">
                     {/* Avatar */}
@@ -196,7 +197,6 @@ export default function ConversationsPage() {
                           {otherUser.username?.[0]?.toUpperCase() || "?"}
                         </AvatarFallback>
                       </Avatar>
-                      {/* Assuming otherUser has an `isOnline` property */}
                       {otherUser?.isOnline && (
                         <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full"></div>
                       )}

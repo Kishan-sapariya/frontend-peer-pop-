@@ -20,7 +20,7 @@ export default function ConnectionsPage() {
     deleteRequest,
   } = useConnectionStore();
 
-  const [filter, setFilter] = useState("ALL");
+  const [filter, setFilter] = useState("PENDING");
 
   useEffect(() => {
     getConnections();

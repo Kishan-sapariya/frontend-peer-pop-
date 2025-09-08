@@ -12,7 +12,20 @@ export const useConversationStore = create((set, get) => ({
   loading: false,
   error: null,
 
-  setMessages: (fn) => set((state) => ({ messages: fn(state.messages) })),
+  getUnreadCount: () => {
+    const { conversations } = get();
+    return conversations.filter(
+      (c) =>
+        c.lastMessage && !c.lastMessage.readBy?.includes(get().currentUserId)
+    ).length;
+  },
+
+  setMessages: (updater) =>
+    set((state) => {
+      const newMessages =
+        typeof updater === "function" ? updater(state.messages) : updater;
+      return { messages: newMessages };
+    }),
 
   createConversation: async (receiverId) => {
     try {
@@ -20,11 +33,15 @@ export const useConversationStore = create((set, get) => ({
       const res = await axios.post(`${API_URL}/conversation/create`, {
         receiverId,
       });
+
+      const newConv = res.data.conversation || res.data;
+
       set((state) => ({
-        conversations: [...state.conversations, res.data.newConversation],
+        conversations: [...state.conversations, newConv],
         loading: false,
       }));
-      return res.data.newConversation;
+
+      return newConv;
     } catch (err) {
       console.error(err);
       set({
@@ -40,13 +57,16 @@ export const useConversationStore = create((set, get) => ({
       const res = await axios.get(
         `${API_URL}/conversation/get/${conversationId}`
       );
+
       set({
         activeConversation: res.data.conversation,
+        messages: res.data.conversation.messages || [],
         loading: false,
       });
+
       return res.data.conversation;
     } catch (err) {
-      console.error(err);
+      console.error("Failed to fetch conversation:", err);
       set({
         error: err.response?.data?.message || "Failed to fetch conversation",
         loading: false,
@@ -58,27 +78,28 @@ export const useConversationStore = create((set, get) => ({
     try {
       set({ loading: true, error: null });
       const res = await axios.get(`${API_URL}/conversation/get`);
+
       set({
         conversations: res.data.conversations,
         loading: false,
       });
+
       return res.data.conversations;
     } catch (err) {
-      console.error(err);
+      console.error("Failed to fetch conversations:", err);
       set({
-        error: err.response?.data?.message || "Failed to fetch conversation",
+        error: err.response?.data?.message || "Failed to fetch conversations",
         loading: false,
       });
     }
   },
 
-  sendMessage: async (senderId, receiverId, conversationId, content, file) => {
+  sendMessage: async (receiverId, conversationId, content, file) => {
     try {
       let fileUrl = null;
       let fileType = null;
 
-      // Upload attachment if exists
-      if (file) {
+      if (file && file instanceof File) {
         const formData = new FormData();
         formData.append("file", file);
 
@@ -92,35 +113,29 @@ export const useConversationStore = create((set, get) => ({
         fileType = uploadRes.data.fileType;
       }
 
-      // Build payload dynamically
       const payload = { receiverId };
-      if (content) payload.content = content;
+      if (content && content.trim()) payload.content = content.trim();
       if (fileUrl) {
         payload.attachmentUrl = fileUrl;
         payload.attachmentType = fileType;
       }
 
-      // Prevent sending empty messages
       if (!payload.content && !payload.attachmentUrl) {
         throw new Error("Cannot send empty message");
       }
 
-      // Send message to backend (backend emits it via socket)
       await axios.post(
         `${API_URL}/conversation/send-message/${conversationId}`,
-        payload,
-        { withCredentials: true }
+        payload
       );
-
-      // No need to update state here; socket will handle incoming message
     } catch (err) {
       console.error("Failed to send message:", err);
-      set((state) => ({
+      set({
         error:
           err.response?.data?.message ||
           err.message ||
           "Failed to send message",
-      }));
+      });
     }
   },
 
@@ -130,10 +145,7 @@ export const useConversationStore = create((set, get) => ({
 
       const res = await axios.get(
         `${API_URL}/conversation/get-messages/${conversationId}`,
-        {
-          params: { cursor, limit },
-          withCredentials: true,
-        }
+        { params: { cursor, limit } }
       );
 
       const fetchedMessages = res.data.messages;
@@ -147,12 +159,46 @@ export const useConversationStore = create((set, get) => ({
         }
         return { messages: fetchedMessages, loading: false };
       });
+
+      return fetchedMessages;
     } catch (err) {
-      console.error(err);
+      console.error("Failed to load messages:", err);
       set({
         error: err.response?.data?.message || "Failed to load messages",
         loading: false,
       });
     }
+  },
+
+  handleIncomingMessage: (message) => {
+    set((state) => ({
+      messages:
+        state.activeConversation?.id === message.conversationId
+          ? [...state.messages, message]
+          : state.messages,
+    }));
+  },
+
+  handleConversationUpdate: (update) => {
+    set((state) => {
+      const conversations = state.conversations.map((c) =>
+        c.id === update.conversationId
+          ? {
+              ...c,
+              lastMessage: update.lastMessage,
+              unreadCount:
+                state.activeConversation?.id === update.conversationId
+                  ? 0
+                  : (c.unreadCount || 0) + 1,
+            }
+          : c
+      );
+
+      return { conversations };
+    });
+  },
+  getUnreadConversationCount: () => {
+    const { conversations } = get();
+    return conversations.filter((c) => (c.unreadCount || 0) > 0).length;
   },
 }));

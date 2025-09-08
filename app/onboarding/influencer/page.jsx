@@ -31,7 +31,7 @@ import { useInfluencerStore } from "@/store/useInfluencerStore";
 import { useRouter } from "next/navigation";
 
 export default function InfluencerOnboarding() {
-  const { router } = useRouter();
+  const router = useRouter();
   const { createInfluencerProfile } = useInfluencerStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
@@ -235,13 +235,12 @@ export default function InfluencerOnboarding() {
             editingSoftware: formData.editingSoftware,
             languages: languages,
           },
-          // Preferences
           preferences: formData.preferences,
         },
       };
       const result = await createInfluencerProfile(profileData);
       if (result) {
-        router.push("/dashboard");
+        router.push("/feed");
       }
     } catch (error) {
       console.error("Error creating influencer profile:", error);
@@ -1063,36 +1062,6 @@ export default function InfluencerOnboarding() {
               </Select>
             </div>
 
-            <div>
-              <Label>Top Audience Locations</Label>
-              <Textarea
-                value={formData.topLocations.join(", ")}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    topLocations: e.target.value.split(", "),
-                  })
-                }
-                placeholder="List your top audience locations (e.g., United States, Canada, United Kingdom)"
-                rows={2}
-              />
-            </div>
-
-            <div>
-              <Label>Audience Interests</Label>
-              <Textarea
-                value={formData.audienceInterests.join(", ")}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    audienceInterests: e.target.value.split(", "),
-                  })
-                }
-                placeholder="What are your audience's main interests? (e.g., fashion, beauty, travel, fitness)"
-                rows={3}
-              />
-            </div>
-
             <div className="flex items-center mb-2">
               <Label>Content Languages</Label>
               <span className="ml-2 text-xs text-muted-foreground">
@@ -1308,21 +1277,6 @@ export default function InfluencerOnboarding() {
                   />
                 </div>
               </div>
-            </div>
-
-            <div>
-              <Label>Preferred Brand Categories</Label>
-              <Textarea
-                value={formData.preferredBrands.join(", ")}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    preferredBrands: e.target.value.split(", "),
-                  })
-                }
-                placeholder="What types of brands do you prefer to work with? (e.g., sustainable fashion, beauty, tech, lifestyle)"
-                rows={2}
-              />
             </div>
 
             <div>

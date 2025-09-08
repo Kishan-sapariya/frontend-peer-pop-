@@ -66,7 +66,13 @@ const VerifyOtpPage = () => {
         otp: formData.otp,
       });
       if (result.success) {
-        router.push("/onboarding");
+        router.push(
+          `${
+            result.user.role === "CREATOR"
+              ? "/onboarding"
+              : "/onboarding/business"
+          }`
+        );
       } else {
         console.log(
           result.message || "OTP verification failed. Please try again."

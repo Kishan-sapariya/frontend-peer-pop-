@@ -28,21 +28,22 @@ import {
   MoreVertical,
   Trash2,
   Phone,
+  Lock,
 } from "lucide-react";
 import { useYoutubeStore } from "@/store/useYoutubeStore";
 import { useParams } from "next/navigation";
 import { capitalizeInitials, formatNumber } from "@/utils/formatDate";
 import RecentContent from "@/component/youtube profile/RecentContent";
 import UploadImageModal from "../../../../component/profile/UploadImageModal";
-import UploadCoverImageModal from "@/component/profile/UploadCoverImageModal";
 import { useAuthStore } from "@/store/useAuthStore";
 import CollaborationTab from "@/component/youtube profile/CollaborationTab";
 import AchievementTab from "@/component/youtube profile/AchievementTab";
 import ShareDialog from "@/component/ShareDialog";
-import { useConnectionStore } from "@/store/useConnectionStore";
 import ConnectBtn from "@/component/Connection/ConnectBtn";
-import FeedsPostSections from "@/component/feeds/FeedsPostSections";
 import MyPostsSection from "@/component/feeds/MyPostsSection";
+import ProfileActionsMenu from "@/component/profile/ProfileActionMenu";
+import PrivateAccountUI from "@/component/PrivateAccountUI";
+import PostInputSection from "@/component/feeds/PostInputSection";
 
 export default function YouTuberProfile() {
   const {
@@ -55,7 +56,9 @@ export default function YouTuberProfile() {
     stats,
     getYoutubeStats,
   } = useYoutubeStore();
-  const { connections } = useConnectionStore();
+  const [accountVisibility, setAccountVisibility] = useState(
+    profile?.userProfile?.visibility
+  );
   const [activeTab, setActiveTab] = useState("my posts");
   const { username } = useParams();
   const { user } = useAuthStore();
@@ -218,6 +221,7 @@ export default function YouTuberProfile() {
       ? primary
       : fallback;
   };
+  const accountRestricted = profile?.restricted;
 
   const isOwnProfile = profile?.userProfile?.id === user?.id;
   return (
@@ -225,7 +229,9 @@ export default function YouTuberProfile() {
       {/* Cover Image */}
       <div className="relative h-64 bg-black">
         <img
-          src={profile?.userProfile?.coverImage}
+          src={
+            isOwnProfile ? user?.coverImage : profile?.userProfile?.coverImage
+          }
           alt="Cover"
           className="w-full h-full object-cover"
         />
@@ -240,10 +246,9 @@ export default function YouTuberProfile() {
                 <Avatar className="relative w-40 h-40 border-4 border-white shadow-xl">
                   <AvatarImage
                     className="object-cover"
-                    src={profile?.userProfile?.image}
-                    onError={(e) => {
-                      e.target.src = "";
-                    }}
+                    src={
+                      isOwnProfile ? user?.image : profile?.userProfile?.image
+                    }
                   />
                   <AvatarFallback className="text-3xl">
                     {creator.name
@@ -266,7 +271,7 @@ export default function YouTuberProfile() {
                   <div className="mb-4 lg:mb-0">
                     <div className="flex items-center space-x-2 mb-2">
                       <h1 className="text-4xl font-bold text-gray-900">
-                        {capitalizeInitials(creator.name)}
+                        {capitalizeInitials(profile?.userProfile?.username)}
                       </h1>
                       {stats && Object.keys(stats).length > 0 && (
                         <Badge className="bg-red-500">YouTube Verified</Badge>
@@ -335,343 +340,360 @@ export default function YouTuberProfile() {
                           creatorType={profile?.creatorType}
                         />
 
-                        <UploadCoverImageModal />
+                        <ProfileActionsMenu
+                          accountVisibility={accountVisibility}
+                          setAccountVisibility={setAccountVisibility}
+                        />
                       </>
                     )}
                   </div>
                 </div>
                 {/* YouTube Stats */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mt-8 pt-6 border-t">
-                  <div className="text-center">
-                    <div className="text-3xl font-bold text-red-600">
-                      {formatNumber(
-                        getStatValue(
-                          stats.subscriberCount,
-                          profileData?.statistics?.subscriberCount
-                        )
-                      )}
+                {!accountRestricted && (
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mt-8 pt-6 border-t">
+                    {/* Public Stats Section */}
+                    <div className="text-center">
+                      <div className="text-3xl font-bold text-red-600">
+                        {formatNumber(
+                          getStatValue(
+                            stats.subscriberCount,
+                            profileData?.statistics?.subscriberCount
+                          )
+                        )}
+                      </div>
+                      <div className="text-sm text-gray-600">Subscribers</div>
                     </div>
-                    <div className="text-sm text-gray-600">Subscribers</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-3xl font-bold text-red-600">
-                      {formatNumber(
-                        getStatValue(
-                          stats.totalViews,
-                          profileData?.statistics?.totalViews
-                        )
-                      )}
+                    <div className="text-center">
+                      <div className="text-3xl font-bold text-red-600">
+                        {formatNumber(
+                          getStatValue(
+                            stats.totalViews,
+                            profileData?.statistics?.totalViews
+                          )
+                        )}
+                      </div>
+                      <div className="text-sm text-gray-600">Total Views</div>
                     </div>
-                    <div className="text-sm text-gray-600">Total Views</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-3xl font-bold text-red-600">
-                      {formatNumber(
-                        getStatValue(avgViews, creator?.stats?.avgViews)
-                      )}
+                    <div className="text-center">
+                      <div className="text-3xl font-bold text-red-600">
+                        {formatNumber(
+                          getStatValue(avgViews, creator?.stats?.avgViews)
+                        )}
+                      </div>
+                      <div className="text-sm text-gray-600">Avg Views</div>
                     </div>
-                    <div className="text-sm text-gray-600">Avg Views</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-3xl font-bold text-red-600">
-                      {formatNumber(creator.stats.watchTime)}
+                    <div className="text-center">
+                      <div className="text-3xl font-bold text-red-600">
+                        {formatNumber(creator.stats.watchTime)}
+                      </div>
+                      <div className="text-sm text-gray-600">Watch Hours</div>
                     </div>
-                    <div className="text-sm text-gray-600">Watch Hours</div>
                   </div>
-                </div>
+                )}
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Left Sidebar */}
-          <div className="lg:col-span-1 space-y-6">
-            {/* About */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <Users className="w-5 h-5 mr-2" />
-                  About
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-700 text-sm leading-relaxed mb-4">
-                  {creator.bio}
-                </p>
-                {creator.website && (
-                  <div className="space-y-3">
-                    <div className="flex items-center text-sm">
-                      <Globe className="w-4 h-4 mr-2 text-gray-400" />
-                      <a
-                        href={
-                          creator.website.startsWith("http")
-                            ? creator.website
-                            : `https://${creator.website}`
-                        }
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-600 hover:underline"
-                      >
-                        {creator.website}
-                      </a>
-                    </div>
-                  </div>
-                )}
-                {profileData?.preferences?.showContact && (
-                  <>
-                    {creator.email && (
-                      <div className="flex items-center text-sm mt-3">
-                        <Mail className="w-4 h-4 mr-2 text-gray-400" />
-                        <span className="text-gray-600">{creator.email}</span>
-                      </div>
-                    )}
-                    {profileData?.personalInfo?.phone && (
-                      <div className="flex items-center text-sm mt-3">
-                        <Phone className="w-4 h-4 mr-2 text-gray-400" />
-                        <span className="text-gray-600">
-                          {profileData?.personalInfo?.phone}
-                        </span>
-                      </div>
-                    )}
-                  </>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Social Media Reach */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Social Media Presence</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {/* Instagram */}
-                  {creator.socialStats.instagram.followers > 0 && (
-                    <div className="flex items-center justify-between p-3 bg-gradient-to-r from-pink-50 to-purple-50 rounded-lg">
-                      <div className="flex items-center space-x-3">
-                        <Instagram className="w-6 h-6 text-pink-600" />
-                        <div>
-                          <div className="font-medium">Instagram</div>
-                          <div className="text-sm text-gray-600">
-                            {formatNumber(
-                              creator.socialStats.instagram.followers
-                            )}{" "}
-                            followers
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* TikTok */}
-                  {creator.socialStats.tiktok.followers > 0 && (
-                    <div className="flex items-center justify-between p-3 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-6 h-6 bg-black rounded-full flex items-center justify-center">
-                          <span className="text-white text-xs font-bold">
-                            T
-                          </span>
-                        </div>
-                        <div>
-                          <div className="font-medium">TikTok</div>
-                          <div className="text-sm text-gray-600">
-                            {formatNumber(creator.socialStats.tiktok.followers)}{" "}
-                            followers
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* YouTube */}
-                  {creator.socialStats.youtube.subscribers > 0 && (
-                    <div className="flex items-center justify-between p-3 bg-gradient-to-r from-red-50 to-pink-50 rounded-lg">
-                      <div className="flex items-center space-x-3">
-                        <Youtube className="w-6 h-6 text-red-600" />
-                        <div>
-                          <div className="font-medium">YouTube</div>
-                          <div className="text-sm text-gray-600">
-                            {formatNumber(
-                              creator.socialStats.youtube.subscribers
-                            )}{" "}
-                            subscribers
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Twitter */}
-                  {creator.socialStats.twitter.followers > 0 && (
-                    <div className="flex items-center justify-between p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg">
-                      <div className="flex items-center space-x-3">
-                        <Twitter className="w-6 h-6 text-blue-600" />
-                        <div>
-                          <div className="font-medium">Twitter</div>
-                          <div className="text-sm text-gray-600">
-                            {formatNumber(
-                              creator.socialStats.twitter.followers
-                            )}{" "}
-                            followers
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-
-            {creator.contentCategories.length > 0 && (
+        {!accountRestricted ? (
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            {/* Left Sidebar */}
+            <div className="lg:col-span-1 space-y-6">
+              {/* About */}
               <Card>
                 <CardHeader>
-                  <div className="flex gap-2 items-center">
-                    <Boxes className="text-gray-700" />
-                    <CardTitle>Content Category</CardTitle>
-                  </div>
+                  <CardTitle className="flex items-center">
+                    <Users className="w-5 h-5 mr-2" />
+                    About
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-700 text-sm leading-relaxed mb-4">
+                    {creator.bio}
+                  </p>
+                  {creator.website && (
+                    <div className="space-y-3">
+                      <div className="flex items-center text-sm">
+                        <Globe className="w-4 h-4 mr-2 text-gray-400" />
+                        <a
+                          href={
+                            creator.website.startsWith("http")
+                              ? creator.website
+                              : `https://${creator.website}`
+                          }
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 hover:underline"
+                        >
+                          {creator.website}
+                        </a>
+                      </div>
+                    </div>
+                  )}
+                  {(isOwnProfile || profileData?.preferences?.showContact) && (
+                    <>
+                      {creator.email && (
+                        <div className="flex items-center text-sm mt-3">
+                          <Mail className="w-4 h-4 mr-2 text-gray-400" />
+                          <span className="text-gray-600">{creator.email}</span>
+                        </div>
+                      )}
+                      {profileData?.personalInfo?.phone && (
+                        <div className="flex items-center text-sm mt-3">
+                          <Phone className="w-4 h-4 mr-2 text-gray-400" />
+                          <span className="text-gray-600">
+                            {profileData?.personalInfo?.phone}
+                          </span>
+                        </div>
+                      )}
+                    </>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Social Media Reach */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Social Media Presence</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {creator.contentCategories.map((category, index) => (
-                      <div key={index}>
-                        <div className="flex justify-between items-center mb-2">
-                          <span className="text-sm font-medium">
-                            {category.name}
-                          </span>
+                    {/* Instagram */}
+                    {creator.socialStats.instagram.followers > 0 && (
+                      <div className="flex items-center justify-between p-3 bg-gradient-to-r from-pink-50 to-purple-50 rounded-lg">
+                        <div className="flex items-center space-x-3">
+                          <Instagram className="w-6 h-6 text-pink-600" />
+                          <div>
+                            <div className="font-medium">Instagram</div>
+                            <div className="text-sm text-gray-600">
+                              {formatNumber(
+                                creator.socialStats.instagram.followers
+                              )}{" "}
+                              followers
+                            </div>
+                          </div>
                         </div>
                       </div>
-                    ))}
+                    )}
+
+                    {/* TikTok */}
+                    {creator.socialStats.tiktok.followers > 0 && (
+                      <div className="flex items-center justify-between p-3 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-6 h-6 bg-black rounded-full flex items-center justify-center">
+                            <span className="text-white text-xs font-bold">
+                              T
+                            </span>
+                          </div>
+                          <div>
+                            <div className="font-medium">TikTok</div>
+                            <div className="text-sm text-gray-600">
+                              {formatNumber(
+                                creator.socialStats.tiktok.followers
+                              )}{" "}
+                              followers
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* YouTube */}
+                    {creator.socialStats.youtube.subscribers > 0 && (
+                      <div className="flex items-center justify-between p-3 bg-gradient-to-r from-red-50 to-pink-50 rounded-lg">
+                        <div className="flex items-center space-x-3">
+                          <Youtube className="w-6 h-6 text-red-600" />
+                          <div>
+                            <div className="font-medium">YouTube</div>
+                            <div className="text-sm text-gray-600">
+                              {formatNumber(
+                                creator.socialStats.youtube.subscribers
+                              )}{" "}
+                              subscribers
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Twitter */}
+                    {creator.socialStats.twitter.followers > 0 && (
+                      <div className="flex items-center justify-between p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg">
+                        <div className="flex items-center space-x-3">
+                          <Twitter className="w-6 h-6 text-blue-600" />
+                          <div>
+                            <div className="font-medium">Twitter</div>
+                            <div className="text-sm text-gray-600">
+                              {formatNumber(
+                                creator.socialStats.twitter.followers
+                              )}{" "}
+                              followers
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>
-            )}
 
-            {/* Availability & Rates */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <DollarSign className="w-5 h-5 mr-2" />
-                  Business Opportunities
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {creator.availability.sponsorships && (
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm">Sponsorships</span>
-                      <Badge className="bg-green-100 text-green-700">
-                        Available
-                      </Badge>
+              {creator.contentCategories.length > 0 && (
+                <Card>
+                  <CardHeader>
+                    <div className="flex gap-2 items-center">
+                      <Boxes className="text-gray-700" />
+                      <CardTitle>Content Category</CardTitle>
                     </div>
-                  )}
-                  {creator.availability.collaborations && (
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm">Collaborations</span>
-                      <Badge className="bg-green-100 text-green-700">
-                        Open
-                      </Badge>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {creator.contentCategories.map((category, index) => (
+                        <div key={index}>
+                          <div className="flex justify-between items-center mb-2">
+                            <span className="text-sm font-medium">
+                              {category.name}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                  )}
-                  {creator.availability.consulting && (
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm">Consulting</span>
-                      <Badge className="bg-green-100 text-green-700">
-                        Available
-                      </Badge>
-                    </div>
-                  )}
-                  {creator.availability.speaking && (
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm">Speaking</span>
-                      <Badge className="bg-green-100 text-green-700">
-                        Available
-                      </Badge>
-                    </div>
-                  )}
-                </div>
+                  </CardContent>
+                </Card>
+              )}
 
-                {profileData?.preferences?.showRates && (
-                  <div>
-                    <Separator className="my-4" />
-                    <h4 className="font-medium text-sm mb-3">Rates</h4>
-                    <div className="space-y-2 text-sm">
-                      {creator.rates.sponsorship !== "Not specified" && (
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Sponsorship:</span>
-                          <span className="font-medium">
-                            {creator.rates.sponsorship}
-                          </span>
-                        </div>
-                      )}
-                      {creator.rates.consulting !== "Not specified" && (
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Consulting:</span>
-                          <span className="font-medium">
-                            {creator.rates.consulting}
-                          </span>
-                        </div>
-                      )}
-                      {creator.rates.speaking !== "Not specified" && (
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Speaking:</span>
-                          <span className="font-medium">
-                            {creator.rates.speaking}
-                          </span>
-                        </div>
-                      )}
-                      {creator.rates.collaboration !== "Not specified" && (
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Collaboration:</span>
-                          <span className="font-medium">
-                            {creator.rates.collaboration}
-                          </span>
-                        </div>
-                      )}
-                    </div>
+              {/* Availability & Rates */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <DollarSign className="w-5 h-5 mr-2" />
+                    Business Opportunities
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {creator.availability.sponsorships && (
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm">Sponsorships</span>
+                        <Badge className="bg-green-100 text-green-700">
+                          Available
+                        </Badge>
+                      </div>
+                    )}
+                    {creator.availability.collaborations && (
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm">Collaborations</span>
+                        <Badge className="bg-green-100 text-green-700">
+                          Open
+                        </Badge>
+                      </div>
+                    )}
+                    {creator.availability.consulting && (
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm">Consulting</span>
+                        <Badge className="bg-green-100 text-green-700">
+                          Available
+                        </Badge>
+                      </div>
+                    )}
+                    {creator.availability.speaking && (
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm">Speaking</span>
+                        <Badge className="bg-green-100 text-green-700">
+                          Available
+                        </Badge>
+                      </div>
+                    )}
                   </div>
-                )}
-                <Button className="w-full mt-4" size="sm">
-                  <Target className="w-4 h-4 mr-2" />
-                  Send Proposal
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
 
-          {/* Main Content - Keep the same as before */}
-          <div className="lg:col-span-3">
-            <Tabs
-              value={activeTab}
-              onValueChange={setActiveTab}
-              className="w-full"
-            >
-              <TabsList className="grid w-full grid-cols-4 mb-6">
-                <TabsTrigger value="my posts">
-                  {isOwnProfile ? "My Posts" : "Posts"}
-                </TabsTrigger>
-                <TabsTrigger value="content">Recent Content</TabsTrigger>
-                <TabsTrigger value="collaborations">Collaborations</TabsTrigger>
-                <TabsTrigger value="achievements">Achievements</TabsTrigger>
-              </TabsList>
-              <TabsContent value="my posts">
-                <MyPostsSection profileId={profile?.userProfile?.id} />
-              </TabsContent>
-              <TabsContent value="content">
-                <RecentContent
-                  contents={recentContent}
-                  isOwnProfile={isOwnProfile}
-                />
-              </TabsContent>
-              <TabsContent value="collaborations">
-                <CollaborationTab isOwnProfile={isOwnProfile} />
-              </TabsContent>
-              <TabsContent value="achievements">
-                <AchievementTab isOwnProfile={isOwnProfile} />
-              </TabsContent>
-            </Tabs>
+                  {profileData?.preferences?.showRates && (
+                    <div>
+                      <Separator className="my-4" />
+                      <h4 className="font-medium text-sm mb-3">Rates</h4>
+                      <div className="space-y-2 text-sm">
+                        {creator.rates.sponsorship !== "Not specified" && (
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">Sponsorship:</span>
+                            <span className="font-medium">
+                              {creator.rates.sponsorship}
+                            </span>
+                          </div>
+                        )}
+                        {creator.rates.consulting !== "Not specified" && (
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">Consulting:</span>
+                            <span className="font-medium">
+                              {creator.rates.consulting}
+                            </span>
+                          </div>
+                        )}
+                        {creator.rates.speaking !== "Not specified" && (
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">Speaking:</span>
+                            <span className="font-medium">
+                              {creator.rates.speaking}
+                            </span>
+                          </div>
+                        )}
+                        {creator.rates.collaboration !== "Not specified" && (
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">
+                              Collaboration:
+                            </span>
+                            <span className="font-medium">
+                              {creator.rates.collaboration}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                  <Button className="w-full mt-4" size="sm">
+                    <Target className="w-4 h-4 mr-2" />
+                    Send Proposal
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Main Content - Keep the same as before */}
+            <div className="lg:col-span-3">
+              <Tabs
+                value={activeTab}
+                onValueChange={setActiveTab}
+                className="w-full"
+              >
+                <TabsList className="grid w-full grid-cols-4 mb-6">
+                  <TabsTrigger value="my posts">
+                    {isOwnProfile ? "My Posts" : "Posts"}
+                  </TabsTrigger>
+                  <TabsTrigger value="content">Recent Content</TabsTrigger>
+                  <TabsTrigger value="collaborations">
+                    Collaborations
+                  </TabsTrigger>
+                  <TabsTrigger value="achievements">Achievements</TabsTrigger>
+                </TabsList>
+                <TabsContent value="my posts">
+                  {isOwnProfile && <PostInputSection />}
+                  <MyPostsSection profileId={profile?.userProfile?.id} />
+                </TabsContent>
+                <TabsContent value="content">
+                  <RecentContent
+                    contents={recentContent}
+                    isOwnProfile={isOwnProfile}
+                  />
+                </TabsContent>
+                <TabsContent value="collaborations">
+                  <CollaborationTab isOwnProfile={isOwnProfile} />
+                </TabsContent>
+                <TabsContent value="achievements">
+                  <AchievementTab isOwnProfile={isOwnProfile} />
+                </TabsContent>
+              </Tabs>
+            </div>
           </div>
-        </div>
+        ) : (
+          <PrivateAccountUI />
+        )}
       </div>
     </div>
   );

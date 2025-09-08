@@ -24,6 +24,10 @@ export const useAuthStore = create((set, get) => ({
         username: user.username,
         email: user.email,
         password: user.password,
+        role: user.role,
+        companyName: user.companyName || null,
+        industry: user.industry || null,
+        companySize: user.companySize || null,
       });
       const parsedRes = res.data;
       if (parsedRes?.success) {
@@ -230,15 +234,46 @@ export const useAuthStore = create((set, get) => ({
 
       const res = await axios.get(`${API_URL}/auth/search`, {
         params: {
-          q: q || undefined, // only add if not empty
-          creatorType: creatorType || undefined,
-          location: location || undefined,
+          q: q?.trim() || undefined, // only add if not empty
+          creatorType: Array.isArray(creatorType)
+            ? creatorType.join(",") // ✅ backend expects string (comma-separated)
+            : creatorType || undefined,
+          location: Array.isArray(location)
+            ? location.join(",") // ✅ same for location
+            : location || undefined,
           limit,
         },
       });
 
+      const results = (res.data.users || [])
+        .map((user) => {
+          if (user.creatorProfile) {
+            return {
+              type: "CREATOR",
+              id: user.id,
+              username: user.username,
+              image: user.image,
+              creatorType: user.creatorProfile.creatorType,
+              data: user.creatorProfile.data,
+            };
+          }
+          if (user.businessProfile) {
+            return {
+              type: "BUSINESS",
+              id: user.id,
+              username: user.username,
+              companyName: user.businessProfile.companyName,
+              industry: user.businessProfile.industry,
+              size: user.businessProfile.size,
+              headquarters: user.businessProfile.headquarters,
+            };
+          }
+          return null;
+        })
+        .filter(Boolean);
+
       set({
-        results: res.data.users || [],
+        results,
         cursor: res.data.nextCursor,
         hasMore: !!res.data.nextCursor,
         query: q,
@@ -274,6 +309,27 @@ export const useAuthStore = create((set, get) => ({
       toast.error(err.response?.data?.message || "Failed to load more results");
     } finally {
       set({ loading: false });
+    }
+  },
+
+  toggleVisibility: async () => {
+    try {
+      const res = await axios.patch(`${API_URL}/account/visibility`);
+      const newVisibility = res.data?.user?.visibility;
+
+      set((state) => ({
+        user: {
+          ...state.user,
+          visibility: newVisibility,
+        },
+      }));
+
+      toast.success("Visibility changed");
+      return newVisibility;
+    } catch (error) {
+      console.error(error);
+      toast.error("Error toggling visibility");
+      throw error;
     }
   },
 }));

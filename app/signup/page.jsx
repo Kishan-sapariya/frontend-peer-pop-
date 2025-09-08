@@ -78,6 +78,7 @@ const SignupPage = () => {
         username: formData.username,
         email: formData.email,
         password: formData.password,
+        role: "CREATOR",
       });
       if (result.success) {
         router.push("/verify-otp");

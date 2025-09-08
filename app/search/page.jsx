@@ -5,13 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useAuthStore } from "@/store/useAuthStore";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -22,7 +16,6 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogClose,
   DialogDescription,
 } from "@/components/ui/dialog";
 import {
@@ -35,10 +28,9 @@ import {
   Filter,
   Users,
   Eye,
-  MessageCircle,
-  UserPlus,
 } from "lucide-react";
 import Link from "next/link";
+import { getInitialLetter } from "@/utils/formatDate";
 
 const professions = {
   Youtuber: "YOUTUBER",
@@ -83,11 +75,12 @@ export default function SearchPage() {
   const [activeFilterCount, setActiveFilterCount] = useState(0);
 
   useEffect(() => {
-    if (q) {
+    if (q || creatorType || location) {
       fetchSearchResults(q, creatorType, location);
     }
   }, [q, creatorType, location, fetchSearchResults]);
 
+  // --- UI helpers ---
   const handleProfessionToggle = (enumValue) => {
     setSelectedProfessions((prev) => {
       const newProfessions = prev.includes(enumValue)
@@ -95,16 +88,15 @@ export default function SearchPage() {
         : [...prev, enumValue];
 
       updateURL({ creatorType: newProfessions, location: selectedLocations });
-
       return newProfessions;
     });
   };
 
-  const handleLocationToggle = (location) => {
+  const handleLocationToggle = (loc) => {
     setSelectedLocations((prev) => {
-      const newLocations = prev.includes(location)
-        ? prev.filter((l) => l !== location)
-        : [...prev, location];
+      const newLocations = prev.includes(loc)
+        ? prev.filter((l) => l !== loc)
+        : [...prev, loc];
 
       updateURL({ creatorType: selectedProfessions, location: newLocations });
       return newLocations;
@@ -118,7 +110,7 @@ export default function SearchPage() {
 
     if (newFilters.creatorType !== undefined) {
       if (newFilters.creatorType.length > 0) {
-        params.set("creatorType", newFilters.creatorType.join(",")); // safe, always array
+        params.set("creatorType", newFilters.creatorType.join(","));
       } else {
         params.delete("creatorType");
       }
@@ -126,7 +118,7 @@ export default function SearchPage() {
 
     if (newFilters.location !== undefined) {
       if (newFilters.location.length > 0) {
-        params.set("location", newFilters.location.join(",")); // safe, always array
+        params.set("location", newFilters.location.join(","));
       } else {
         params.delete("location");
       }
@@ -139,42 +131,37 @@ export default function SearchPage() {
     const trimmed = customLocationInput.trim();
     if (trimmed && !selectedLocations.includes(trimmed)) {
       const newLocations = [...selectedLocations, trimmed];
-
       setSelectedLocations(newLocations);
-      updateURL({
-        creatorType: selectedProfessions, // keep as array
-        location: newLocations, // keep as array
-      });
-
+      updateURL({ creatorType: selectedProfessions, location: newLocations });
       setCustomLocationInput("");
     }
   };
 
-  const handleRemoveLocation = (locationToRemove) => {
-    const newLocations = selectedLocations.filter(
-      (l) => l !== locationToRemove
-    );
-
+  const handleRemoveLocation = (locToRemove) => {
+    const newLocations = selectedLocations.filter((l) => l !== locToRemove);
     setSelectedLocations(newLocations);
-    updateURL({
-      creatorType: selectedProfessions.join(","),
-      location: newLocations.join(","),
-    });
+    updateURL({ creatorType: selectedProfessions, location: newLocations });
   };
 
   const clearAllFilters = () => {
     setSelectedProfessions([]);
     setSelectedLocations([]);
     setCustomLocationInput("");
+    updateURL({ creatorType: [], location: [] });
   };
 
+  // --- Local filtering on already fetched results ---
   const filteredResults = results.filter((user) => {
     const professionMatch =
       selectedProfessions.length === 0 ||
-      selectedProfessions.includes(user.creatorProfile?.creatorType);
+      (user.type === "CREATOR" &&
+        selectedProfessions.includes(user.creatorType));
 
     const userLocation =
-      user.creatorProfile?.data?.personalInfo?.location || "";
+      user.type === "CREATOR"
+        ? user?.data?.personalInfo?.location || ""
+        : user?.headquarters || "";
+
     const locationMatch =
       selectedLocations.length === 0 ||
       selectedLocations.some((loc) =>
@@ -186,24 +173,23 @@ export default function SearchPage() {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-
     const creatorType = params.get("creatorType")?.split(",") || [];
     const location = params.get("location")?.split(",") || [];
-
     setSelectedProfessions(creatorType);
     setSelectedLocations(location);
   }, []);
 
+  // --- Render ---
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       <div className="container mx-auto p-6 max-w-7xl">
-        {/* Search Header */}
+        {/* Header */}
         <div className="mb-8">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-sm text-slate-500">
                 <Search className="w-4 h-4" />
-                Search Results
+                Search Results For
               </div>
               <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 via-sky-600 to-indigo-600 bg-clip-text text-transparent">
                 "{q}"
@@ -214,7 +200,6 @@ export default function SearchPage() {
               </p>
             </div>
 
-            {/* Filter Toggle Button wrapped in DialogTrigger */}
             <Dialog open={showFilters} onOpenChange={setShowFilters}>
               <DialogTrigger asChild>
                 <Button
@@ -443,7 +428,8 @@ export default function SearchPage() {
             </Dialog>
           </div>
         </div>
-        {/* Results Section */}
+
+        {/* Results */}
         <div className="space-y-6">
           {loading && (
             <div className="flex items-center justify-center py-12">
@@ -451,24 +437,24 @@ export default function SearchPage() {
               <span className="ml-3 text-slate-600">Finding creatives...</span>
             </div>
           )}
+
           {!loading && filteredResults.length === 0 && (
             <div className="text-center py-12">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-slate-100 flex items-center justify-center">
-                <Users className="w-8 h-8 text-slate-400" />
-              </div>
-              <p className="text-xl font-semibold text-slate-600 mb-2">
-                No creatives found
+              <Users className="w-8 h-8 mx-auto text-slate-400 mb-4" />
+              <p className="text-xl font-semibold text-slate-600">
+                No User found
               </p>
               <p className="text-slate-500">
                 Try adjusting your filters or search terms
               </p>
             </div>
           )}
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredResults.map((user, index) => (
+            {filteredResults.map((user) => (
               <Card
                 key={user.id}
-                className="group border-0 shadow-lg hover:shadow-xl transition-all duration-300 rounded-2xl p-0 overflow-hidden bg-white"
+                className="border-0 shadow-lg hover:shadow-xl transition-all rounded-2xl bg-white "
               >
                 <CardHeader className="p-0 relative h-32">
                   <div className="absolute inset-0 bg-gradient-to-br from-blue-200 to-indigo-200 opacity-80"></div>
@@ -479,32 +465,44 @@ export default function SearchPage() {
                       className="object-cover"
                     />
                     <AvatarFallback className="bg-gradient-to-r from-blue-500 to-sky-600 text-white text-3xl font-bold">
-                      {user.username?.[0]?.toUpperCase() || "U"}
+                      {user.type === "BUSINESS"
+                        ? getInitialLetter(user.companyName)
+                        : getInitialLetter(user.username)}
                     </AvatarFallback>
                   </Avatar>
                 </CardHeader>
                 <CardContent className="px-6 pt-16 pb-6 space-y-4">
-                  <div className="flex flex-col space-y-1">
-                    <h3 className="font-bold text-xl text-slate-800">
-                      {user.username}
+                  <div className="flex justify-between items-center">
+                    <h3 className="font-bold text-xl">
+                      {user.type === "BUSINESS"
+                        ? user.companyName
+                        : user.username}
                     </h3>
-                    <p className="text-slate-600 text-sm font-medium">
-                      {user.creatorProfile.creatorType}
-                    </p>
-                    {user.creatorProfile.data.personalInfo.location && (
-                      <div className="flex items-center gap-1 text-sm text-slate-500">
-                        <MapPin className="w-4 h-4" />
-                        {user.creatorProfile.data.personalInfo.location}
-                      </div>
-                    )}
+                    <Badge className="bg-green-200 text-black">
+                      {user.type === "BUSINESS"
+                        ? "Business account"
+                        : "Creator account"}
+                    </Badge>
+                  </div>
+                  <p className="text-slate-600 text-sm">
+                    {user.type === "CREATOR" ? user.creatorType : user.industry}
+                  </p>
+                  <div className="flex items-center gap-1 text-sm text-slate-500">
+                    <MapPin className="w-4 h-4" />
+                    {user.type === "BUSINESS"
+                      ? user.headquarters
+                      : user?.data?.personalInfo?.location}
                   </div>
                   <Link
-                    href={`/profile/${
-                      user.username
-                    }/${user.creatorProfile.creatorType.toLowerCase()}`}
-                    passHref
+                    href={
+                      user.type === "BUSINESS"
+                        ? `/profile/business/${user.username}`
+                        : `/profile/${
+                            user.username
+                          }/${user.creatorType?.toLowerCase()}`
+                    }
                   >
-                    <Button className="w-full justify-center items-center rounded-full bg-gradient-to-r from-blue-500 via-sky-500 to-indigo-500 hover:from-blue-600 hover:via-sky-600 hover:to-indigo-600 text-white shadow-sm cursor-pointer">
+                    <Button className="w-full mt-3 bg-gradient-to-r from-blue-500 via-sky-500 to-indigo-500 text-white">
                       <Eye className="w-4 h-4 mr-2" /> View Profile
                     </Button>
                   </Link>
@@ -514,7 +512,6 @@ export default function SearchPage() {
           </div>
         </div>
       </div>
-      
     </div>
   );
 }

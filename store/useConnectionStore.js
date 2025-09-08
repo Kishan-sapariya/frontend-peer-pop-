@@ -1,10 +1,13 @@
 import { create } from "zustand";
 import axios from "axios";
 import { toast } from "react-hot-toast";
-import { connection } from "next/server";
+import { io } from "socket.io-client";
+import { useAuthStore } from "./useAuthStore";
 
 const API_URL = process.env.NEXT_PUBLIC_BASE_API_URL;
 axios.defaults.withCredentials = true;
+
+let socket;
 
 export const useConnectionStore = create((set, get) => ({
   connections: [],
@@ -56,7 +59,6 @@ export const useConnectionStore = create((set, get) => ({
       const updated = response.data.updatedRequest;
 
       set((state) => ({
-        ...state,
         connections: state.connections.map((conn) =>
           conn.id === connectionId ? { ...conn, status: updated.status } : conn
         ),
@@ -72,6 +74,7 @@ export const useConnectionStore = create((set, get) => ({
       );
     }
   },
+
   rejectRequest: async (connectionId) => {
     try {
       const response = await axios.patch(
@@ -81,12 +84,11 @@ export const useConnectionStore = create((set, get) => ({
       const updated = response.data.updatedRequest;
 
       set((state) => ({
-        ...state,
         connections: state.connections.map((conn) =>
           conn.id === connectionId ? { ...conn, status: updated.status } : conn
         ),
       }));
-      toast.success("Connection request reject");
+      toast.success("Connection request rejected");
 
       return updated;
     } catch (error) {
@@ -97,6 +99,7 @@ export const useConnectionStore = create((set, get) => ({
       );
     }
   },
+
   deleteRequest: async (connectionId) => {
     try {
       const response = await axios.delete(
@@ -104,10 +107,7 @@ export const useConnectionStore = create((set, get) => ({
       );
       const deletedRequest = response.data.deletedConnection;
       set((state) => ({
-        ...state,
-        connections: state.connections.filter(
-          (conn) => conn.id !== connectionId
-        ),
+        connections: state.connections.filter((c) => c.id !== connectionId),
       }));
       toast.success("Connection deleted");
 
@@ -119,5 +119,98 @@ export const useConnectionStore = create((set, get) => ({
           "Failed to deleting request. Please try again."
       );
     }
+  },
+
+  getPendingCount: () => {
+    const { connections } = get();
+    const { user } = useAuthStore.getState();
+
+    if (!user) return 0;
+
+    return connections.filter(
+      (c) => c.status === "PENDING" && c.receiverId === user.id
+    ).length;
+  },
+
+  // 🔥 NEW: Listen for socket events
+  listenForSocketEvents: () => {
+    if (socket) return; // don’t re-initialize
+
+    socket = io(API_URL, { withCredentials: true });
+
+    socket.on("connection:pendingUpdated", (data) => {
+      const { type, request, connectionId } = data;
+      set((state) => {
+        let updatedConnections = [...state.connections];
+
+        if (type === "NEW_REQUEST") {
+          const { user } = useAuthStore.getState();
+          if (request.receiverId === user.id) {
+            updatedConnections.push(request); 
+          }
+        }
+
+        if (type === "REQUEST_ACCEPTED" || type === "REQUEST_REJECTED") {
+          updatedConnections = updatedConnections.map((conn) =>
+            conn.id === connectionId
+              ? {
+                  ...conn,
+                  status: type === "REQUEST_ACCEPTED" ? "ACCEPTED" : "REJECTED",
+                }
+              : conn
+          );
+        }
+
+        if (type === "CONNECTION_DELETED") {
+          updatedConnections = updatedConnections.filter(
+            (conn) => conn.id !== connectionId
+          );
+        }
+
+        return { connections: updatedConnections };
+      });
+    });
+  },
+
+  subscribeToConnectionUpdates: () => {
+    socket.on("connection:pendingUpdated", (data) => {
+      console.log("🔔 Connection update:", data);
+      const { type, request, connectionId } = data;
+
+      set((state) => {
+        switch (type) {
+          case "NEW_REQUEST":
+            return { connections: [...state.connections, request] };
+
+          case "REQUEST_ACCEPTED":
+            return {
+              connections: state.connections.map((conn) =>
+                conn.id === connectionId
+                  ? { ...conn, status: "ACCEPTED" }
+                  : conn
+              ),
+            };
+
+          case "REQUEST_REJECTED":
+            return {
+              connections: state.connections.map((conn) =>
+                conn.id === connectionId
+                  ? { ...conn, status: "REJECTED" }
+                  : conn
+              ),
+            };
+
+          case "CONNECTION_DELETED":
+            return {
+              connections: state.connections.filter(
+                (conn) => conn.id !== connectionId
+              ),
+            };
+
+          default:
+            return state;
+        }
+      });
+    });
   },
 }));

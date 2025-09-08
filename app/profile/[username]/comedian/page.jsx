@@ -27,7 +27,7 @@ import {
 } from "lucide-react";
 import { formatNumber } from "@/utils/formatDate";
 import UploadImageModal from "@/component/profile/UploadImageModal";
-import UploadCoverImageModal from "@/component/profile/UploadCoverImageModal";
+import UploadCoverImageModal from "@/component/profile/ProfileActionMenu";
 import { useAuthStore } from "@/store/useAuthStore";
 import UpcomingShowsTab from "@/component/comedian profile/UpcomingShowsTab";
 import RecentSetsTab from "@/component/comedian profile/RecentSetsTab";
@@ -35,6 +35,9 @@ import AchievementTab from "@/component/comedian profile/AchievementTab";
 import ShareDialog from "@/component/ShareDialog";
 import ConnectBtn from "@/component/Connection/ConnectBtn";
 import MyPostsSection from "@/component/feeds/MyPostsSection";
+import ProfileActionsMenu from "@/component/profile/ProfileActionMenu";
+import PrivateAccountUI from "@/component/PrivateAccountUI";
+import PostInputSection from "@/component/feeds/PostInputSection";
 
 export default function ComedianProfile() {
   const { user } = useAuthStore();
@@ -43,6 +46,9 @@ export default function ComedianProfile() {
   const { profile, getComedianProfileByUsername } = useComedianStore();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [accountVisibility, setAccountVisibility] = useState(
+    profile?.userProfile?.visibility
+  );
 
   useEffect(() => {
     async function fetchProfile() {
@@ -157,14 +163,17 @@ export default function ComedianProfile() {
 
   const isOwnProfile = profile?.userProfile?.id === user?.id;
 
+  const accountRestricted = profile?.restricted;
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Cover Image */}
       <div className="relative h-64">
         <img
-          src={profile?.userProfile?.coverImage || "/placeholder.svg"}
+          src={
+            isOwnProfile ? user?.coverImage : profile?.userProfile?.coverImage
+          }
           alt="Cover"
-          className="w-full h-full object-cover "
+          className="w-full h-full object-cover"
         />
       </div>
 
@@ -177,13 +186,12 @@ export default function ComedianProfile() {
                 <Avatar className="relative w-40 h-40 border-4 border-white shadow-xl">
                   <AvatarImage
                     className="object-cover"
-                    src={profile?.userProfile?.image}
-                    onError={(e) => {
-                      e.target.src = "";
-                    }}
+                    src={
+                      isOwnProfile ? user?.image : profile?.userProfile?.image
+                    }
                   />
                   <AvatarFallback className="text-3xl">
-                    {comedian.name
+                    {profile?.userProfile?.username
                       .split(" ")
                       .map((n) => n[0] || "")
                       .join("")
@@ -202,7 +210,7 @@ export default function ComedianProfile() {
                   <div className="mb-4 lg:mb-0">
                     <div className="flex items-center space-x-2 mb-2">
                       <h1 className="text-4xl font-bold text-gray-900">
-                        {comedian.name}
+                        {profile?.userProfile?.username}
                       </h1>
                       {comedian.verified && (
                         <Badge className="bg-yellow-500">
@@ -277,293 +285,312 @@ export default function ComedianProfile() {
                           username={profile?.userProfile?.username}
                           creatorType={profile?.creatorType}
                         />
-                        <UploadCoverImageModal />
+                        <ProfileActionsMenu
+                          accountVisibility={accountVisibility}
+                          setAccountVisibility={setAccountVisibility}
+                        />
                       </>
                     )}
                   </div>
                 </div>
 
                 {/* Comedy Stats */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mt-8 pt-6 border-t">
-                  <div className="text-center">
-                    <div className="text-3xl font-bold text-yellow-600">
-                      {comedian.stats.showsPerformed}+
+                {!accountRestricted && (
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mt-8 pt-6 border-t">
+                    <div className="text-center">
+                      <div className="text-3xl font-bold text-yellow-600">
+                        {comedian.stats.showsPerformed}+
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        Shows Performed
+                      </div>
                     </div>
-                    <div className="text-sm text-gray-600">Shows Performed</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-3xl font-bold text-yellow-600">
-                      {(comedian.stats.totalAudience / 1000).toFixed(0)}K
+                    <div className="text-center">
+                      <div className="text-3xl font-bold text-yellow-600">
+                        {(comedian.stats.totalAudience / 1000).toFixed(0)}K
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        Total Audience
+                      </div>
                     </div>
-                    <div className="text-sm text-gray-600">Total Audience</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-3xl font-bold text-yellow-600">
-                      {comedian.stats.clubsPerformed}
+                    <div className="text-center">
+                      <div className="text-3xl font-bold text-yellow-600">
+                        {comedian.stats.clubsPerformed}
+                      </div>
+                      <div className="text-sm text-gray-600">Venues</div>
                     </div>
-                    <div className="text-sm text-gray-600">Venues</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-3xl font-bold text-yellow-600">
-                      {comedian.stats.specialsReleased}
+                    <div className="text-center">
+                      <div className="text-3xl font-bold text-yellow-600">
+                        {comedian.stats.specialsReleased}
+                      </div>
+                      <div className="text-sm text-gray-600">Specials</div>
                     </div>
-                    <div className="text-sm text-gray-600">Specials</div>
                   </div>
-                </div>
+                )}
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Left Sidebar */}
-          <div className="lg:col-span-1 space-y-6">
-            {/* About */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <Users className="w-5 h-5 mr-2" />
-                  About
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-700 text-sm leading-relaxed mb-4">
-                  {comedian.bio}
-                </p>
-                <div className="space-y-3">
-                  <div className="flex items-center text-sm">
-                    <Globe className="w-4 h-4 mr-2 text-gray-400" />
-                    <a
-                      href={`https://${comedian.website}`}
-                      className="text-blue-600 hover:underline"
-                    >
-                      {comedian.website}
-                    </a>
-                  </div>
-                  {profileData?.preferences?.showContact && (
-                    <>
-                      <div className="flex items-center text-sm">
-                        <Mail className="w-4 h-4 mr-2 text-gray-400" />
-                        <span className="text-gray-600">{comedian.email}</span>
-                      </div>
-                      <div className="flex items-center text-sm">
-                        <Phone className="w-4 h-4 mr-2 text-gray-400" />
-                        <span className="text-gray-600">{comedian.phone}</span>
-                      </div>
-                    </>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Social Media */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Social Media Following</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {/* Instagram */}
-                  {comedian.socialStats.instagram.followers > 0 && (
-                    <div className="flex items-center justify-between p-3 bg-gradient-to-r from-pink-50 to-purple-50 rounded-lg">
-                      <div className="flex items-center space-x-3">
-                        <Instagram className="w-6 h-6 text-pink-600" />
-                        <div>
-                          <div className="font-medium">Instagram</div>
-                          <div className="text-sm text-gray-600">
-                            {formatNumber(
-                              comedian.socialStats.instagram.followers
-                            )}{" "}
-                            followers
-                          </div>
-                        </div>
-                      </div>
+        {!accountRestricted ? (
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            {/* Left Sidebar */}
+            <div className="lg:col-span-1 space-y-6">
+              {/* About */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <Users className="w-5 h-5 mr-2" />
+                    About
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-700 text-sm leading-relaxed mb-4">
+                    {comedian.bio}
+                  </p>
+                  <div className="space-y-3">
+                    <div className="flex items-center text-sm">
+                      <Globe className="w-4 h-4 mr-2 text-gray-400" />
+                      <a
+                        href={`https://${comedian.website}`}
+                        className="text-blue-600 hover:underline"
+                      >
+                        {comedian.website}
+                      </a>
                     </div>
-                  )}
-                  {/* TikTok */}
-                  {comedian.socialStats.tiktok.followers > 0 && (
-                    <div className="flex items-center justify-between p-3 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-6 h-6 bg-black rounded-full flex items-center justify-center">
-                          <span className="text-white text-xs font-bold">
-                            T
+                    {(isOwnProfile ||
+                      profileData?.preferences?.showContact) && (
+                      <>
+                        <div className="flex items-center text-sm">
+                          <Mail className="w-4 h-4 mr-2 text-gray-400" />
+                          <span className="text-gray-600">
+                            {comedian.email}
                           </span>
                         </div>
-                        <div>
-                          <div className="font-medium">TikTok</div>
-                          <div className="text-sm text-gray-600">
-                            {formatNumber(
-                              comedian.socialStats.tiktok.followers
-                            )}{" "}
-                            followers
-                          </div>
+                        <div className="flex items-center text-sm">
+                          <Phone className="w-4 h-4 mr-2 text-gray-400" />
+                          <span className="text-gray-600">
+                            {comedian.phone}
+                          </span>
                         </div>
-                      </div>
-                    </div>
-                  )}
-                  {/* Twitter */}
-                  {comedian.socialStats.twitter.followers > 0 && (
-                    <div className="flex items-center justify-between p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg">
-                      <div className="flex items-center space-x-3">
-                        <Twitter className="w-6 h-6 text-blue-600" />
-                        <div>
-                          <div className="font-medium">Twitter</div>
-                          <div className="text-sm text-gray-600">
-                            {formatNumber(
-                              comedian.socialStats.twitter.followers
-                            )}{" "}
-                            followers
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                  {/* YouTube */}
-                  {comedian.socialStats.youtube.subscribers > 0 && (
-                    <div className="flex items-center justify-between p-3 bg-gradient-to-r from-red-50 to-pink-50 rounded-lg">
-                      <div className="flex items-center space-x-3">
-                        <Youtube className="w-6 h-6 text-red-600" />
-                        <div>
-                          <div className="font-medium">YouTube</div>
-                          <div className="text-sm text-gray-600">
-                            {formatNumber(
-                              comedian.socialStats.youtube.subscribers
-                            )}{" "}
-                            subscribers
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
+                      </>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
 
-            {/* Regular Venues */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <LocationIcon className="w-5 h-5 mr-2" />
-                  Regular Venues
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  {comedian.venues.map((venue, index) => (
-                    <div
-                      key={index}
-                      className="text-sm text-gray-700 flex items-center"
-                    >
-                      <span className="w-1.5 h-1.5 bg-yellow-500 rounded-full mr-2"></span>
-                      {venue}
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+              {/* Social Media */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Social Media Following</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {/* Instagram */}
+                    {comedian.socialStats.instagram.followers > 0 && (
+                      <div className="flex items-center justify-between p-3 bg-gradient-to-r from-pink-50 to-purple-50 rounded-lg">
+                        <div className="flex items-center space-x-3">
+                          <Instagram className="w-6 h-6 text-pink-600" />
+                          <div>
+                            <div className="font-medium">Instagram</div>
+                            <div className="text-sm text-gray-600">
+                              {formatNumber(
+                                comedian.socialStats.instagram.followers
+                              )}{" "}
+                              followers
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    {/* TikTok */}
+                    {comedian.socialStats.tiktok.followers > 0 && (
+                      <div className="flex items-center justify-between p-3 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-6 h-6 bg-black rounded-full flex items-center justify-center">
+                            <span className="text-white text-xs font-bold">
+                              T
+                            </span>
+                          </div>
+                          <div>
+                            <div className="font-medium">TikTok</div>
+                            <div className="text-sm text-gray-600">
+                              {formatNumber(
+                                comedian.socialStats.tiktok.followers
+                              )}{" "}
+                              followers
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    {/* Twitter */}
+                    {comedian.socialStats.twitter.followers > 0 && (
+                      <div className="flex items-center justify-between p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg">
+                        <div className="flex items-center space-x-3">
+                          <Twitter className="w-6 h-6 text-blue-600" />
+                          <div>
+                            <div className="font-medium">Twitter</div>
+                            <div className="text-sm text-gray-600">
+                              {formatNumber(
+                                comedian.socialStats.twitter.followers
+                              )}{" "}
+                              followers
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    {/* YouTube */}
+                    {comedian.socialStats.youtube.subscribers > 0 && (
+                      <div className="flex items-center justify-between p-3 bg-gradient-to-r from-red-50 to-pink-50 rounded-lg">
+                        <div className="flex items-center space-x-3">
+                          <Youtube className="w-6 h-6 text-red-600" />
+                          <div>
+                            <div className="font-medium">YouTube</div>
+                            <div className="text-sm text-gray-600">
+                              {formatNumber(
+                                comedian.socialStats.youtube.subscribers
+                              )}{" "}
+                              subscribers
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
 
-            {/* Booking & Rates */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <DollarSign className="w-5 h-5 mr-2" />
-                  Booking Information
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {Object.entries(availability)
-                    .filter(([_, value]) => value)
-                    .map(([key]) => (
+              {/* Regular Venues */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <LocationIcon className="w-5 h-5 mr-2" />
+                    Regular Venues
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    {comedian.venues.map((venue, index) => (
                       <div
-                        className="flex items-center justify-between"
-                        key={key}
+                        key={index}
+                        className="text-sm text-gray-700 flex items-center"
                       >
-                        <span className="text-sm">
-                          {key.charAt(0).toUpperCase() + key.slice(1)}
-                          {key === "standup"
-                            ? " Shows"
-                            : key === "corporate"
-                            ? " Events"
-                            : key === "private"
-                            ? " Shows"
-                            : key === "writing"
-                            ? " Writing"
-                            : key === "podcasts"
-                            ? " Appearances"
-                            : ""}
-                        </span>
-                        <Badge className="bg-green-100 text-green-700">
-                          Available
-                        </Badge>
+                        <span className="w-1.5 h-1.5 bg-yellow-500 rounded-full mr-2"></span>
+                        {venue}
                       </div>
                     ))}
-                </div>
-
-                <Separator className="my-4" />
-
-                {profileData?.preferences?.showRates && (
-                  <div>
-                    <h4 className="font-medium text-sm mb-3">Rates</h4>
-                    <div className="space-y-2 text-sm">
-                      {Object.entries(comedian.rates)
-                        .filter(
-                          ([_, value]) =>
-                            value && value !== "Not specified" && value !== ""
-                        )
-                        .map(([key, value]) => (
-                          <div className="flex justify-between" key={key}>
-                            <span className="text-gray-600">
-                              {key.charAt(0).toUpperCase() + key.slice(1)}:
-                            </span>
-                            <span className="font-medium">{value}</span>
-                          </div>
-                        ))}
-                    </div>
                   </div>
-                )}
+                </CardContent>
+              </Card>
 
-                <Button className="w-full mt-4" size="sm">
-                  <Ticket className="w-4 h-4 mr-2" />
-                  Request Booking
-                </Button>
-              </CardContent>
-            </Card>
+              {/* Booking & Rates */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <DollarSign className="w-5 h-5 mr-2" />
+                    Booking Information
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {Object.entries(availability)
+                      .filter(([_, value]) => value)
+                      .map(([key]) => (
+                        <div
+                          className="flex items-center justify-between"
+                          key={key}
+                        >
+                          <span className="text-sm">
+                            {key.charAt(0).toUpperCase() + key.slice(1)}
+                            {key === "standup"
+                              ? " Shows"
+                              : key === "corporate"
+                              ? " Events"
+                              : key === "private"
+                              ? " Shows"
+                              : key === "writing"
+                              ? " Writing"
+                              : key === "podcasts"
+                              ? " Appearances"
+                              : ""}
+                          </span>
+                          <Badge className="bg-green-100 text-green-700">
+                            Available
+                          </Badge>
+                        </div>
+                      ))}
+                  </div>
+
+                  <Separator className="my-4" />
+
+                  {profileData?.preferences?.showRates && (
+                    <div>
+                      <h4 className="font-medium text-sm mb-3">Rates</h4>
+                      <div className="space-y-2 text-sm">
+                        {Object.entries(comedian.rates)
+                          .filter(
+                            ([_, value]) =>
+                              value && value !== "Not specified" && value !== ""
+                          )
+                          .map(([key, value]) => (
+                            <div className="flex justify-between" key={key}>
+                              <span className="text-gray-600">
+                                {key.charAt(0).toUpperCase() + key.slice(1)}:
+                              </span>
+                              <span className="font-medium">{value}</span>
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+                  )}
+
+                  <Button className="w-full mt-4" size="sm">
+                    <Ticket className="w-4 h-4 mr-2" />
+                    Request Booking
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Main Content */}
+            <div className="lg:col-span-3">
+              <Tabs
+                value={activeTab}
+                onValueChange={setActiveTab}
+                className="w-full"
+              >
+                <TabsList className="grid w-full grid-cols-3 mb-6">
+                  <TabsTrigger value="my posts">
+                    {isOwnProfile ? "My Posts" : "Posts"}
+                  </TabsTrigger>
+                  <TabsTrigger value="shows">Upcoming Shows</TabsTrigger>
+                  <TabsTrigger value="recent">Recent Sets</TabsTrigger>
+                  <TabsTrigger value="achievements">Achievements</TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="my posts">
+                  {isOwnProfile && <PostInputSection />}
+                  <MyPostsSection profileId={profile?.userProfile?.id} />
+                </TabsContent>
+                <TabsContent value="shows">
+                  <UpcomingShowsTab isOwnProfile={isOwnProfile} />
+                </TabsContent>
+
+                <TabsContent value="recent">
+                  <RecentSetsTab isOwnProfile={isOwnProfile} />
+                </TabsContent>
+
+                <TabsContent value="achievements">
+                  <AchievementTab isOwnProfile={isOwnProfile} />
+                </TabsContent>
+              </Tabs>
+            </div>
           </div>
-
-          {/* Main Content */}
-          <div className="lg:col-span-3">
-            <Tabs
-              value={activeTab}
-              onValueChange={setActiveTab}
-              className="w-full"
-            >
-              <TabsList className="grid w-full grid-cols-3 mb-6">
-                <TabsTrigger value="my posts">
-                  {isOwnProfile ? "My Posts" : "Posts"}
-                </TabsTrigger>
-                <TabsTrigger value="shows">Upcoming Shows</TabsTrigger>
-                <TabsTrigger value="recent">Recent Sets</TabsTrigger>
-                <TabsTrigger value="achievements">Achievements</TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="my posts">
-                <MyPostsSection profileId={profile?.userProfile?.id} />
-              </TabsContent>
-              <TabsContent value="shows">
-                <UpcomingShowsTab isOwnProfile={isOwnProfile} />
-              </TabsContent>
-
-              <TabsContent value="recent">
-                <RecentSetsTab isOwnProfile={isOwnProfile} />
-              </TabsContent>
-
-              <TabsContent value="achievements">
-                <AchievementTab isOwnProfile={isOwnProfile} />
-              </TabsContent>
-            </Tabs>
-          </div>
-        </div>
+        ) : (
+          <PrivateAccountUI />
+        )}
       </div>
     </div>
   );

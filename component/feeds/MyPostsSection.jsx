@@ -35,6 +35,7 @@ import { VideoPlayer } from "./VideoPlayer";
 import { CommentSection } from "./CommentSection";
 import { formatTimeAgo } from "@/utils/formatDate";
 import SharePostDialog from "../SharePostDialog";
+import PostInputSection from "./PostInputSection";
 
 const MyPostsSection = ({ profileId }) => {
   const {
@@ -332,7 +333,7 @@ const MyPostsSection = ({ profileId }) => {
                       {post.comments?.length || 0}
                     </span>
                   </Button>
-                  <SharePostDialog postId={post.id}/>
+                  <SharePostDialog postId={post.id} />
                 </div>
               </div>
               {openComments[post.id] && (

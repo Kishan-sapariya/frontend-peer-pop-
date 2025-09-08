@@ -26,13 +26,16 @@ import {
 import UploadImageModal from "@/component/profile/UploadImageModal";
 import { useAuthStore } from "@/store/useAuthStore";
 import ShareDialog from "@/component/ShareDialog";
-import UploadCoverImageModal from "@/component/profile/UploadCoverImageModal";
+import UploadCoverImageModal from "@/component/profile/ProfileActionMenu";
 import UploadRecentContent from "@/component/influencer profile/UploadContentForm";
 import RecentContent from "@/component/influencer profile/RecentContentTab";
 import { UploadCampaignForm } from "@/component/influencer profile/UploadCampaignForm";
 import CampaignTab from "@/component/influencer profile/CampaignTab";
 import ConnectBtn from "@/component/Connection/ConnectBtn";
 import MyPostsSection from "@/component/feeds/MyPostsSection";
+import ProfileActionsMenu from "@/component/profile/ProfileActionMenu";
+import PrivateAccountUI from "@/component/PrivateAccountUI";
+import PostInputSection from "@/component/feeds/PostInputSection";
 
 export default function InfluencerProfile() {
   const [isFollowing, setIsFollowing] = useState(false);
@@ -173,6 +176,7 @@ export default function InfluencerProfile() {
     return num.toString();
   };
   const isOwnProfile = profile?.userProfile?.id === user?.id;
+  const accountRestricted = profile?.restricted;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -280,398 +284,419 @@ export default function InfluencerProfile() {
                           username={profile?.userProfile?.username}
                           influencerType={profile?.influencerType}
                         />
-                        <UploadCoverImageModal />
+                        <ProfileActionsMenu />
                       </>
                     )}
                   </div>
                 </div>
 
                 {/* Key Stats */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
-                  <div className="text-center p-3 bg-gradient-to-br from-pink-50 to-purple-50 rounded-lg">
-                    <div className="text-2xl font-bold text-purple-600">
-                      {formatNumber(influencer.stats.totalFollowers)}
+                {!accountRestricted && (
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+                    <div className="text-center p-3 bg-gradient-to-br from-pink-50 to-purple-50 rounded-lg">
+                      <div className="text-2xl font-bold text-purple-600">
+                        {formatNumber(influencer.stats.totalFollowers)}
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        Total Followers
+                      </div>
                     </div>
-                    <div className="text-sm text-gray-600">Total Followers</div>
-                  </div>
-                  <div className="text-center p-3 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg">
-                    <div className="text-2xl font-bold text-blue-600">
-                      {influencer.stats.avgEngagement}%
+                    <div className="text-center p-3 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg">
+                      <div className="text-2xl font-bold text-blue-600">
+                        {influencer.stats.avgEngagement}%
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        Avg Engagement
+                      </div>
                     </div>
-                    <div className="text-sm text-gray-600">Avg Engagement</div>
-                  </div>
-                  <div className="text-center p-3 bg-gradient-to-br from-green-50 to-green-100 rounded-lg">
-                    <div className="text-2xl font-bold text-green-600">
-                      {formatNumber(monthlyReach)}
+                    <div className="text-center p-3 bg-gradient-to-br from-green-50 to-green-100 rounded-lg">
+                      <div className="text-2xl font-bold text-green-600">
+                        {formatNumber(monthlyReach)}
+                      </div>
+                      <div className="text-sm text-gray-600">Monthly Reach</div>
                     </div>
-                    <div className="text-sm text-gray-600">Monthly Reach</div>
-                  </div>
-                  <div className="text-center p-3 bg-gradient-to-br from-orange-50 to-red-50 rounded-lg">
-                    <div className="text-2xl font-bold text-orange-600">
-                      {influencer.stats.brandPartnerships}
+                    <div className="text-center p-3 bg-gradient-to-br from-orange-50 to-red-50 rounded-lg">
+                      <div className="text-2xl font-bold text-orange-600">
+                        {influencer.stats.brandPartnerships}
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        Brand Partners
+                      </div>
                     </div>
-                    <div className="text-sm text-gray-600">Brand Partners</div>
                   </div>
-                </div>
+                )}
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Left Sidebar */}
-          <div className="lg:col-span-1 space-y-6">
-            {/* About */}
-            <Card>
-              <CardHeader>
-                <CardTitle>About</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-700 text-sm leading-relaxed">
-                  {influencer.bio}
-                </p>
-                <div className="mt-4 space-y-2">
-                  <div className="flex items-center text-sm">
-                    <Globe className="w-4 h-4 mr-2 text-gray-400" />
-                    <a href="#" className="text-blue-600 hover:underline">
-                      {influencer.website}
-                    </a>
+        {!accountRestricted ? (
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            {/* Left Sidebar */}
+            <div className="lg:col-span-1 space-y-6">
+              {/* About */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>About</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-700 text-sm leading-relaxed">
+                    {influencer.bio}
+                  </p>
+                  <div className="mt-4 space-y-2">
+                    <div className="flex items-center text-sm">
+                      <Globe className="w-4 h-4 mr-2 text-gray-400" />
+                      <a href="#" className="text-blue-600 hover:underline">
+                        {influencer.website}
+                      </a>
+                    </div>
+                    <div className="flex items-center text-sm">
+                      <Mail className="w-4 h-4 mr-2 text-gray-400" />
+                      <span className="text-gray-600">{influencer.email}</span>
+                    </div>
+                    <div className="flex items-center text-sm">
+                      <Phone className="w-4 h-4 mr-2 text-gray-400" />
+                      <span className="text-gray-600">{influencer.phone}</span>
+                    </div>
                   </div>
-                  <div className="flex items-center text-sm">
-                    <Mail className="w-4 h-4 mr-2 text-gray-400" />
-                    <span className="text-gray-600">{influencer.email}</span>
-                  </div>
-                  <div className="flex items-center text-sm">
-                    <Phone className="w-4 h-4 mr-2 text-gray-400" />
-                    <span className="text-gray-600">{influencer.phone}</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
 
-            {/* Social Media Stats */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Social Media Presence</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {/* Instagram */}
-                  {platform?.instagram?.followers && (
-                    <div className="flex items-center justify-between p-3 bg-gradient-to-r from-pink-50 to-purple-50 rounded-lg">
-                      <div className="flex items-center space-x-3">
-                        <Instagram className="w-6 h-6 text-pink-600" />
-                        <div>
-                          <div className="font-medium">Instagram</div>
-                          <div className="text-sm text-gray-600">
-                            {formatNumber(
-                              influencer.socialStats.instagram.followers
-                            )}{" "}
-                            followers
+              {/* Social Media Stats */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Social Media Presence</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {/* Instagram */}
+                    {platform?.instagram?.followers && (
+                      <div className="flex items-center justify-between p-3 bg-gradient-to-r from-pink-50 to-purple-50 rounded-lg">
+                        <div className="flex items-center space-x-3">
+                          <Instagram className="w-6 h-6 text-pink-600" />
+                          <div>
+                            <div className="font-medium">Instagram</div>
+                            <div className="text-sm text-gray-600">
+                              {formatNumber(
+                                influencer.socialStats.instagram.followers
+                              )}{" "}
+                              followers
+                            </div>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-sm font-medium">
+                            {influencer.socialStats.instagram.engagement}%
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            engagement
                           </div>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <div className="text-sm font-medium">
-                          {influencer.socialStats.instagram.engagement}%
-                        </div>
-                        <div className="text-xs text-gray-500">engagement</div>
-                      </div>
-                    </div>
-                  )}
+                    )}
 
-                  {/* TikTok */}
-                  {platform?.tiktok?.followers && (
-                    <div className="flex items-center justify-between p-3 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-6 h-6 bg-black rounded-full flex items-center justify-center">
-                          <span className="text-white text-xs font-bold">
-                            T
+                    {/* TikTok */}
+                    {platform?.tiktok?.followers && (
+                      <div className="flex items-center justify-between p-3 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-6 h-6 bg-black rounded-full flex items-center justify-center">
+                            <span className="text-white text-xs font-bold">
+                              T
+                            </span>
+                          </div>
+                          <div>
+                            <div className="font-medium">TikTok</div>
+                            <div className="text-sm text-gray-600">
+                              {formatNumber(
+                                influencer.socialStats.tiktok.followers
+                              )}{" "}
+                              followers
+                            </div>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-sm font-medium">
+                            {influencer.socialStats.tiktok.engagement}%
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            engagement
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* YouTube */}
+                    {platform?.youtube?.subscribers && (
+                      <div className="flex items-center justify-between p-3 bg-gradient-to-r from-red-50 to-pink-50 rounded-lg">
+                        <div className="flex items-center space-x-3">
+                          <Youtube className="w-6 h-6 text-red-600" />
+                          <div>
+                            <div className="font-medium">YouTube</div>
+                            <div className="text-sm text-gray-600">
+                              {formatNumber(
+                                influencer.socialStats.youtube.subscribers
+                              )}{" "}
+                              subscribers
+                            </div>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-sm font-medium">
+                            {formatNumber(
+                              influencer.socialStats.youtube.avgViews
+                            )}
+                          </div>
+                          <div className="text-xs text-gray-500">avg views</div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Twitter */}
+                    {platform?.twitter?.followers && (
+                      <div className="flex items-center justify-between p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg">
+                        <div className="flex items-center space-x-3">
+                          <Twitter className="w-6 h-6 text-blue-600" />
+                          <div>
+                            <div className="font-medium">Twitter</div>
+                            <div className="text-sm text-gray-600">
+                              {formatNumber(
+                                influencer.socialStats.twitter.followers
+                              )}{" "}
+                              followers
+                            </div>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-sm font-medium">
+                            {influencer.socialStats.twitter.engagement}%
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            engagement
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Availability */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Available Services</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {Object.entries(influencer.availability).map(
+                      ([key, available]) => (
+                        <div
+                          key={key}
+                          className="flex items-center justify-between"
+                        >
+                          <span className="text-sm capitalize">
+                            {key.replace(/([A-Z])/g, " $1").toLowerCase()}
                           </span>
-                        </div>
-                        <div>
-                          <div className="font-medium">TikTok</div>
-                          <div className="text-sm text-gray-600">
-                            {formatNumber(
-                              influencer.socialStats.tiktok.followers
-                            )}{" "}
-                            followers
-                          </div>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-sm font-medium">
-                          {influencer.socialStats.tiktok.engagement}%
-                        </div>
-                        <div className="text-xs text-gray-500">engagement</div>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* YouTube */}
-                  {platform?.youtube?.subscribers && (
-                    <div className="flex items-center justify-between p-3 bg-gradient-to-r from-red-50 to-pink-50 rounded-lg">
-                      <div className="flex items-center space-x-3">
-                        <Youtube className="w-6 h-6 text-red-600" />
-                        <div>
-                          <div className="font-medium">YouTube</div>
-                          <div className="text-sm text-gray-600">
-                            {formatNumber(
-                              influencer.socialStats.youtube.subscribers
-                            )}{" "}
-                            subscribers
-                          </div>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-sm font-medium">
-                          {formatNumber(
-                            influencer.socialStats.youtube.avgViews
+                          {available ? (
+                            <Badge
+                              variant="secondary"
+                              className="bg-green-100 text-green-700"
+                            >
+                              Available
+                            </Badge>
+                          ) : (
+                            <Badge variant="outline">Not Available</Badge>
                           )}
                         </div>
-                        <div className="text-xs text-gray-500">avg views</div>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Twitter */}
-                  {platform?.twitter?.followers && (
-                    <div className="flex items-center justify-between p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg">
-                      <div className="flex items-center space-x-3">
-                        <Twitter className="w-6 h-6 text-blue-600" />
-                        <div>
-                          <div className="font-medium">Twitter</div>
-                          <div className="text-sm text-gray-600">
-                            {formatNumber(
-                              influencer.socialStats.twitter.followers
-                            )}{" "}
-                            followers
-                          </div>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-sm font-medium">
-                          {influencer.socialStats.twitter.engagement}%
-                        </div>
-                        <div className="text-xs text-gray-500">engagement</div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Availability */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Available Services</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {Object.entries(influencer.availability).map(
-                    ([key, available]) => (
-                      <div
-                        key={key}
-                        className="flex items-center justify-between"
-                      >
-                        <span className="text-sm capitalize">
-                          {key.replace(/([A-Z])/g, " $1").toLowerCase()}
-                        </span>
-                        {available ? (
-                          <Badge
-                            variant="secondary"
-                            className="bg-green-100 text-green-700"
-                          >
-                            Available
-                          </Badge>
-                        ) : (
-                          <Badge variant="outline">Not Available</Badge>
-                        )}
-                      </div>
-                    )
-                  )}
-                </div>
-
-                <div className="mt-4 pt-4 border-t">
-                  <h4 className="font-medium text-sm mb-3">Starting Rates</h4>
-                  <div className="space-y-2 text-sm">
-                    {influencer.rates.instagramPost !== "" && (
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Instagram Post:</span>
-                        <span className="font-medium">
-                          {influencer.rates.instagramPost}
-                        </span>
-                      </div>
-                    )}
-                    {influencer.rates.instagramStory !== "" && (
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Instagram Story:</span>
-                        <span className="font-medium">
-                          {influencer.rates.instagramStory}
-                        </span>
-                      </div>
-                    )}
-                    {influencer.rates.tiktokVideo !== "" && (
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">TikTok Video:</span>
-                        <span className="font-medium">
-                          {influencer.rates.tiktokVideo}
-                        </span>
-                      </div>
-                    )}
-                    {influencer.rates.youtubeIntegration !== "" && (
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">
-                          YouTube Integration:
-                        </span>
-                        <span className="font-medium">
-                          {influencer.rates.youtubeIntegration}
-                        </span>
-                      </div>
+                      )
                     )}
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
 
-          {/* Main Content */}
-          <div className="lg:col-span-3">
-            <Tabs
-              value={activeTab}
-              onValueChange={setActiveTab}
-              className="w-full"
-            >
-              <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 relative z-10 mb-4 bg-gray-100 dark:bg-gray-800">
-                <TabsTrigger
-                  value="my posts"
-                  className="data-[state=active]:bg-background"
-                >
-                  {isOwnProfile ? "My Posts" : "Posts"}
-                </TabsTrigger>
-                <TabsTrigger
-                  value="content"
-                  className="data-[state=active]:bg-background"
-                >
-                  Recent Content
-                </TabsTrigger>
-                <TabsTrigger
-                  value="campaigns"
-                  className="data-[state=active]:bg-background"
-                >
-                  Campaigns
-                </TabsTrigger>
-                <TabsTrigger
-                  value="audience"
-                  className="data-[state=active]:bg-background"
-                >
-                  Audience
-                </TabsTrigger>
-              </TabsList>
-              <TabsContent value="my posts">
-                <MyPostsSection profileId={profile?.userProfile?.id} />
-              </TabsContent>
-              <TabsContent value="content" className="mt-6">
-                <UploadRecentContent isOwnProfile={isOwnProfile} />
-                <RecentContent isOwnProfile={isOwnProfile} />
-              </TabsContent>
+                  <div className="mt-4 pt-4 border-t">
+                    <h4 className="font-medium text-sm mb-3">Starting Rates</h4>
+                    <div className="space-y-2 text-sm">
+                      {influencer.rates.instagramPost !== "" && (
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Instagram Post:</span>
+                          <span className="font-medium">
+                            {influencer.rates.instagramPost}
+                          </span>
+                        </div>
+                      )}
+                      {influencer.rates.instagramStory !== "" && (
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">
+                            Instagram Story:
+                          </span>
+                          <span className="font-medium">
+                            {influencer.rates.instagramStory}
+                          </span>
+                        </div>
+                      )}
+                      {influencer.rates.tiktokVideo !== "" && (
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">TikTok Video:</span>
+                          <span className="font-medium">
+                            {influencer.rates.tiktokVideo}
+                          </span>
+                        </div>
+                      )}
+                      {influencer.rates.youtubeIntegration !== "" && (
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">
+                            YouTube Integration:
+                          </span>
+                          <span className="font-medium">
+                            {influencer.rates.youtubeIntegration}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
 
-              <TabsContent value="campaigns" className="mt-6">
-                <UploadCampaignForm isOwnProfile={isOwnProfile} />
-                <CampaignTab isOwnProfile={isOwnProfile} />
-              </TabsContent>
-              <TabsContent value="audience" className="mt-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <Card>
+            {/* Main Content */}
+            <div className="lg:col-span-3">
+              <Tabs
+                value={activeTab}
+                onValueChange={setActiveTab}
+                className="w-full"
+              >
+                <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 relative z-10 mb-4 bg-gray-100 dark:bg-gray-800">
+                  <TabsTrigger
+                    value="my posts"
+                    className="data-[state=active]:bg-background"
+                  >
+                    {isOwnProfile ? "My Posts" : "Posts"}
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="content"
+                    className="data-[state=active]:bg-background"
+                  >
+                    Recent Content
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="campaigns"
+                    className="data-[state=active]:bg-background"
+                  >
+                    Campaigns
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="audience"
+                    className="data-[state=active]:bg-background"
+                  >
+                    Audience
+                  </TabsTrigger>
+                </TabsList>
+                <TabsContent value="my posts">
+                  {isOwnProfile && <PostInputSection />}
+                  <MyPostsSection profileId={profile?.userProfile?.id} />
+                </TabsContent>
+                <TabsContent value="content" className="mt-6">
+                  <UploadRecentContent isOwnProfile={isOwnProfile} />
+                  <RecentContent isOwnProfile={isOwnProfile} />
+                </TabsContent>
+
+                <TabsContent value="campaigns" className="mt-6">
+                  <UploadCampaignForm isOwnProfile={isOwnProfile} />
+                  <CampaignTab isOwnProfile={isOwnProfile} />
+                </TabsContent>
+                <TabsContent value="audience" className="mt-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Age Demographics</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="space-y-3">
+                          {influencer.demographics.ageGroups.map(
+                            (group, index) => (
+                              <div key={index} className="space-y-1">
+                                <div className="flex justify-between text-sm">
+                                  <span>{group.range} years</span>
+                                </div>
+                              </div>
+                            )
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Gender Split</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="space-y-3">
+                          <div className="space-y-1">
+                            <div className="flex justify-between text-sm">
+                              <span>Female</span>
+                              <span>
+                                {influencer.demographics.genderSplit.female}%
+                              </span>
+                            </div>
+                            <Progress
+                              value={influencer.demographics.genderSplit.female}
+                              className="h-2"
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <div className="flex justify-between text-sm">
+                              <span>Male</span>
+                              <span>
+                                {influencer.demographics.genderSplit.male}%
+                              </span>
+                            </div>
+                            <Progress
+                              value={influencer.demographics.genderSplit.male}
+                              className="h-2"
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <div className="flex justify-between text-sm">
+                              <span>Other</span>
+                              <span>
+                                {influencer.demographics.genderSplit.other}%
+                              </span>
+                            </div>
+                            <Progress
+                              value={influencer.demographics.genderSplit.other}
+                              className="h-2"
+                            />
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+
+                  <Card className="mt-6">
                     <CardHeader>
-                      <CardTitle>Age Demographics</CardTitle>
+                      <CardTitle>Top Audience Locations</CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <div className="space-y-3">
-                        {influencer.demographics.ageGroups.map(
-                          (group, index) => (
-                            <div key={index} className="space-y-1">
-                              <div className="flex justify-between text-sm">
-                                <span>{group.range} years</span>
-                              </div>
-                            </div>
+                      <div className="flex flex-wrap gap-2">
+                        {influencer.demographics.topLocations.map(
+                          (location, index) => (
+                            <Badge
+                              key={index}
+                              variant="outline"
+                              className="px-3 py-1"
+                            >
+                              {location}
+                            </Badge>
                           )
                         )}
                       </div>
                     </CardContent>
                   </Card>
-
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Gender Split</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-3">
-                        <div className="space-y-1">
-                          <div className="flex justify-between text-sm">
-                            <span>Female</span>
-                            <span>
-                              {influencer.demographics.genderSplit.female}%
-                            </span>
-                          </div>
-                          <Progress
-                            value={influencer.demographics.genderSplit.female}
-                            className="h-2"
-                          />
-                        </div>
-                        <div className="space-y-1">
-                          <div className="flex justify-between text-sm">
-                            <span>Male</span>
-                            <span>
-                              {influencer.demographics.genderSplit.male}%
-                            </span>
-                          </div>
-                          <Progress
-                            value={influencer.demographics.genderSplit.male}
-                            className="h-2"
-                          />
-                        </div>
-                        <div className="space-y-1">
-                          <div className="flex justify-between text-sm">
-                            <span>Other</span>
-                            <span>
-                              {influencer.demographics.genderSplit.other}%
-                            </span>
-                          </div>
-                          <Progress
-                            value={influencer.demographics.genderSplit.other}
-                            className="h-2"
-                          />
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-
-                <Card className="mt-6">
-                  <CardHeader>
-                    <CardTitle>Top Audience Locations</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex flex-wrap gap-2">
-                      {influencer.demographics.topLocations.map(
-                        (location, index) => (
-                          <Badge
-                            key={index}
-                            variant="outline"
-                            className="px-3 py-1"
-                          >
-                            {location}
-                          </Badge>
-                        )
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-            </Tabs>
+                </TabsContent>
+              </Tabs>
+            </div>
           </div>
-        </div>
+        ) : (
+          <PrivateAccountUI />
+        )}
       </div>
     </div>
   );

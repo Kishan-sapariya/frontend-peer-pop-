@@ -1212,7 +1212,7 @@ export default function DancerOnboarding() {
     try {
       const result = await createDancerProfile(formData);
       if (result) {
-        router.push("/dashboard");
+        router.push("/feed");
       }
     } catch (error) {
       console.error("Error creating dancer profile:", error);

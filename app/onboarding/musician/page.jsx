@@ -1458,7 +1458,7 @@ export default function MusicianOnboarding() {
       // You may want to validate required fields here
       const result = await createMusicianProfile(formData);
       if (result) {
-        router.push("/dashboard");
+        router.push("/feed");
       }
     } catch (error) {
       // Optionally handle error

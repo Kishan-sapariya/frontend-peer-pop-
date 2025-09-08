@@ -15,7 +15,6 @@ import {
   Briefcase,
   ExternalLink,
   Video,
-  Music4,
   Drum,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -37,6 +36,7 @@ export default function OnboardingSelection() {
       ],
       route: "/onboarding/youtuber",
       demoProfileRoute: "/demo/youtuber",
+      comingSoon: false,
     },
     {
       id: "comedian",
@@ -52,6 +52,7 @@ export default function OnboardingSelection() {
       ],
       route: "/onboarding/comedian",
       demoProfileRoute: "/demo/comedian",
+      comingSoon: false,
     },
     {
       id: "influencer",
@@ -67,6 +68,7 @@ export default function OnboardingSelection() {
       ],
       route: "/onboarding/influencer",
       demoProfileRoute: "/demo/influencer",
+      comingSoon: false,
     },
     {
       id: "actor",
@@ -82,6 +84,7 @@ export default function OnboardingSelection() {
       ],
       route: "/onboarding/actor",
       demoProfileRoute: "/demo/actor",
+      comingSoon: true,
     },
     {
       id: "photographer",
@@ -97,6 +100,7 @@ export default function OnboardingSelection() {
       ],
       route: "/onboarding/photographer",
       demoProfileRoute: "/demo/photographer",
+      comingSoon: true,
     },
     {
       id: "podcaster",
@@ -112,6 +116,7 @@ export default function OnboardingSelection() {
       ],
       route: "/onboarding/podcaster",
       demoProfileRoute: "/demo/podcaster",
+      comingSoon: true,
     },
     {
       id: "musician",
@@ -127,13 +132,14 @@ export default function OnboardingSelection() {
       ],
       route: "/onboarding/musician",
       demoProfileRoute: "/demo/musician",
+      comingSoon: true,
     },
     {
       id: "dancer",
       title: "Dancer / Choreographer",
       description: "Professional dancers, choreographers, and movement artists",
-      icon: Drum, 
-      color: "bg-cyan-400", 
+      icon: Drum,
+      color: "bg-cyan-400",
       features: [
         "Performance Portfolio",
         "Audition Alerts",
@@ -142,16 +148,21 @@ export default function OnboardingSelection() {
       ],
       route: "/onboarding/dancer",
       demoProfileRoute: "/demo/dancer",
+      comingSoon: true,
     },
   ];
 
-  const handleCardClick = (route) => {
-    router.push(route);
+  const handleCardClick = (type) => {
+    if (!type.comingSoon) {
+      router.push(type.route);
+    }
   };
 
-  const handleDemoProfileClick = (e, demoProfileRoute) => {
+  const handleDemoProfileClick = (e, type) => {
     e.stopPropagation();
-    router.push(demoProfileRoute);
+    if (!type.comingSoon) {
+      router.push(type.demoProfileRoute);
+    }
   };
 
   return (
@@ -175,54 +186,62 @@ export default function OnboardingSelection() {
           {userTypes.map((type) => {
             const IconComponent = type.icon;
             return (
-              <Card
-                key={type.id}
-                className={`cursor-pointer transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5`}
-                onClick={() => handleCardClick(type.route)}
-              >
-                <CardHeader>
-                  <div className="flex items-center space-x-3">
-                    <div
-                      className={`w-12 h-12 ${type.color} rounded-lg flex items-center justify-center`}
-                    >
-                      <IconComponent className="w-6 h-6 text-white" />
+              <div key={type.id} className="relative">
+                <Card
+                  className={`cursor-pointer transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 ${
+                    type.comingSoon ? "opacity-60 cursor-not-allowed" : ""
+                  }`}
+                  onClick={() => handleCardClick(type)}
+                >
+                  <CardHeader>
+                    <div className="flex items-center space-x-3">
+                      <div
+                        className={`w-12 h-12 ${type.color} rounded-lg flex items-center justify-center`}
+                      >
+                        <IconComponent className="w-6 h-6 text-white" />
+                      </div>
+                      <div className="flex-1">
+                        <CardTitle className="text-lg">{type.title}</CardTitle>
+                      </div>
                     </div>
-                    <div className="flex-1">
-                      <CardTitle className="text-lg">{type.title}</CardTitle>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-600 text-sm mb-4">
-                    {type.description}
-                  </p>
-                  <div className="space-y-2">
-                    <p className="text-xs font-medium text-gray-700 mb-2">
-                      Key Features:
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-gray-600 text-sm mb-4">
+                      {type.description}
                     </p>
-                    <div className="flex flex-wrap gap-1">
-                      {type.features.map((feature, index) => (
-                        <Badge
-                          key={index}
-                          variant="secondary"
-                          className="text-xs bg-gray-100 text-gray-700"
-                        >
-                          {feature}
-                        </Badge>
-                      ))}
+                    <div className="space-y-2">
+                      <p className="text-xs font-medium text-gray-700 mb-2">
+                        Key Features:
+                      </p>
+                      <div className="flex flex-wrap gap-1">
+                        {type.features.map((feature, index) => (
+                          <Badge
+                            key={index}
+                            variant="secondary"
+                            className="text-xs bg-gray-100 text-gray-700"
+                          >
+                            {feature}
+                          </Badge>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                  <Button
-                    variant="outline"
-                    className="mt-4 w-full"
-                    onClick={(e) =>
-                      handleDemoProfileClick(e, type.demoProfileRoute)
-                    }
-                  >
-                    <ExternalLink className="mr-2 h-4 w-4" /> View Demo Profile
-                  </Button>
-                </CardContent>
-              </Card>
+                    {!type.comingSoon ? (
+                      <Button
+                        variant="outline"
+                        className="mt-4 w-full"
+                        onClick={(e) => handleDemoProfileClick(e, type)}
+                      >
+                        <ExternalLink className="mr-2 h-4 w-4" /> View Demo
+                        Profile
+                      </Button>
+                    ) : (
+                      <div className="mt-6 text-center text-sm font-semibold text-gray-500">
+                        🚧 Coming Soon
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
             );
           })}
         </div>

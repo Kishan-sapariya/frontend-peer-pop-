@@ -99,52 +99,6 @@ export default function HomeFeed() {
     }
   };
 
-  const professions = [
-    "UI/UX Designer",
-    "Graphic Designer",
-    "Filmmaker",
-    "Director",
-    "Photographer",
-    "Musician",
-    "Producer",
-    "Dancer",
-    "Choreographer",
-    "Actor",
-    "Voice Actor",
-    "YouTuber",
-    "Content Creator",
-    "Social Media Influencer",
-    "Video Editor",
-    "Motion Graphics Designer",
-    "Writer",
-    "Copywriter",
-    "Animator",
-    "Illustrator",
-    "Brand Designer",
-    "Web Designer",
-    "Sound Engineer",
-    "Podcaster",
-  ];
-
-  const locations = [
-    "Los Angeles, CA",
-    "New York, NY",
-    "San Francisco, CA",
-    "Chicago, IL",
-    "Austin, TX",
-    "Seattle, WA",
-    "Miami, FL",
-    "Nashville, TN",
-    "Atlanta, GA",
-    "Denver, CO",
-    "Portland, OR",
-    "Boston, MA",
-    "London, UK",
-    "Toronto, CA",
-    "Berlin, DE",
-    "Remote",
-  ];
-
   const tiers = ["Rising", "Pro", "Elite"];
 
   const availabilityOptions = [
@@ -550,23 +504,6 @@ export default function HomeFeed() {
     },
   ];
 
-  // Filter handlers
-  const handleProfessionToggle = (profession) => {
-    setSelectedProfessions((prev) =>
-      prev.includes(profession)
-        ? prev.filter((p) => p !== profession)
-        : [...prev, profession]
-    );
-  };
-
-  const handleLocationToggle = (location) => {
-    setSelectedLocations((prev) =>
-      prev.includes(location)
-        ? prev.filter((l) => l !== location)
-        : [...prev, location]
-    );
-  };
-
   const handleTierToggle = (tier) => {
     setSelectedTiers((prev) =>
       prev.includes(tier) ? prev.filter((t) => t !== tier) : [...prev, tier]
@@ -661,16 +598,6 @@ export default function HomeFeed() {
     ].includes(prof)
   );
 
-  const handlePostSubmit = () => {
-    if (newPost.trim()) {
-      // Handle post submission
-      console.log("Submitting post:", { content: newPost, type: postType });
-      setNewPost("");
-      setPostType("");
-      setShowPostOptions(false);
-    }
-  };
-
   return (
     <div className="min-h-screen bg-blue-50">
       <div className="max-w-7xl mx-auto px-4 py-6">
@@ -682,28 +609,6 @@ export default function HomeFeed() {
             {/* Filter Bar */}
             <div className="flex items-center justify-between bg-white/90 backdrop-blur-sm rounded-xl p-3 shadow-lg border border-blue-200">
               <div className="flex items-center space-x-1 md:space-x-4">
-                <Button
-                  variant={showFilters ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setShowFilters(!showFilters)}
-                  className={`bg-cyan-50 ${
-                    showFilters
-                      ? "bg-gradient-to-r from-blue-500 to-sky-600 text-white"
-                      : "border-blue-300 hover:bg-blue-50 text-blue-600"
-                  }`}
-                >
-                  <SlidersHorizontal className="w-4 h-4 mr-1" />
-                  Filters
-                  {activeFilterCount > 0 && (
-                    <Badge
-                      variant="secondary"
-                      className="ml-2 bg-white text-blue-600 text-xs"
-                    >
-                      {activeFilterCount}
-                    </Badge>
-                  )}
-                </Button>
-
                 <div className="flex items-center space-x-1 sm:space-x-4 ">
                   {/* Home Button */}
                   <Button
@@ -820,107 +725,6 @@ export default function HomeFeed() {
                 </div>
               </div>
             </div>
-
-            {/* Advanced Filters Panel */}
-            {showFilters && (
-              <Card className="border-0 shadow-lg bg-white/95 backdrop-blur-sm">
-                <CardHeader className="pb-4">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-bold text-lg text-gray-800">
-                      Advanced Filters
-                    </h3>
-                    <div className="flex items-center space-x-2">
-                      {activeFilterCount > 0 && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={clearAllFilters}
-                          className="text-xs bg-transparent"
-                        >
-                          Clear All
-                        </Button>
-                      )}
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setShowFilters(false)}
-                      >
-                        <X className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  {/* Basic Filters */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Professions */}
-                    <div>
-                      <h4 className="font-medium text-sm text-gray-800 mb-3">
-                        Professions
-                      </h4>
-                      <div className="grid grid-cols-2 gap-2 max-h-32 overflow-y-auto">
-                        {professions.map((profession) => (
-                          <div
-                            key={profession}
-                            className="flex items-center space-x-2"
-                          >
-                            <Checkbox
-                              id={profession}
-                              checked={selectedProfessions.includes(profession)}
-                              onCheckedChange={() =>
-                                handleProfessionToggle(profession)
-                              }
-                            />
-                            <label
-                              htmlFor={profession}
-                              className="text-xs text-gray-700 cursor-pointer"
-                            >
-                              {profession}
-                            </label>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Locations */}
-                    <div>
-                      <h4 className="font-medium text-sm text-gray-800 mb-3">
-                        Locations
-                      </h4>
-                      <div className="space-y-2 max-h-32 overflow-y-auto">
-                        {locations.map((location) => (
-                          <div
-                            key={location}
-                            className="flex items-center space-x-2"
-                          >
-                            <Checkbox
-                              id={location}
-                              checked={selectedLocations.includes(location)}
-                              onCheckedChange={() =>
-                                handleLocationToggle(location)
-                              }
-                            />
-                            <label
-                              htmlFor={location}
-                              className="text-xs text-gray-700 cursor-pointer"
-                            >
-                              {location}
-                            </label>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Apply Filters Button */}
-                  <div className="flex justify-end pt-4 border-t">
-                    <Button className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white">
-                      Apply Filters ({activeFilterCount} active)
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
 
             {/* Post Creation */}
             <PostInputSection />

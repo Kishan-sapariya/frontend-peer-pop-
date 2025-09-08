@@ -5,7 +5,15 @@ import { useNotificationStore } from "@/store/useNotificationStore";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Bell, Loader2, Trash2, Filter, Trash } from "lucide-react";
+import {
+  Bell,
+  Loader2,
+  Trash2,
+  Filter,
+  Trash,
+  CheckCircle,
+  XCircle,
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,6 +27,9 @@ const notificationTypes = [
   { key: "CONNECTION_REQUEST", label: "Connection Requests" },
   { key: "CONNECTION_ACCEPTED", label: "Accepted Connections" },
   { key: "CONNECTION_REJECTED", label: "Rejected Connections" },
+  { key: "BUSINESS_VERIFICATION", label: "Business Verified" },
+  { key: "BUSINESS_UNVERIFICATION", label: "Business Unverified" },
+  { key: "CUSTOM", label: "Custom Messages" }, // ✅ Custom notifications
 ];
 
 export default function NotificationList() {
@@ -28,16 +39,17 @@ export default function NotificationList() {
     deleteNotification,
     loading,
     markAsRead,
-    initSocket
+    initSocket,
   } = useNotificationStore();
 
   const [activeFilter, setActiveFilter] = useState("ALL");
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       initSocket();
+      fetchNotifications(); // Fetch latest notifications
     }
-  }, [initSocket]);
+  }, [initSocket, fetchNotifications]);
 
   const formatTime = (isoString) => {
     const date = new Date(isoString);
@@ -73,7 +85,7 @@ export default function NotificationList() {
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0 flex flex-col gap-3">
-            {/* New read/unread counts section */}
+            {/* Read/unread counts */}
             <div className="flex justify-between items-center mb-2">
               <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
                 Unread
@@ -186,6 +198,17 @@ export default function NotificationList() {
                         {formatTime(n.createdAt)}
                       </span>
                     </div>
+
+                    {/* Status icon for notification type */}
+                    {n.type === "BUSINESS_VERIFICATION" && (
+                      <CheckCircle className="h-5 w-5 text-green-500" />
+                    )}
+                    {n.type === "BUSINESS_UNVERIFICATION" && (
+                      <XCircle className="h-5 w-5 text-red-500" />
+                    )}
+                    {n.type === "CUSTOM" && (
+                      <Bell className="h-5 w-5 text-yellow-500" />
+                    )}
 
                     <Button
                       size="icon"

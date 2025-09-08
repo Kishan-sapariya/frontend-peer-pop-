@@ -6,19 +6,18 @@ import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import { useConversationStore } from "@/store/useConversationStore";
 import { useParams, useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/useAuthStore";
 import LoadingSpinner from "@/component/LoadingSpinner";
 import socket from "@/lib/socket";
-import { Link, Upload } from "lucide-react";
+import { Link } from "lucide-react";
 
 const MessagesArea = () => {
-  const [messageInput, setMessageInput] = useState(""); // text input
-  const [selectedFile, setSelectedFile] = useState(null); // file input
-  const [filePreview, setFilePreview] = useState(null); // file preview URL
-  const [isSending, setIsSending] = useState(false); // sending state
+  const [messageInput, setMessageInput] = useState("");
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [filePreview, setFilePreview] = useState(null);
+  const [isSending, setIsSending] = useState(false);
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
   const router = useRouter();
@@ -35,30 +34,42 @@ const MessagesArea = () => {
   } = useConversationStore();
   const { conversationId } = useParams();
 
-  // Get current conversation and other user data
+  // ✅ Get current conversation and other participant
   const currentConversation = conversations?.find(
-    (c) => c.conversationId === conversationId
+    (c) => c.id === conversationId
   );
 
-  const otherUser = currentConversation?.conversation?.participants?.find(
+  const otherUser = currentConversation?.participants?.find(
     (p) => p.userId !== currentUser?.id
   )?.user;
 
+  // ✅ Fetch all conversations
   useEffect(() => {
     getAllConversation();
   }, [getAllConversation]);
 
+  // ✅ Reset + fetch messages when conversation changes
   useEffect(() => {
-    getMessages(conversationId);
-  }, [getMessages, conversationId]);
+    setMessages([]);
+    if (conversationId) getMessages(conversationId);
+  }, [conversationId, getMessages, setMessages]);
 
+  // ✅ Listen for incoming socket messages
   useEffect(() => {
     socket.on("receiveMessage", (msg) => {
       setMessages((prev) => {
         if (prev.some((m) => m.id === msg.id)) return prev;
         return [...prev, msg];
       });
-      setIsSending(false); // Stop loading when message is received
+
+      // also update lastMessage for conversation
+      useConversationStore.setState((state) => ({
+        conversations: state.conversations.map((c) =>
+          c.id === msg.conversationId ? { ...c, lastMessage: msg } : c
+        ),
+      }));
+
+      setIsSending(false);
     });
 
     return () => {
@@ -66,19 +77,17 @@ const MessagesArea = () => {
     };
   }, [setMessages]);
 
-  // Scroll to bottom when messages change
+  // ✅ Auto scroll to bottom
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const formatTime = (timestamp) => {
-    const date = new Date(timestamp);
-    return date.toLocaleTimeString("en-US", {
+  const formatTime = (timestamp) =>
+    new Date(timestamp).toLocaleTimeString("en-US", {
       hour: "numeric",
       minute: "2-digit",
       hour12: true,
     });
-  };
 
   const formatDate = (timestamp) => {
     const date = new Date(timestamp);
@@ -96,40 +105,31 @@ const MessagesArea = () => {
   };
 
   const getFileSize = (bytes) => {
-    if (bytes === 0) return "0 Bytes";
+    if (!bytes) return "";
     const k = 1024;
     const sizes = ["Bytes", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
   };
 
-  const isImageFile = (file) => {
-    return file?.type?.startsWith("image/");
-  };
+  const isImageFile = (file) => file?.type?.startsWith("image/");
+  const isVideoFile = (file) => file?.type?.startsWith("video/");
 
-  const isVideoFile = (file) => {
-    return file?.type?.startsWith("video/");
-  };
-
+  // ✅ Send message
   const handleSendMessage = async () => {
     if (!messageInput.trim() && !selectedFile) return;
 
     setIsSending(true);
-
     const receiverId = otherUser?.id;
 
     try {
-      await useConversationStore
-        .getState()
-        .sendMessage(
-          currentUser.id,
-          receiverId,
-          conversationId,
-          messageInput.trim() || null,
-          selectedFile
-        );
+      await sendMessage(
+        receiverId,
+        conversationId,
+        messageInput.trim() || null,
+        selectedFile
+      );
 
-      // Reset input and file
       setMessageInput("");
       setSelectedFile(null);
       setFilePreview(null);
@@ -150,15 +150,11 @@ const MessagesArea = () => {
   const handleFileSelect = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
     setSelectedFile(file);
 
-    // Create preview for images and videos
     if (isImageFile(file) || isVideoFile(file)) {
       const reader = new FileReader();
-      reader.onload = (e) => {
-        setFilePreview(e.target.result);
-      };
+      reader.onload = (e) => setFilePreview(e.target.result);
       reader.readAsDataURL(file);
     } else {
       setFilePreview(null);
@@ -171,20 +167,19 @@ const MessagesArea = () => {
     if (fileInputRef.current) fileInputRef.current.value = null;
   };
 
-  const groupMessagesByDate = (messages) => {
-    if (!messages || !Array.isArray(messages)) return {};
-    const grouped = {};
-    messages.forEach((msg) => {
+  const groupMessagesByDate = (msgs) => {
+    if (!Array.isArray(msgs)) return {};
+    return msgs.reduce((acc, msg) => {
       const date = formatDate(msg.createdAt);
-      if (!grouped[date]) grouped[date] = [];
-      grouped[date].push(msg);
-    });
-    return grouped;
+      if (!acc[date]) acc[date] = [];
+      acc[date].push(msg);
+      return acc;
+    }, {});
   };
 
   const groupedMessages = groupMessagesByDate(messages);
 
-  // Show loading if conversation data isn't loaded yet
+  // ✅ Loading state
   if (!currentConversation || !otherUser) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -195,6 +190,7 @@ const MessagesArea = () => {
 
   return (
     <div className="flex flex-col h-screen bg-gray-50 font-sans">
+      {/* Header */}
       <div className="fixed top-16 w-full z-10 bg-white border-b border-gray-200 p-3 sm:p-4">
         <div className="flex items-center gap-3">
           <Button
@@ -203,23 +199,15 @@ const MessagesArea = () => {
             onClick={() => router.back()}
             className="p-2 hover:bg-gray-100"
           >
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
+            ←
           </Button>
 
           <Avatar className="h-10 w-10 sm:h-12 sm:w-12">
-            <AvatarImage src={otherUser.image} alt={otherUser.username} className="object-cover" />
+            <AvatarImage
+              src={otherUser.image}
+              alt={otherUser.username}
+              className="object-cover"
+            />
             <AvatarFallback className="bg-gray-100 text-gray-600">
               {otherUser.username?.charAt(0).toUpperCase() || "?"}
             </AvatarFallback>
@@ -233,12 +221,13 @@ const MessagesArea = () => {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-4">
+      {/* Messages */}
+      <div className="flex-1 overflow-y-auto px-3 sm:px-4 pt-24 pb-24 space-y-4">
         {isLoading ? (
           <LoadingSpinner />
         ) : (
           Object.entries(groupedMessages).map(([date, dateMessages]) => (
-            <div key={date} className="mt-17 mb-17">
+            <div key={date}>
               <div className="flex items-center justify-center my-4">
                 <Badge
                   variant="secondary"
@@ -281,159 +270,15 @@ const MessagesArea = () => {
                             isFromCurrentUser ? "items-end" : "items-start"
                           }`}
                         >
-                          {msg.attachmentUrl &&
-                          (msg.attachmentType?.startsWith("image/") ||
-                            msg.attachmentType?.startsWith("video/")) ? (
-                            <div className="space-y-2">
-                              {msg.attachmentType?.startsWith("image/") ? (
-                                <div className="relative">
-                                  <img
-                                    src={msg.attachmentUrl}
-                                    alt="Shared image"
-                                    className="w-full max-w-xs h-auto rounded-lg cursor-pointer"
-                                    onClick={() =>
-                                      window.open(msg.attachmentUrl, "_blank")
-                                    }
-                                  />
-                                </div>
-                              ) : (
-                                <div className="relative max-w-xs">
-                                  <video
-                                    src={msg.attachmentUrl}
-                                    controls
-                                    className="w-full h-auto rounded-lg"
-                                    preload="metadata"
-                                  />
-                                </div>
-                              )}
+                          <Card
+                            className={`p-3 ${
+                              isFromCurrentUser
+                                ? "bg-blue-500 text-white"
+                                : "bg-white"
+                            }`}
+                          >
+                            <CardContent className="p-0 space-y-2">
                               {msg.content && (
-                                <Card
-                                  className={`p-3 ${
-                                    isFromCurrentUser
-                                      ? "bg-blue-500 text-white"
-                                      : "bg-white"
-                                  }`}
-                                >
-                                  <CardContent className="p-0">
-                                    <p
-                                      className={`text-sm whitespace-pre-wrap ${
-                                        isFromCurrentUser
-                                          ? "text-white"
-                                          : "text-gray-900"
-                                      }`}
-                                    >
-                                      {msg.content}
-                                    </p>
-                                  </CardContent>
-                                </Card>
-                              )}
-                            </div>
-                          ) : msg.attachmentUrl ? (
-                            <Card
-                              className={`p-3 ${
-                                isFromCurrentUser ? "bg-blue-500" : "bg-white"
-                              }`}
-                            >
-                              <CardContent className="p-0">
-                                <div className="flex items-center gap-3">
-                                  <div
-                                    className={`p-2 rounded-full ${
-                                      isFromCurrentUser
-                                        ? "bg-blue-600"
-                                        : "bg-gray-100"
-                                    }`}
-                                  >
-                                    {msg.attachmentType?.includes("pdf") ? (
-                                      <svg
-                                        className={`w-5 h-5 ${
-                                          isFromCurrentUser
-                                            ? "text-white"
-                                            : "text-red-600"
-                                        }`}
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                      >
-                                        <path
-                                          strokeLinecap="round"
-                                          strokeLinejoin="round"
-                                          strokeWidth={2}
-                                          d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
-                                        />
-                                      </svg>
-                                    ) : msg.attachmentType?.includes("text") ? (
-                                      <svg
-                                        className={`w-5 h-5 ${
-                                          isFromCurrentUser
-                                            ? "text-white"
-                                            : "text-gray-600"
-                                        }`}
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                      >
-                                        <path
-                                          strokeLinecap="round"
-                                          strokeLinejoin="round"
-                                          strokeWidth={2}
-                                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                                        />
-                                      </svg>
-                                    ) : (
-                                      <svg
-                                        className={`w-5 h-5 ${
-                                          isFromCurrentUser
-                                            ? "text-white"
-                                            : "text-gray-600"
-                                        }`}
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                      >
-                                        <path
-                                          strokeLinecap="round"
-                                          strokeLinejoin="round"
-                                          strokeWidth={2}
-                                          d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
-                                        />
-                                      </svg>
-                                    )}
-                                  </div>
-                                  <div className="flex-1 min-w-0">
-                                    <p
-                                      className={`text-sm font-medium truncate ${
-                                        isFromCurrentUser
-                                          ? "text-white"
-                                          : "text-gray-900"
-                                      }`}
-                                    >
-                                      {msg.attachmentName || "File attachment"}
-                                    </p>
-                                    <button
-                                      onClick={() =>
-                                        window.open(msg.attachmentUrl, "_blank")
-                                      }
-                                      className={`text-xs underline hover:no-underline ${
-                                        isFromCurrentUser
-                                          ? "text-blue-100 hover:text-white"
-                                          : "text-blue-600 hover:text-blue-800"
-                                      }`}
-                                    >
-                                      Download
-                                    </button>
-                                  </div>
-                                </div>
-                              </CardContent>
-                            </Card>
-                          ) : (
-                            <Card
-                              className={`p-3 ${
-                                isFromCurrentUser
-                                  ? "bg-blue-500 text-white"
-                                  : "bg-white"
-                              }`}
-                            >
-                              <CardContent className="p-0">
                                 <p
                                   className={`text-sm whitespace-pre-wrap ${
                                     isFromCurrentUser
@@ -443,15 +288,40 @@ const MessagesArea = () => {
                                 >
                                   {msg.content}
                                 </p>
-                              </CardContent>
-                            </Card>
-                          )}
+                              )}
 
-                          <span
-                            className={`text-xs text-gray-500 mt-1 px-1 ${
-                              isFromCurrentUser ? "text-right" : "text-left"
-                            }`}
-                          >
+                              {msg.attachmentUrl && (
+                                <>
+                                  {msg.attachmentType?.startsWith("image/") ? (
+                                    <img
+                                      src={msg.attachmentUrl}
+                                      alt="attachment"
+                                      className="max-w-xs rounded-lg"
+                                    />
+                                  ) : msg.attachmentType?.startsWith(
+                                      "video/"
+                                    ) ? (
+                                    <video
+                                      controls
+                                      className="max-w-xs rounded-lg"
+                                      src={msg.attachmentUrl}
+                                    />
+                                  ) : (
+                                    <a
+                                      href={msg.attachmentUrl}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="text-sm underline"
+                                    >
+                                      📎 Download file
+                                    </a>
+                                  )}
+                                </>
+                              )}
+                            </CardContent>
+                          </Card>
+
+                          <span className="text-xs text-gray-500 mt-1 px-1">
                             {formatTime(msg.createdAt)}
                           </span>
                         </div>
@@ -466,10 +336,11 @@ const MessagesArea = () => {
         <div ref={messagesEndRef} />
       </div>
 
+      {/* File preview */}
       {selectedFile && (
         <div className="bg-white border-t border-gray-200 p-3">
           <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-            <div className="relative mb-18">
+            <div className="relative">
               {isImageFile(selectedFile) && filePreview ? (
                 <img
                   src={filePreview}
@@ -484,19 +355,7 @@ const MessagesArea = () => {
                 />
               ) : (
                 <div className="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center">
-                  <svg
-                    className="w-8 h-8 text-gray-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                    />
-                  </svg>
+                  📎
                 </div>
               )}
 
@@ -519,6 +378,8 @@ const MessagesArea = () => {
           </div>
         </div>
       )}
+
+      {/* Input */}
       <div className="bg-white fixed bottom-0 w-full border-t border-gray-200 p-3 sm:p-4">
         <div className="flex items-end gap-2">
           <Button
@@ -528,7 +389,7 @@ const MessagesArea = () => {
             className="p-2 hover:bg-gray-100 flex-shrink-0"
             disabled={isSending}
           >
-            <Link/>
+            <Link />
           </Button>
 
           <div className="flex-1 min-w-0">
@@ -548,14 +409,7 @@ const MessagesArea = () => {
             size="sm"
             className="px-4 flex-shrink-0"
           >
-            {isSending ? (
-              <div className="flex items-center gap-2">
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                <span>Sending</span>
-              </div>
-            ) : (
-              "Send"
-            )}
+            {isSending ? "Sending..." : "Send"}
           </Button>
         </div>
 

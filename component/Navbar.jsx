@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,6 +18,7 @@ import {
   MessageCircle,
   Telescope,
   Search,
+  User2,
 } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useRouter } from "next/navigation";
@@ -30,23 +31,29 @@ import {
 } from "@/components/ui/popover";
 import NotificationBell from "./notifications/NotificationBell";
 import { NavbarSearch } from "./NavbarSearch";
+import { getInitialLetter } from "@/utils/formatDate";
+import { useConnectionStore } from "@/store/useConnectionStore";
+import { Badge } from "@/components/ui/badge";
+import { useConversationStore } from "@/store/useConversationStore";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const { isAuthenticated, user, logout } = useAuthStore();
   const router = useRouter();
+  const getConnections = useConnectionStore((s) => s.getConnections);
+  const listenForSocketEvents = useConnectionStore(
+    (s) => s.listenForSocketEvents
+  );
+  const pendingCount = useConnectionStore((s) => s.getPendingCount());
+  const unreadConversations = useConversationStore((state) =>
+    state.getUnreadConversationCount()
+  );
 
-  const getInitials = (name) => {
-    if (!name) return "";
-    const nameParts = name.split(" ");
-    if (nameParts.length === 1) {
-      return nameParts[0].charAt(0).toUpperCase();
-    }
-    return (
-      nameParts[0].charAt(0) + nameParts[nameParts.length - 1].charAt(0)
-    ).toUpperCase();
-  };
+  useEffect(() => {
+    getConnections(); // load initial state
+    listenForSocketEvents(); // keep it in sync with sockets
+  }, [getConnections, listenForSocketEvents]);
 
   const handleLogout = async () => {
     try {
@@ -58,7 +65,6 @@ const Navbar = () => {
       console.error("Logout error:", error);
     }
   };
-
   return (
     <header className="bg-white/90 backdrop-blur-lg border-b border-cyan-200 sticky top-0 z-50 shadow-lg">
       <div className="max-w-6xl mx-auto px-4 py-4">
@@ -82,25 +88,28 @@ const Navbar = () => {
                   <PopoverTrigger asChild>
                     <Button
                       variant="ghost"
-                      className="relative h-10 rounded-full flex items-center justify-center hover:bg-muted/50 transition-colors"
+                      className="h-10 rounded-full flex items-center justify-center hover:bg-muted/50 transition-colors"
                     >
-                      <Avatar className="h-9 w-9">
+                      <Avatar className="h-9 w-9 relative overflow-visible ">
                         {user?.image && (
                           <AvatarImage
-                            className="object-cover"
+                            className="object-cover rounded-full"
                             src={user.image}
                             alt={user.username || "User Avatar"}
                           />
                         )}
                         <AvatarFallback className="font-semibold text-white bg-gradient-to-r from-cyan-400 to-blue-400">
-                          {getInitials(user.username || user.email)}
+                          {getInitialLetter(user.username)}
                         </AvatarFallback>
+                        {(pendingCount > 0 || unreadConversations > 0) && (
+                          <span className="absolute top-0 right-0 block w-2 h-2 rounded-full bg-red-500 z-10 ring-2 ring-white"></span>
+                        )}
                       </Avatar>
-                      {user?.username && (
-                        <span className="text-gray-700 font-medium ml-2 mr-1 hidden sm:inline-block">
-                          {user.username}
-                        </span>
-                      )}
+
+                      <span className="text-gray-700 font-medium ml-2 mr-1 hidden sm:inline-block">
+                        {user.username}
+                      </span>
+
                       {isPopoverOpen ? (
                         <ChevronUp className="h-4 w-4 text-gray-700" />
                       ) : (
@@ -123,9 +132,13 @@ const Navbar = () => {
                       </div>
                       <div className="border-t my-2"></div>
                       <Link
-                        href={`/profile/${
-                          user?.username
-                        }/${user?.creatorType?.toLowerCase()}`}
+                        href={
+                          user.role === "BUSINESS"
+                            ? `/profile/business/${user.username}`
+                            : `/profile/${
+                                user.username
+                              }/${user?.creatorType?.toLowerCase()}`
+                        }
                         passHref
                       >
                         <Button
@@ -143,12 +156,27 @@ const Navbar = () => {
                           <Telescope className="mr-2 h-4 w-4" /> Explore
                         </Button>
                       </Link>
+                      {user?.isAdmin && (
+                        <Link href="/admin">
+                          <Button
+                            variant="ghost"
+                            className="w-full justify-start text-gray-700 hover:bg-muted/60"
+                          >
+                            <User2 className="mr-2 h-4 w-4" /> Admin
+                          </Button>
+                        </Link>
+                      )}
                       <Link href="/connections">
                         <Button
                           variant="ghost"
-                          className="w-full justify-start text-gray-700 hover:bg-muted/60"
+                          className="w-full justify-start text-gray-700 hover:bg-muted/60 relative"
                         >
                           <Plus className="mr-2 h-4 w-4" /> Peers
+                          {pendingCount > 0 && (
+                            <Badge className="ml-2 bg-red-500 text-white text-xs px-2 py-0 rounded-full">
+                              {pendingCount}
+                            </Badge>
+                          )}
                         </Button>
                       </Link>
                       <Link href="/conversations">
@@ -157,10 +185,15 @@ const Navbar = () => {
                           className="w-full justify-start text-gray-700 hover:bg-muted/60"
                         >
                           <MessageCircle className="mr-2 h-4 w-4" /> Messages
+                          {unreadConversations > 0 && (
+                            <span className=" bg-red-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
+                              {unreadConversations}
+                            </span>
+                          )}
                         </Button>
                       </Link>
 
-                      {!user.creatorType && (
+                      {!user.creatorType && user.role !== "BUSINESS" && (
                         <Link href="/onboarding" passHref>
                           <Button
                             variant="ghost"
@@ -240,7 +273,7 @@ const Navbar = () => {
                             />
                           )}
                           <AvatarFallback className="font-semibold text-white bg-gradient-to-r from-cyan-400 to-blue-400 text-sm">
-                            {getInitials(user.username || user.email)}
+                            {getInitialLetter(user.username || user.email)}
                           </AvatarFallback>
                         </Avatar>
                         <div className="flex flex-col">
@@ -276,6 +309,17 @@ const Navbar = () => {
                         Explore
                       </Button>
                     </Link>
+                    {user?.isAdmin && (
+                      <Link href="/admin">
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-start text-gray-700 hover:text-cyan-600"
+                        >
+                          <User2 className="mr-2 h-4 w-4" />
+                          Admin
+                        </Button>
+                      </Link>
+                    )}
                     <Link href="/connections">
                       <Button
                         variant="ghost"
@@ -283,6 +327,11 @@ const Navbar = () => {
                       >
                         <User className="mr-2 h-4 w-4" />
                         Peers
+                        {pendingCount > 0 && (
+                          <Badge className="ml-2 bg-red-500 text-white text-xs px-2 py-0 rounded-full">
+                            {pendingCount}
+                          </Badge>
+                        )}
                       </Button>
                     </Link>
                     <Link href="/conversations">
@@ -292,9 +341,12 @@ const Navbar = () => {
                       >
                         <MessageCircle className="mr-2 h-4 w-4" />
                         Messages
+                        <span className=" bg-red-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
+                          {unreadConversations}
+                        </span>
                       </Button>
                     </Link>
-                    {!user.creatorType && (
+                    {!user.creatorType && user.role !== "BUSINESS" && (
                       <Link
                         href="/onboarding"
                         onClick={() => setIsMenuOpen(false)}

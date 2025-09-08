@@ -37,31 +37,28 @@ import {
   PenTool,
   Code,
 } from "lucide-react";
-import Link from "next/link";
+import { useAuthStore } from "@/store/useAuthStore";
+import { useRouter } from "next/navigation";
 
 export default function BusinessLoginPage() {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState("login");
+  const [error, setErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
   const [loginData, setLoginData] = useState({
     email: "",
     password: "",
-    rememberMe: false,
   });
   const [signupData, setSignupData] = useState({
+    username: "",
     companyName: "",
     industry: "",
     companySize: "",
-    website: "",
-    description: "",
-    firstName: "",
-    lastName: "",
-    jobTitle: "",
     email: "",
-    phone: "",
     password: "",
-    confirmPassword: "",
-    agreeToTerms: false,
-    marketingEmails: false,
   });
+
+  const { signup, login } = useAuthStore();
 
   const industries = [
     "Technology",
@@ -184,22 +181,299 @@ export default function BusinessLoginPage() {
     },
   ];
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    // Handle login logic
-    console.log("Login:", loginData);
+    setIsLoading(true);
+    try {
+      const result = await login({
+        email: loginData.email,
+        password: loginData.password,
+      });
+      if (result.success) {
+        router.push("/feed");
+      }
+    } catch (error) {
+      console.log(error.message || "Login failed. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleSignup = (e) => {
+  const validateForm = () => {
+    const newErrors = {};
+    if (!signupData.companyName.trim())
+      newErrors.companyName = "Comapny Name is required";
+    if (!signupData.email.trim()) newErrors.email = "Email is required";
+    else if (!/\S+@\S+\.\S+/.test(signupData.email))
+      newErrors.email = "Email is invalid";
+    if (!signupData.password) newErrors.password = "Password is required";
+    else if (signupData.password.length < 6)
+      newErrors.password = "Password must be at least 6 characters";
+    if (!signupData.industry.trim())
+      newErrors.industry = "Industry is required";
+    if (!signupData.companySize.trim())
+      newErrors.companySize = "Company size is required";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSignup = async (e) => {
     e.preventDefault();
-    // Handle signup logic
-    console.log("Signup:", signupData);
+    if (!validateForm()) {
+      return;
+    }
+    setIsLoading(true);
+    try {
+      const result = await signup({
+        username: signupData.companyName,
+        companyName: signupData.companyName,
+        email: signupData.email,
+        password: signupData.password,
+        companySize: signupData.companySize,
+        industry: signupData.industry,
+        role: "BUSINESS",
+      });
+      if (result.success) {
+        router.push("/verify-otp");
+      }
+    } catch (error) {
+      console.log(error.message || "Signup failed. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50">
       <div className="max-w-7xl mx-auto px-4 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+          {/* Right Side - Login/Signup Form */}
+          <div className="lg:sticky lg:top-8">
+            <Card className="shadow-2xl bg-white/95 backdrop-blur-sm border-0">
+              <CardHeader className="text-center pb-4">
+                <CardTitle className="text-2xl font-bold text-gray-900">
+                  Get Started Today
+                </CardTitle>
+                <p className="text-gray-600">
+                  Join hundreds of brands already using Peerpop
+                </p>
+              </CardHeader>
+              <CardContent>
+                <Tabs value={activeTab} onValueChange={setActiveTab}>
+                  <TabsList className="grid w-full grid-cols-2 mb-6">
+                    <TabsTrigger value="login">Sign In</TabsTrigger>
+                    <TabsTrigger value="signup">Create Account</TabsTrigger>
+                  </TabsList>
+
+                  <TabsContent value="login">
+                    <form onSubmit={handleLogin} className="space-y-4">
+                      <div>
+                        <Label htmlFor="email">Business Email</Label>
+                        <Input
+                          id="email"
+                          type="email"
+                          value={loginData.email}
+                          onChange={(e) =>
+                            setLoginData({
+                              ...loginData,
+                              email: e.target.value,
+                            })
+                          }
+                          placeholder="your.email@company.com"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="password">Password</Label>
+                        <Input
+                          id="password"
+                          type="password"
+                          value={loginData.password}
+                          onChange={(e) =>
+                            setLoginData({
+                              ...loginData,
+                              password: e.target.value,
+                            })
+                          }
+                          placeholder="Enter your password"
+                          required
+                        />
+                      </div>
+                      <Button
+                        type="submit"
+                        className="w-full bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white"
+                      >
+                        Sign In
+                        <ArrowRight className="w-4 h-4 ml-2" />
+                      </Button>
+                    </form>
+                  </TabsContent>
+
+                  <TabsContent value="signup">
+                    <form onSubmit={handleSignup} className="space-y-4">
+                      <div className="grid grid-cols-2 gap-4"></div>
+                      <div>
+                        <Label htmlFor="companyName">Company Name</Label>
+                        <Input
+                          id="companyName"
+                          value={signupData.companyName}
+                          onChange={(e) =>
+                            setSignupData({
+                              ...signupData,
+                              companyName: e.target.value,
+                            })
+                          }
+                          placeholder="Your Company Inc."
+                          required
+                        />
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="industry">Industry</Label>
+                          <Select
+                            value={signupData.industry}
+                            onValueChange={(value) =>
+                              setSignupData({ ...signupData, industry: value })
+                            }
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select industry" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {industries.map((industry) => (
+                                <SelectItem key={industry} value={industry}>
+                                  {industry}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div>
+                          <Label htmlFor="companySize">Company Size</Label>
+                          <Select
+                            value={signupData.companySize}
+                            onValueChange={(value) =>
+                              setSignupData({
+                                ...signupData,
+                                companySize: value,
+                              })
+                            }
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select size" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {companySizes.map((size) => (
+                                <SelectItem key={size} value={size}>
+                                  {size}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                      <div>
+                        <Label htmlFor="businessEmail">Business Email</Label>
+                        <Input
+                          id="businessEmail"
+                          type="email"
+                          value={signupData.email}
+                          onChange={(e) =>
+                            setSignupData({
+                              ...signupData,
+                              email: e.target.value,
+                            })
+                          }
+                          placeholder="your.email@company.com"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="signupPassword">Password</Label>
+                        <Input
+                          id="signupPassword"
+                          type="password"
+                          value={signupData.password}
+                          onChange={(e) =>
+                            setSignupData({
+                              ...signupData,
+                              password: e.target.value,
+                            })
+                          }
+                          placeholder="Create a strong password"
+                          required
+                        />
+                      </div>
+                      <div className="space-y-3">
+                        <div className="flex items-center space-x-2">
+                          <Checkbox
+                            id="terms"
+                            checked={signupData.agreeToTerms}
+                            onCheckedChange={(checked) =>
+                              setSignupData({
+                                ...signupData,
+                                agreeToTerms: checked,
+                              })
+                            }
+                            required
+                          />
+                          <Label htmlFor="terms" className="text-sm">
+                            I agree to the{" "}
+                            <Button
+                              variant="link"
+                              className="p-0 h-auto text-sm"
+                            >
+                              Terms of Service
+                            </Button>{" "}
+                            and{" "}
+                            <Button
+                              variant="link"
+                              className="p-0 h-auto text-sm"
+                            >
+                              Privacy Policy
+                            </Button>
+                          </Label>
+                        </div>
+                      </div>
+                      <Button
+                        type="submit"
+                        className="w-full bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white"
+                        disabled={!signupData.agreeToTerms}
+                      >
+                        Create Business Account
+                        <ArrowRight className="w-4 h-4 ml-2" />
+                      </Button>
+                    </form>
+                  </TabsContent>
+                </Tabs>
+
+                <div className="mt-6 pt-6 border-t text-center">
+                  <p className="text-sm text-gray-600 mb-4">
+                    Need help getting started?
+                  </p>
+                  <div className="flex justify-center space-x-4">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="border-orange-300 hover:bg-orange-50 bg-transparent"
+                    >
+                      <Mail className="w-4 h-4 mr-2" />
+                      Contact Sales
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="border-orange-300 hover:bg-orange-50 bg-transparent"
+                    >
+                      <Eye className="w-4 h-4 mr-2" />
+                      View Demo
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
           {/* Left Side - Information */}
           <div className="space-y-8">
             {/* Hero Section */}
@@ -360,300 +634,6 @@ export default function BusinessLoginPage() {
                 ))}
               </div>
             </div>
-          </div>
-
-          {/* Right Side - Login/Signup Form */}
-          <div className="lg:sticky lg:top-8">
-            <Card className="shadow-2xl bg-white/95 backdrop-blur-sm border-0">
-              <CardHeader className="text-center pb-4">
-                <CardTitle className="text-2xl font-bold text-gray-900">
-                  Get Started Today
-                </CardTitle>
-                <p className="text-gray-600">
-                  Join hundreds of brands already using Peerpop
-                </p>
-              </CardHeader>
-              <CardContent>
-                <Tabs value={activeTab} onValueChange={setActiveTab}>
-                  <TabsList className="grid w-full grid-cols-2 mb-6">
-                    <TabsTrigger value="login">Sign In</TabsTrigger>
-                    <TabsTrigger value="signup">Create Account</TabsTrigger>
-                  </TabsList>
-
-                  <TabsContent value="login">
-                    <form onSubmit={handleLogin} className="space-y-4">
-                      <div>
-                        <Label htmlFor="email">Business Email</Label>
-                        <Input
-                          id="email"
-                          type="email"
-                          value={loginData.email}
-                          onChange={(e) =>
-                            setLoginData({
-                              ...loginData,
-                              email: e.target.value,
-                            })
-                          }
-                          placeholder="your.email@company.com"
-                          required
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="password">Password</Label>
-                        <Input
-                          id="password"
-                          type="password"
-                          value={loginData.password}
-                          onChange={(e) =>
-                            setLoginData({
-                              ...loginData,
-                              password: e.target.value,
-                            })
-                          }
-                          placeholder="Enter your password"
-                          required
-                        />
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-2">
-                          <Checkbox
-                            id="remember"
-                            checked={loginData.rememberMe}
-                            onCheckedChange={(checked) =>
-                              setLoginData({
-                                ...loginData,
-                                rememberMe: checked,
-                              })
-                            }
-                          />
-                          <Label htmlFor="remember" className="text-sm">
-                            Remember me
-                          </Label>
-                        </div>
-                        <Button variant="link" className="text-sm p-0 h-auto">
-                          Forgot password?
-                        </Button>
-                      </div>
-                      <Button
-                        type="submit"
-                        className="w-full bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white"
-                      >
-                        Sign In to Dashboard
-                        <ArrowRight className="w-4 h-4 ml-2" />
-                      </Button>
-                    </form>
-                  </TabsContent>
-
-                  <TabsContent value="signup">
-                    <form onSubmit={handleSignup} className="space-y-4">
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <Label htmlFor="firstName">First Name</Label>
-                          <Input
-                            id="firstName"
-                            value={signupData.firstName}
-                            onChange={(e) =>
-                              setSignupData({
-                                ...signupData,
-                                firstName: e.target.value,
-                              })
-                            }
-                            placeholder="John"
-                            required
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor="lastName">Last Name</Label>
-                          <Input
-                            id="lastName"
-                            value={signupData.lastName}
-                            onChange={(e) =>
-                              setSignupData({
-                                ...signupData,
-                                lastName: e.target.value,
-                              })
-                            }
-                            placeholder="Smith"
-                            required
-                          />
-                        </div>
-                      </div>
-                      <div>
-                        <Label htmlFor="companyName">Company Name</Label>
-                        <Input
-                          id="companyName"
-                          value={signupData.companyName}
-                          onChange={(e) =>
-                            setSignupData({
-                              ...signupData,
-                              companyName: e.target.value,
-                            })
-                          }
-                          placeholder="Your Company Inc."
-                          required
-                        />
-                      </div>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <Label htmlFor="industry">Industry</Label>
-                          <Select
-                            value={signupData.industry}
-                            onValueChange={(value) =>
-                              setSignupData({ ...signupData, industry: value })
-                            }
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select industry" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {industries.map((industry) => (
-                                <SelectItem key={industry} value={industry}>
-                                  {industry}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div>
-                          <Label htmlFor="companySize">Company Size</Label>
-                          <Select
-                            value={signupData.companySize}
-                            onValueChange={(value) =>
-                              setSignupData({
-                                ...signupData,
-                                companySize: value,
-                              })
-                            }
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select size" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {companySizes.map((size) => (
-                                <SelectItem key={size} value={size}>
-                                  {size}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      </div>
-                      <div>
-                        <Label htmlFor="businessEmail">Business Email</Label>
-                        <Input
-                          id="businessEmail"
-                          type="email"
-                          value={signupData.email}
-                          onChange={(e) =>
-                            setSignupData({
-                              ...signupData,
-                              email: e.target.value,
-                            })
-                          }
-                          placeholder="your.email@company.com"
-                          required
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="signupPassword">Password</Label>
-                        <Input
-                          id="signupPassword"
-                          type="password"
-                          value={signupData.password}
-                          onChange={(e) =>
-                            setSignupData({
-                              ...signupData,
-                              password: e.target.value,
-                            })
-                          }
-                          placeholder="Create a strong password"
-                          required
-                        />
-                      </div>
-                      <div className="space-y-3">
-                        <div className="flex items-center space-x-2">
-                          <Checkbox
-                            id="terms"
-                            checked={signupData.agreeToTerms}
-                            onCheckedChange={(checked) =>
-                              setSignupData({
-                                ...signupData,
-                                agreeToTerms: checked,
-                              })
-                            }
-                            required
-                          />
-                          <Label htmlFor="terms" className="text-sm">
-                            I agree to the{" "}
-                            <Button
-                              variant="link"
-                              className="p-0 h-auto text-sm"
-                            >
-                              Terms of Service
-                            </Button>{" "}
-                            and{" "}
-                            <Button
-                              variant="link"
-                              className="p-0 h-auto text-sm"
-                            >
-                              Privacy Policy
-                            </Button>
-                          </Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Checkbox
-                            id="marketing"
-                            checked={signupData.marketingEmails}
-                            onCheckedChange={(checked) =>
-                              setSignupData({
-                                ...signupData,
-                                marketingEmails: checked,
-                              })
-                            }
-                          />
-                          <Label htmlFor="marketing" className="text-sm">
-                            Send me updates about new features and creator
-                            opportunities
-                          </Label>
-                        </div>
-                      </div>
-                      <Button
-                        type="submit"
-                        className="w-full bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white"
-                        disabled={!signupData.agreeToTerms}
-                      >
-                        Create Business Account
-                        <ArrowRight className="w-4 h-4 ml-2" />
-                      </Button>
-                    </form>
-                  </TabsContent>
-                </Tabs>
-
-                <div className="mt-6 pt-6 border-t text-center">
-                  <p className="text-sm text-gray-600 mb-4">
-                    Need help getting started?
-                  </p>
-                  <div className="flex justify-center space-x-4">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="border-orange-300 hover:bg-orange-50 bg-transparent"
-                    >
-                      <Mail className="w-4 h-4 mr-2" />
-                      Contact Sales
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="border-orange-300 hover:bg-orange-50 bg-transparent"
-                    >
-                      <Eye className="w-4 h-4 mr-2" />
-                      View Demo
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
           </div>
         </div>
       </div>

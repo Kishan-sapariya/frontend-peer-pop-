@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { create } from "zustand";
 import axios from "axios";
@@ -13,6 +13,7 @@ export const useNotificationStore = create((set, get) => ({
   notifications: [],
   unreadCount: 0,
 
+  // ✅ Fetch notifications from backend
   fetchNotifications: async () => {
     try {
       const res = await axios.get(`${API_URL}/notification/all`);
@@ -30,6 +31,7 @@ export const useNotificationStore = create((set, get) => ({
     }
   },
 
+  // ✅ Mark one notification as read
   markAsRead: async (id) => {
     try {
       await axios.patch(`${API_URL}/notification/read/${id}`);
@@ -37,7 +39,6 @@ export const useNotificationStore = create((set, get) => ({
         const updated = state.notifications.map((n) =>
           n.id === id ? { ...n, isRead: true } : n
         );
-        toast.success("Marked as read");
         return {
           notifications: updated,
           unreadCount: updated.filter((n) => !n.isRead).length,
@@ -48,6 +49,7 @@ export const useNotificationStore = create((set, get) => ({
     }
   },
 
+  // ✅ Delete one notification
   deleteNotification: async (id) => {
     try {
       await axios.delete(`${API_URL}/notification/delete/${id}`);
@@ -65,6 +67,7 @@ export const useNotificationStore = create((set, get) => ({
     }
   },
 
+  // ✅ Initialize socket connection for real-time updates
   initSocket: () => {
     const { fetchNotifications } = get();
     const user = useAuthStore.getState().user;
@@ -74,20 +77,16 @@ export const useNotificationStore = create((set, get) => ({
       return;
     }
 
-    // Connect socket if not already connected
     if (!socket.connected) {
       socket.connect();
     }
 
-    console.log("[SOCKET] Joining room with userId:", user.id);
     socket.emit("join", user.id);
 
-    // Remove existing listeners to prevent duplicates
+    // Prevent duplicate listeners
     socket.off("newNotification");
 
     socket.on("connect", () => {
-      console.log("[SOCKET] Connected to server with id:", socket.id);
-      // Re-join room on reconnection
       socket.emit("join", user.id);
     });
 
@@ -95,27 +94,53 @@ export const useNotificationStore = create((set, get) => ({
       console.log("[SOCKET] Disconnected from server");
     });
 
+    // ✅ Handle new notifications from server
     socket.on("newNotification", (data) => {
-      console.log("[SOCKET] Received newNotification:", data);
-
-      // Handle both old and new notification format
       const notification = data.notification || data;
-      const unreadCount = data.unreadCount;
 
       set((state) => {
+        // prevent duplicates
+        if (state.notifications.some((n) => n.id === notification.id)) {
+          return state;
+        }
+
         const updatedNotifications = [notification, ...state.notifications];
         return {
           notifications: updatedNotifications,
-          unreadCount: unreadCount !== undefined ? unreadCount : state.unreadCount + 1,
+          unreadCount: updatedNotifications.filter((n) => !n.isRead).length,
         };
       });
 
-      toast.success("🔔 New Notification");
+      // ✅ Show different toasts depending on type
+      switch (notification.type) {
+        case "BUSINESS_VERIFICATION":
+          toast.success("✅ Your business has been verified!");
+          break;
+        case "BUSINESS_UNVERIFICATION":
+          toast.error("❌ Your business verification was revoked!");
+          break;
+        case "CONNECTION_REQUEST":
+          toast("🤝 You have a new connection request!");
+          break;
+        case "CONNECTION_ACCEPTED":
+          toast.success("🎉 Your connection request was accepted!");
+          break;
+        case "CONNECTION_REJECTED":
+          toast.error("🚫 Your connection request was rejected.");
+          break;
+        case "CUSTOM":
+          toast(notification.message || "🔔 You have a new update!");
+          break;
+        default:
+          toast("🔔 New Notification");
+      }
     });
 
+    // Load old notifications on init
     fetchNotifications();
   },
 
+  // ✅ Disconnect socket (logout, cleanup)
   disconnectSocket: () => {
     socket.off("newNotification");
     socket.disconnect();

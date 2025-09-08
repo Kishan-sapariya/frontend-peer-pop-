@@ -311,7 +311,7 @@ export default function FilmmakerOnboardingForm() {
       };
       const result = await createFilmMakerProfile(profileData);
       if (result) {
-        router.push("/dashboard");
+        router.push("/feed");
       }
     } catch (error) {
       console.error("Error creating filmmaker profile:", error);
@@ -888,7 +888,9 @@ export default function FilmmakerOnboardingForm() {
                   <SelectContent>
                     <SelectItem value="native">Native</SelectItem>
                     <SelectItem value="fluent">Fluent</SelectItem>
-                    <SelectItem value="conversational">Conversational</SelectItem>
+                    <SelectItem value="conversational">
+                      Conversational
+                    </SelectItem>
                     <SelectItem value="basic">Basic</SelectItem>
                   </SelectContent>
                 </Select>

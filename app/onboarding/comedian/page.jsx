@@ -223,7 +223,7 @@ export default function ComedianOnboarding() {
       };
       const result = await createComedianProfile(profileData);
       if (result) {
-        router.push("/dashboard");
+        router.push("/feed");
       }
     } catch (error) {
       console.error("Error creating comedian profile:", error);
@@ -536,20 +536,6 @@ export default function ComedianOnboarding() {
                   </SelectContent>
                 </Select>
               </div>
-            </div>
-
-            <div>
-              <Label htmlFor="specialsReleased">
-                Comedy Specials/Recordings
-              </Label>
-              <Input
-                id="specialsReleased"
-                value={formData.specialsReleased}
-                onChange={(e) =>
-                  setFormData({ ...formData, specialsReleased: e.target.value })
-                }
-                placeholder="Number of specials, albums, or recordings released"
-              />
             </div>
           </div>
         );
@@ -882,36 +868,6 @@ export default function ComedianOnboarding() {
                   />
                 </div>
               </div>
-            </div>
-
-            <div>
-              <Label>Media Appearances</Label>
-              <Textarea
-                value={formData.mediaAppearances.join(", ")}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    mediaAppearances: e.target.value.split(", "),
-                  })
-                }
-                placeholder="List any TV shows, podcasts, radio appearances, or other media (e.g., Comedy Central, Joe Rogan Experience)"
-                rows={3}
-              />
-            </div>
-
-            <div>
-              <Label>Awards & Recognition</Label>
-              <Textarea
-                value={formData.awardsWon.join(", ")}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    awardsWon: e.target.value.split(", "),
-                  })
-                }
-                placeholder="List any comedy awards, contest wins, or recognition you've received"
-                rows={2}
-              />
             </div>
           </div>
         );

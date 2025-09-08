@@ -1,10 +1,8 @@
 export const formatDate = (date) => {
-  if (typeof date !== "string" || !date.includes("T")) {
-    return "";
-  }
+  if (!date) return "";
 
-  const dateObj = new Date(date);
-  if (isNaN(dateObj.getTime())) {
+  const dateObj = typeof date === "string" ? new Date(date) : date;
+  if (!(dateObj instanceof Date) || isNaN(dateObj.getTime())) {
     return "";
   }
 
@@ -14,11 +12,11 @@ export const formatDate = (date) => {
     day: "numeric",
   };
 
-  return dateObj.toLocaleString(undefined, options);
+  return dateObj.toLocaleDateString(undefined, options);
 };
 
 export const getInitialLetter = (name) => {
-  const letters = name?.charAt(0);
+  const letters = name?.charAt(0).toUpperCase();
   return letters;
 };
 
