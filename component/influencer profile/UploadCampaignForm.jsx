@@ -104,7 +104,6 @@ export function UploadCampaignForm({ isOwnProfile }) {
                   <SelectItem value="Instagram Post + Stories">
                     Instagram Post + Stories
                   </SelectItem>
-                  <SelectItem value="TikTok Series">TikTok Series</SelectItem>
                   <SelectItem value="YouTube Integration">
                     YouTube Integration
                   </SelectItem>

@@ -61,25 +61,19 @@ export default function InfluencerOnboarding() {
     // Social Media Stats
     socialPlatforms: {
       instagram: {
-        handle: "",
-        followers: "",
-        engagement: "",
-        verified: false,
-      },
-      tiktok: {
-        handle: "",
+        link: "",
         followers: "",
         engagement: "",
         verified: false,
       },
       youtube: {
-        handle: "",
+        link: "",
         subscribers: "",
         avgViews: "",
         verified: false,
       },
       twitter: {
-        handle: "",
+        link: "",
         followers: "",
         engagement: "",
         verified: false,
@@ -110,7 +104,6 @@ export default function InfluencerOnboarding() {
     rates: {
       instagramPost: "",
       instagramStory: "",
-      tiktokVideo: "",
       youtubeIntegration: "",
       eventAppearance: "",
     },
@@ -619,14 +612,12 @@ export default function InfluencerOnboarding() {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="instagramHandle">Instagram Handle *</Label>
+                <Label htmlFor="instagramLink">Instagram Link *</Label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
-                    @
-                  </span>
+                  
                   <Input
-                    id="instagramHandle"
-                    value={formData.socialPlatforms.instagram.handle}
+                    id="instagramLink"
+                    value={formData.socialPlatforms.instagram.link}
                     onChange={(e) =>
                       setFormData({
                         ...formData,
@@ -634,12 +625,12 @@ export default function InfluencerOnboarding() {
                           ...formData.socialPlatforms,
                           instagram: {
                             ...formData.socialPlatforms.instagram,
-                            handle: e.target.value,
+                            link: e.target.value,
                           },
                         },
                       })
                     }
-                    placeholder="yourusername"
+                    placeholder="https://www.instagram.com/instagram/"
                     className="pl-8"
                   />
                 </div>
@@ -725,109 +716,16 @@ export default function InfluencerOnboarding() {
               </p>
             </div>
 
-            {/* TikTok */}
-            <div className="p-4 border rounded-lg">
-              <h3 className="font-semibold mb-3">TikTok</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="tiktokHandle">TikTok Handle</Label>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
-                      @
-                    </span>
-                    <Input
-                      id="tiktokHandle"
-                      value={formData.socialPlatforms.tiktok.handle}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          socialPlatforms: {
-                            ...formData.socialPlatforms,
-                            tiktok: {
-                              ...formData.socialPlatforms.tiktok,
-                              handle: e.target.value,
-                            },
-                          },
-                        })
-                      }
-                      placeholder="yourusername"
-                      className="pl-8"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <Label htmlFor="tiktokFollowers">Followers</Label>
-                  <Input
-                    id="tiktokFollowers"
-                    value={formData.socialPlatforms.tiktok.followers}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        socialPlatforms: {
-                          ...formData.socialPlatforms,
-                          tiktok: {
-                            ...formData.socialPlatforms.tiktok,
-                            followers: e.target.value,
-                          },
-                        },
-                      })
-                    }
-                    placeholder="e.g., 100000"
-                  />
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4 mt-4">
-                <div>
-                  <Label htmlFor="tiktokEngagement">Engagement Rate (%)</Label>
-                  <Input
-                    id="tiktokEngagement"
-                    value={formData.socialPlatforms.tiktok.engagement}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        socialPlatforms: {
-                          ...formData.socialPlatforms,
-                          tiktok: {
-                            ...formData.socialPlatforms.tiktok,
-                            engagement: e.target.value,
-                          },
-                        },
-                      })
-                    }
-                    placeholder="e.g., 6.8"
-                  />
-                </div>
-                <div className="flex items-center space-x-2 pt-6">
-                  <Checkbox
-                    id="tiktokVerified"
-                    checked={formData.socialPlatforms.tiktok.verified}
-                    onCheckedChange={(checked) =>
-                      setFormData({
-                        ...formData,
-                        socialPlatforms: {
-                          ...formData.socialPlatforms,
-                          tiktok: {
-                            ...formData.socialPlatforms.tiktok,
-                            verified: checked,
-                          },
-                        },
-                      })
-                    }
-                  />
-                  <Label htmlFor="tiktokVerified">Verified Account</Label>
-                </div>
-              </div>
-            </div>
 
             {/* YouTube */}
             <div className="p-4 border rounded-lg">
               <h3 className="font-semibold mb-3">YouTube</h3>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="youtubeHandle">Channel Name</Label>
+                  <Label htmlFor="youtubeLink">Channel Link</Label>
                   <Input
-                    id="youtubeHandle"
-                    value={formData.socialPlatforms.youtube.handle}
+                    id="youtubeLink"
+                    value={formData.socialPlatforms.youtube.link}
                     onChange={(e) =>
                       setFormData({
                         ...formData,
@@ -835,12 +733,12 @@ export default function InfluencerOnboarding() {
                           ...formData.socialPlatforms,
                           youtube: {
                             ...formData.socialPlatforms.youtube,
-                            handle: e.target.value,
+                            link: e.target.value,
                           },
                         },
                       })
                     }
-                    placeholder="Your Channel Name"
+                    placeholder="Your Channel link"
                   />
                 </div>
                 <div>
@@ -912,14 +810,11 @@ export default function InfluencerOnboarding() {
               <h3 className="font-semibold mb-3">Twitter/X</h3>
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <Label htmlFor="twitterHandle">Handle</Label>
+                  <Label htmlFor="twitterLink">Link</Label>
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
-                      @
-                    </span>
                     <Input
-                      id="twitterHandle"
-                      value={formData.socialPlatforms.twitter.handle}
+                      id="twitterLink"
+                      value={formData.socialPlatforms.twitter.link}
                       onChange={(e) =>
                         setFormData({
                           ...formData,
@@ -927,12 +822,12 @@ export default function InfluencerOnboarding() {
                             ...formData.socialPlatforms,
                             twitter: {
                               ...formData.socialPlatforms.twitter,
-                              handle: e.target.value,
+                              link: e.target.value,
                             },
                           },
                         })
                       }
-                      placeholder="yourusername"
+                      placeholder="your twitter link"
                       className="pl-8"
                     />
                   </div>
@@ -1239,24 +1134,7 @@ export default function InfluencerOnboarding() {
                   />
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4 mt-4">
-                <div>
-                  <Label htmlFor="tiktokVideoRate">TikTok Video</Label>
-                  <Input
-                    id="tiktokVideoRate"
-                    value={formData.rates.tiktokVideo}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        rates: {
-                          ...formData.rates,
-                          tiktokVideo: e.target.value,
-                        },
-                      })
-                    }
-                    placeholder="e.g., $300-800"
-                  />
-                </div>
+              <div className="grid grid-cols-1 gap-4 mt-4">
                 <div>
                   <Label htmlFor="youtubeIntegrationRate">
                     YouTube Integration

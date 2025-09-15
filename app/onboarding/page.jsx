@@ -57,7 +57,7 @@ export default function OnboardingSelection() {
     {
       id: "influencer",
       title: "Social Media Influencer",
-      description: "Instagram, TikTok, and multi-platform content creators",
+      description: "Instagram, and multi-platform content creators",
       icon: Heart,
       color: "bg-pink-500",
       features: [
@@ -166,7 +166,7 @@ export default function OnboardingSelection() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 py-12">
+    <div className="min-h-screen bg-gradient-to-r from-blue-100 to-sky-50 py-12">
       <div className="max-w-6xl mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-12">

@@ -160,16 +160,9 @@ export default function HomeFeed() {
   const socialPlatforms = [
     "YouTube",
     "Instagram",
-    "TikTok",
     "Twitter/X",
     "Facebook",
     "LinkedIn",
-    "Twitch",
-    "Snapchat",
-    "Pinterest",
-    "Behance",
-    "Dribbble",
-    "Vimeo",
   ];
 
   const contentCategories = [
@@ -320,7 +313,7 @@ export default function HomeFeed() {
           engagement: 4.2,
           monthlyViews: 2800000,
         },
-        platforms: ["YouTube", "Instagram", "TikTok"],
+        platforms: ["YouTube", "Instagram"],
       },
       content:
         "📱 Looking for a talented video editor to help with my upcoming tech review series! Need someone experienced with:\n\n• Fast-paced editing & motion graphics\n• Color grading & audio mixing\n• YouTube optimization\n• 10-15 videos per month\n\nThis is a long-term paid opportunity. Budget: $500-800 per video. Must have experience with tech content and quick turnaround times. Portfolio required!",
@@ -599,10 +592,12 @@ export default function HomeFeed() {
   );
 
   return (
-    <div className="min-h-screen bg-blue-50">
+    <div className="min-h-screen bg-slate-100">
       <div className="max-w-7xl mx-auto px-4 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          <UserDetailsCard />
+          <div className="lg:sticky lg:top-25 lg:self-start">
+            <UserDetailsCard />
+          </div>
 
           {/* Main Feed */}
           <div className="lg:col-span-2 space-y-4">
@@ -615,9 +610,9 @@ export default function HomeFeed() {
                     variant={activeNav === "home" ? "default" : "ghost"}
                     size="sm"
                     onClick={() => setActiveNav("home")}
-                    className={`text-sm ${
+                    className={`text-[15px] ${
                       activeNav === "home"
-                        ? "bg-gradient-to-r from-blue-500 to-cyan-500 text-white"
+                        ? " bg-gradient-to-r from-blue-500 to-cyan-500 text-white"
                         : "hover:bg-cyan-100 text-gray-700"
                     }`}
                   >
@@ -630,7 +625,7 @@ export default function HomeFeed() {
                     variant={activeNav === "peers" ? "default" : "ghost"}
                     size="sm"
                     onClick={() => setActiveNav("peers")}
-                    className={`text-sm ${
+                    className={`text-[15px] ${
                       activeNav === "peers"
                         ? "bg-gradient-to-r from-blue-500 to-cyan-500 text-white"
                         : "hover:bg-cyan-100 text-gray-700"
@@ -646,7 +641,7 @@ export default function HomeFeed() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="text-sm hover:bg-blue-50 text-gray-700"
+                        className="text-[15px] hover:bg-blue-50 text-gray-700"
                       >
                         {getFilterLabel()}
                         <ChevronDown className="w-4 h-4 ml-1 sm:ml-2" />

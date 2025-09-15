@@ -22,6 +22,7 @@ import {
   Trash2,
   Lock,
   Globe,
+  Pencil,
 } from "lucide-react";
 import React, { useState, useRef } from "react";
 import Image from "next/image";
@@ -29,6 +30,7 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import ReuploadDocumentsDialog from "../business/ReUploadDocuments";
+import Link from "next/link";
 
 export default function ProfileActionsMenu() {
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
@@ -77,6 +79,16 @@ export default function ProfileActionsMenu() {
         <div className="border-t border-gray-200"></div>
         <UploadCoverImageDialog />
         {user?.role === "BUSINESS" && <ReuploadDocumentsDialog />}
+        <Button className="w-full justify-start bg-gray-50 hover:bg-gray-100 text-black">
+          <Link
+            href={`/profile/${
+              user?.username
+            }/${(user?.creatorType)?.toLowerCase()}/updateprofile`}
+            className="flex items-center"
+          >
+            <Pencil className="mr-4 h-4 w-4" /> Update profile
+          </Link>
+        </Button>
         <Button
           className="w-full justify-start bg-red-50 hover:bg-red-100 text-red-500 hover:text-red-600 transition-colors"
           onClick={deleteProfileImage}

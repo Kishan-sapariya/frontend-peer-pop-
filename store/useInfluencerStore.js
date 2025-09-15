@@ -164,4 +164,24 @@ export const useInfluencerStore = create((set, get) => ({
       toast.error("Failed to delete campaign");
     }
   },
+  updateInfluencerProfile: async (profileData) => {
+    try {
+      const response = await axios.patch(`${API_URL}/influencer/update-profile`, {
+        data: profileData,
+      });
+
+      const updatedProfile = response.data.profile;
+
+      set({ profile: updatedProfile });
+
+      toast.success("influencer profile updated successfully!");
+      return updatedProfile;
+    } catch (error) {
+      console.error("Error updating influencer profile:", error);
+      toast.error(
+        error?.response?.data?.message ||
+          "Failed to update influencer profile. Please try again."
+      );
+    }
+  },
 }));

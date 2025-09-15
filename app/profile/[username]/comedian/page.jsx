@@ -25,7 +25,7 @@ import {
   Twitter,
   Youtube,
 } from "lucide-react";
-import { formatNumber } from "@/utils/formatDate";
+import { formatNumber, getCompletionCateogryStyle } from "@/utils/formatDate";
 import UploadImageModal from "@/component/profile/UploadImageModal";
 import UploadCoverImageModal from "@/component/profile/ProfileActionMenu";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -108,10 +108,18 @@ export default function ComedianProfile() {
         : 0,
     },
     socialStats: {
-      instagram: { followers: socialStats.instagram || 0, verified: false },
-      twitter: { followers: socialStats.twitter || 0, verified: false },
-      youtube: { subscribers: socialStats.youtube || 0, verified: false },
-      tiktok: { followers: socialStats.tiktok || 0, verified: false },
+      instagram: {
+        followers: socialStats.instagram || 0,
+        link: socialMedia.links?.instagram,
+      },
+      twitter: {
+        followers: socialStats.twitter || 0,
+        link: socialMedia.links?.twitter,
+      },
+      youtube: {
+        subscribers: socialStats.youtube || 0,
+        link: socialMedia.links?.youtube,
+      },
     },
     comedyStyle: Array.isArray(comedyCareer.comedyStyle)
       ? comedyCareer.comedyStyle
@@ -160,6 +168,7 @@ export default function ComedianProfile() {
   const mediaAppearances = Array.isArray(performanceStats.mediaAppearances)
     ? performanceStats.mediaAppearances
     : [];
+  const style = getCompletionCateogryStyle(profile?.completion?.category);
 
   const isOwnProfile = profile?.userProfile?.id === user?.id;
 
@@ -212,6 +221,9 @@ export default function ComedianProfile() {
                       <h1 className="text-4xl font-bold text-gray-900">
                         {profile?.userProfile?.username}
                       </h1>
+                      <Badge className={style?.className}>
+                        {profile?.completion?.category}
+                      </Badge>
                       {comedian.verified && (
                         <Badge className="bg-yellow-500">
                           Verified Comedian
@@ -270,6 +282,22 @@ export default function ComedianProfile() {
                         ))}
                       </div>
                     </div>
+
+                    {/* Profile Completion Notice */}
+                    {isOwnProfile && profile?.completion?.percentage < 70 && (
+                      <div className="mt-4 p-3 bg-yellow-50 text-sm rounded-lg">
+                        🚀 Your profile is {profile.completion.percentage}%
+                        complete. Fill in the missing details to unlock{" "}
+                        <b>Pro</b> status.
+                      </div>
+                    )}
+                    {isOwnProfile && profile?.completion?.percentage < 100 && (
+                      <div className="mt-4 p-3 bg-yellow-50 text-sm rounded-lg">
+                        🚀 Your profile is {profile.completion.percentage}%
+                        complete. Fill in the missing details to unlock{" "}
+                        <b>Pro</b> status.
+                      </div>
+                    )}
                   </div>
 
                   <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-3 sm:space-y-0 sm:space-x-3">
@@ -388,7 +416,12 @@ export default function ComedianProfile() {
                   <div className="space-y-3">
                     {/* Instagram */}
                     {comedian.socialStats.instagram.followers > 0 && (
-                      <div className="flex items-center justify-between p-3 bg-gradient-to-r from-pink-50 to-purple-50 rounded-lg">
+                      <a
+                        href={comedian.socialStats.instagram.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-between p-3 bg-gradient-to-r from-pink-50 to-purple-50 rounded-lg cursor-pointer"
+                      >
                         <div className="flex items-center space-x-3">
                           <Instagram className="w-6 h-6 text-pink-600" />
                           <div>
@@ -401,32 +434,17 @@ export default function ComedianProfile() {
                             </div>
                           </div>
                         </div>
-                      </div>
+                      </a>
                     )}
-                    {/* TikTok */}
-                    {comedian.socialStats.tiktok.followers > 0 && (
-                      <div className="flex items-center justify-between p-3 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg">
-                        <div className="flex items-center space-x-3">
-                          <div className="w-6 h-6 bg-black rounded-full flex items-center justify-center">
-                            <span className="text-white text-xs font-bold">
-                              T
-                            </span>
-                          </div>
-                          <div>
-                            <div className="font-medium">TikTok</div>
-                            <div className="text-sm text-gray-600">
-                              {formatNumber(
-                                comedian.socialStats.tiktok.followers
-                              )}{" "}
-                              followers
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    )}
+
                     {/* Twitter */}
                     {comedian.socialStats.twitter.followers > 0 && (
-                      <div className="flex items-center justify-between p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg">
+                      <a
+                        href={comedian.socialStats.twitter.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-between p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg cursor-pointer"
+                      >
                         <div className="flex items-center space-x-3">
                           <Twitter className="w-6 h-6 text-blue-600" />
                           <div>
@@ -439,11 +457,17 @@ export default function ComedianProfile() {
                             </div>
                           </div>
                         </div>
-                      </div>
+                      </a>
                     )}
+
                     {/* YouTube */}
                     {comedian.socialStats.youtube.subscribers > 0 && (
-                      <div className="flex items-center justify-between p-3 bg-gradient-to-r from-red-50 to-pink-50 rounded-lg">
+                      <a
+                        href={comedian.socialStats.youtube.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-between p-3 bg-gradient-to-r from-red-50 to-pink-50 rounded-lg cursor-pointer"
+                      >
                         <div className="flex items-center space-x-3">
                           <Youtube className="w-6 h-6 text-red-600" />
                           <div>
@@ -456,7 +480,7 @@ export default function ComedianProfile() {
                             </div>
                           </div>
                         </div>
-                      </div>
+                      </a>
                     )}
                   </div>
                 </CardContent>
@@ -522,9 +546,6 @@ export default function ComedianProfile() {
                         </div>
                       ))}
                   </div>
-
-                  <Separator className="my-4" />
-
                   {profileData?.preferences?.showRates && (
                     <div>
                       <h4 className="font-medium text-sm mb-3">Rates</h4>
@@ -545,11 +566,6 @@ export default function ComedianProfile() {
                       </div>
                     </div>
                   )}
-
-                  <Button className="w-full mt-4" size="sm">
-                    <Ticket className="w-4 h-4 mr-2" />
-                    Request Booking
-                  </Button>
                 </CardContent>
               </Card>
             </div>
@@ -561,7 +577,7 @@ export default function ComedianProfile() {
                 onValueChange={setActiveTab}
                 className="w-full"
               >
-                <TabsList className="grid w-full grid-cols-3 mb-6">
+                <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 mb-6">
                   <TabsTrigger value="my posts">
                     {isOwnProfile ? "My Posts" : "Posts"}
                   </TabsTrigger>

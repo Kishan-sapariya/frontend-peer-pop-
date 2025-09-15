@@ -85,14 +85,11 @@ export default function YouTuberOnboarding() {
       instagram: "",
       twitter: "",
       linkedin: "",
-      tiktok: "",
-      twitch: "",
     },
     socialStats: {
       instagram: "",
       twitter: "",
-      tiktok: "",
-      twitch: "",
+      linkedin: "",
     },
 
     availability: {
@@ -266,8 +263,7 @@ export default function YouTuberOnboarding() {
             stats: {
               instagram: parseInt(syncedFormData.socialStats.instagram) || 0,
               twitter: parseInt(syncedFormData.socialStats.twitter) || 0,
-              tiktok: parseInt(syncedFormData.socialStats.tiktok) || 0,
-              twitch: parseInt(syncedFormData.socialStats.twitch) || 0,
+              linkedin: parseInt(syncedFormData.socialStats.linkedin) || 0,
             },
           },
 
@@ -734,9 +730,9 @@ export default function YouTuberOnboarding() {
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="instagram">Instagram Handle</Label>
+                  <Label htmlFor="Instagram">Instagram link</Label>
                   <Input
-                    id="instagram"
+                    id="Instagram"
                     value={formData.socialLinks.instagram}
                     onChange={(e) =>
                       setFormData({
@@ -747,13 +743,11 @@ export default function YouTuberOnboarding() {
                         },
                       })
                     }
-                    placeholder="@yourusername"
+                    placeholder="Your instagram link"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="instagramFollowers">
-                    Instagram Followers
-                  </Label>
+                  <Label htmlFor="instagramFollowers">Instagram Followers</Label>
                   <Input
                     id="instagramFollowers"
                     value={formData.socialStats.instagram}
@@ -769,11 +763,46 @@ export default function YouTuberOnboarding() {
                     placeholder="e.g., 50000"
                   />
                 </div>
+
+                <div>
+                  <Label htmlFor="linkedin">Linkedin link</Label>
+                  <Input
+                    id="linkedin"
+                    value={formData.socialLinks.linkedin}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        socialLinks: {
+                          ...formData.socialLinks,
+                          linkedin: e.target.value,
+                        },
+                      })
+                    }
+                    placeholder="your linkedin link"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="LinkedinFollowers">Linkedin Followers</Label>
+                  <Input
+                    id="LinkedinFollowers"
+                    value={formData.socialStats.linkedin}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        socialStats: {
+                          ...formData.socialStats,
+                          Linkedin: e.target.value,
+                        },
+                      })
+                    }
+                    placeholder="e.g., 50000"
+                  />
+                </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="twitter">Twitter/X Handle</Label>
+                  <Label htmlFor="twitter">Twitter/X link</Label>
                   <Input
                     id="twitter"
                     value={formData.socialLinks.twitter}
@@ -786,7 +815,7 @@ export default function YouTuberOnboarding() {
                         },
                       })
                     }
-                    placeholder="@yourusername"
+                    placeholder="your twitter link"
                   />
                 </div>
                 <div>

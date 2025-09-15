@@ -62,3 +62,46 @@ export const formatTimeAgo = (dateString) => {
   if (interval > 1) return Math.floor(interval) + "m ago";
   return "now";
 };
+
+export const getCategoryLabel = (category) => {
+  switch (category?.toUpperCase()) {
+    case "COLLABORATION":
+      return {
+        label: "Seeking Collab",
+        className: "bg-gradient-to-r from-yellow-400 to-orange-500 text-white",
+      };
+    case "OPPORTUNITY":
+      return {
+        label: "Job/Gig Post",
+        className: "bg-gradient-to-r from-blue-400 to-sky-400 text-white",
+      };
+    case "SHOWCASE":
+      return {
+        label: "Projects",
+        className: "bg-gradient-to-r from-emerald-400 to-teal-500 text-white",
+      };
+    default:
+      return {
+        label: "General Post",
+        className: "bg-gradient-to-r from-gray-300 to-gray-500 text-white",
+      };
+  }
+};
+export const getCompletionCateogryStyle = (category) => {
+  switch (category) {
+    case "Elite":
+      return {
+        className: "bg-gradient-to-r from-yellow-400 to-orange-500 text-white",
+      };
+    case "Rising":
+      return {
+        label: "Job/Gig Post",
+        className: "bg-gradient-to-r from-blue-400 to-sky-400 text-white",
+      };
+    case "Pro":
+      return {
+        label: "Projects",
+        className: "bg-gradient-to-r from-emerald-400 to-teal-500 text-white",
+      };
+  }
+};

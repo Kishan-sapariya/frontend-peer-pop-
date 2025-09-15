@@ -9,7 +9,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
-import { capitalizeInitials, formatDate } from "@/utils/formatDate";
+import {
+  capitalizeInitials,
+  formatDate,
+  getCompletionCateogryStyle,
+} from "@/utils/formatDate";
 import {
   MapPin,
   Calendar,
@@ -109,7 +113,6 @@ export default function InfluencerProfile() {
     stats: {
       totalFollowers:
         (parseInt(platforms.instagram?.followers) || 0) +
-        (parseInt(platforms.tiktok?.followers) || 0) +
         (parseInt(platforms.youtube?.subscribers) || 0) +
         (parseInt(platforms.twitter?.followers) || 0),
       avgEngagement: parseFloat(platforms.instagram?.engagement) || 0,
@@ -118,7 +121,6 @@ export default function InfluencerProfile() {
     },
     socialStats: {
       instagram: platforms.instagram || {},
-      tiktok: platforms.tiktok || {},
       youtube: platforms.youtube || {},
       twitter: platforms.twitter || {},
     },
@@ -177,6 +179,7 @@ export default function InfluencerProfile() {
   };
   const isOwnProfile = profile?.userProfile?.id === user?.id;
   const accountRestricted = profile?.restricted;
+  const style = getCompletionCateogryStyle(profile?.completion?.category);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -228,6 +231,9 @@ export default function InfluencerProfile() {
                       <h1 className="text-3xl font-bold text-gray-900">
                         {influencer.name}
                       </h1>
+                      <Badge className={style?.className}>
+                        {profile?.completion?.category}
+                      </Badge>
                       {influencer.verified && (
                         <CheckCircle className="w-6 h-6 text-blue-500" />
                       )}
@@ -289,6 +295,20 @@ export default function InfluencerProfile() {
                     )}
                   </div>
                 </div>
+                {isOwnProfile && profile?.completion?.percentage < 70 && (
+                  <div className="mt-4 p-3 bg-yellow-50 text-sm rounded-lg">
+                    🚀 Your profile is {profile.completion.percentage}%
+                    complete. Fill in the missing details to unlock <b>Pro</b>{" "}
+                    status.
+                  </div>
+                )}
+                {isOwnProfile && profile?.completion?.percentage < 100 && (
+                  <div className="mt-4 p-3 bg-yellow-50 text-sm rounded-lg">
+                    🚀 Your profile is {profile.completion.percentage}%
+                    complete. Fill in the missing details to unlock <b>Pro</b>{" "}
+                    status.
+                  </div>
+                )}
 
                 {/* Key Stats */}
                 {!accountRestricted && (
@@ -370,8 +390,13 @@ export default function InfluencerProfile() {
                 <CardContent>
                   <div className="space-y-4">
                     {/* Instagram */}
-                    {platform?.instagram?.followers && (
-                      <div className="flex items-center justify-between p-3 bg-gradient-to-r from-pink-50 to-purple-50 rounded-lg">
+                    {influencer?.socialStats?.instagram?.followers && (
+                      <a
+                        href={influencer.socialStats.instagram.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-between p-3 bg-gradient-to-r from-pink-50 to-purple-50 rounded-lg cursor-pointer"
+                      >
                         <div className="flex items-center space-x-3">
                           <Instagram className="w-6 h-6 text-pink-600" />
                           <div>
@@ -392,49 +417,26 @@ export default function InfluencerProfile() {
                             engagement
                           </div>
                         </div>
-                      </div>
-                    )}
-
-                    {/* TikTok */}
-                    {platform?.tiktok?.followers && (
-                      <div className="flex items-center justify-between p-3 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg">
-                        <div className="flex items-center space-x-3">
-                          <div className="w-6 h-6 bg-black rounded-full flex items-center justify-center">
-                            <span className="text-white text-xs font-bold">
-                              T
-                            </span>
-                          </div>
-                          <div>
-                            <div className="font-medium">TikTok</div>
-                            <div className="text-sm text-gray-600">
-                              {formatNumber(
-                                influencer.socialStats.tiktok.followers
-                              )}{" "}
-                              followers
-                            </div>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <div className="text-sm font-medium">
-                            {influencer.socialStats.tiktok.engagement}%
-                          </div>
-                          <div className="text-xs text-gray-500">
-                            engagement
-                          </div>
-                        </div>
-                      </div>
+                      </a>
                     )}
 
                     {/* YouTube */}
-                    {platform?.youtube?.subscribers && (
-                      <div className="flex items-center justify-between p-3 bg-gradient-to-r from-red-50 to-pink-50 rounded-lg">
+                    {influencer?.socialStats?.youtube
+                      ?.subscribers && (
+                      <a
+                        href={influencer.socialStats.youtube.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-between p-3 bg-gradient-to-r from-red-50 to-pink-50 rounded-lg cursor-pointer"
+                      >
                         <div className="flex items-center space-x-3">
                           <Youtube className="w-6 h-6 text-red-600" />
                           <div>
                             <div className="font-medium">YouTube</div>
                             <div className="text-sm text-gray-600">
                               {formatNumber(
-                                influencer.socialStats.youtube.subscribers
+                                influencer.socialStats.youtube
+                                  .subscribers
                               )}{" "}
                               subscribers
                             </div>
@@ -448,19 +450,25 @@ export default function InfluencerProfile() {
                           </div>
                           <div className="text-xs text-gray-500">avg views</div>
                         </div>
-                      </div>
+                      </a>
                     )}
 
                     {/* Twitter */}
-                    {platform?.twitter?.followers && (
-                      <div className="flex items-center justify-between p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg">
+                    {influencer?.socialStats?.twitter?.followers && (
+                      <a
+                        href={influencer.socialStats.twitter.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-between p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg cursor-pointer"
+                      >
                         <div className="flex items-center space-x-3">
                           <Twitter className="w-6 h-6 text-blue-600" />
                           <div>
                             <div className="font-medium">Twitter</div>
                             <div className="text-sm text-gray-600">
                               {formatNumber(
-                                influencer.socialStats.twitter.followers
+                                influencer.socialStats.twitter
+                                  .followers
                               )}{" "}
                               followers
                             </div>
@@ -468,13 +476,17 @@ export default function InfluencerProfile() {
                         </div>
                         <div className="text-right">
                           <div className="text-sm font-medium">
-                            {influencer.socialStats.twitter.engagement}%
+                            {
+                              influencer.socialStats.twitter
+                                .engagement
+                            }
+                            %
                           </div>
                           <div className="text-xs text-gray-500">
                             engagement
                           </div>
                         </div>
-                      </div>
+                      </a>
                     )}
                   </div>
                 </CardContent>
@@ -532,14 +544,7 @@ export default function InfluencerProfile() {
                           </span>
                         </div>
                       )}
-                      {influencer.rates.tiktokVideo !== "" && (
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">TikTok Video:</span>
-                          <span className="font-medium">
-                            {influencer.rates.tiktokVideo}
-                          </span>
-                        </div>
-                      )}
+
                       {influencer.rates.youtubeIntegration !== "" && (
                         <div className="flex justify-between">
                           <span className="text-gray-600">

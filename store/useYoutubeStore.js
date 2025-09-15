@@ -224,4 +224,26 @@ export const useYoutubeStore = create((set, get) => ({
       );
     }
   },
+  updateYoutubeProfile: async (profileData) => {
+  try {
+    const response = await axios.patch(
+      `${API_URL}/youtube/update-profile`,
+      { data: profileData }
+    );
+
+    const updatedProfile = response.data.profile;
+
+    set({ profile: updatedProfile });
+
+    toast.success("YouTube profile updated successfully!");
+    return updatedProfile;
+  } catch (error) {
+    console.error("Error updating YouTube profile:", error);
+    toast.error(
+      error?.response?.data?.message ||
+        "Failed to update YouTube profile. Please try again."
+    );
+  }
+},
+
 }));

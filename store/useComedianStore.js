@@ -19,7 +19,7 @@ export const useComedianStore = create((set, get) => ({
       toast.success("Comedian profile created successfully!");
       return createdProfile;
     } catch (error) {
-      console.error("Error creating YouTube profile:", error);
+      console.error("Error creating comedian profile:", error);
       toast.error(
         error?.response?.data?.message ||
           "Failed to create Comedian profile. Please try again."
@@ -202,6 +202,26 @@ export const useComedianStore = create((set, get) => ({
       toast.error(
         error?.response?.data?.message ||
           "Failed to delete Achievement. Please try again."
+      );
+    }
+  },
+  updateComedianProfile: async (profileData) => {
+    try {
+      const response = await axios.patch(`${API_URL}/comedian/update-profile`, {
+        data: profileData,
+      });
+
+      const updatedProfile = response.data.profile;
+
+      set({ profile: updatedProfile });
+
+      toast.success("comedian profile updated successfully!");
+      return updatedProfile;
+    } catch (error) {
+      console.error("Error updating comedian profile:", error);
+      toast.error(
+        error?.response?.data?.message ||
+          "Failed to update comedian profile. Please try again."
       );
     }
   },

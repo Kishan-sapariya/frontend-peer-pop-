@@ -347,10 +347,6 @@ export default function BusinessProfilePage() {
                       Available
                     </Badge>
                   </div>
-                  <Button className="w-full mt-4" size="sm">
-                    <Target className="w-4 h-4 mr-2" />
-                    Send Proposal
-                  </Button>
                 </div>
               </CardContent>
             </Card>

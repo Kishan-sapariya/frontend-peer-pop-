@@ -19,6 +19,9 @@ import {
   Telescope,
   Search,
   User2,
+  Home,
+  Users as PeersIcon,
+  HomeIcon,
 } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useRouter } from "next/navigation";
@@ -51,8 +54,8 @@ const Navbar = () => {
   );
 
   useEffect(() => {
-    getConnections(); // load initial state
-    listenForSocketEvents(); // keep it in sync with sockets
+    getConnections();
+    listenForSocketEvents();
   }, [getConnections, listenForSocketEvents]);
 
   const handleLogout = async () => {
@@ -65,6 +68,7 @@ const Navbar = () => {
       console.error("Logout error:", error);
     }
   };
+
   return (
     <header className="bg-white/90 backdrop-blur-lg border-b border-cyan-200 sticky top-0 z-50 shadow-lg">
       <div className="max-w-6xl mx-auto px-4 py-4">
@@ -80,17 +84,53 @@ const Navbar = () => {
             </Link>
             <NavbarSearch />
           </div>
+
           <div className="flex items-center gap-3">
-            <NotificationBell />
-            <div className="hidden md:flex items-center space-x-4">
-              {isAuthenticated ? (
+            {isAuthenticated ? (
+              <>
+                {/* Desktop and Tablet Icons */}
+                <div className="hidden md:flex items-center space-x-4">
+                  <Link href="/feed">
+                    <Button variant="ghost" className="relative">
+                      <HomeIcon className="h-5 w-5 mr-1" />
+                      <span className="hidden lg:inline">Home</span>
+                    </Button>
+                  </Link>
+
+                  <Link href="/connections">
+                    <Button variant="ghost" className="relative">
+                      <PeersIcon className="h-5 w-5 mr-1" />
+                      <span className="hidden lg:inline">Peers</span>
+                      {pendingCount > 0 && (
+                        <Badge className="absolute top-0 right-0 -mt-1 -mr-1 bg-red-500 text-white text-xs px-2 py-0 rounded-full">
+                          {pendingCount}
+                        </Badge>
+                      )}
+                    </Button>
+                  </Link>
+
+                  <Link href="/conversations">
+                    <Button variant="ghost" className="relative">
+                      <MessageCircle className="h-5 w-5 mr-1" />
+                      <span className="hidden lg:inline">Messages</span>
+                      {unreadConversations > 0 && (
+                        <span className="absolute top-0 right-0 -mt-1 -mr-1 bg-red-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
+                          {unreadConversations}
+                        </span>
+                      )}
+                    </Button>
+                  </Link>
+                </div>
+
+                {/* Notification bell and user popover for all screens */}
+                <NotificationBell />
                 <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
                   <PopoverTrigger asChild>
                     <Button
                       variant="ghost"
                       className="h-10 rounded-full flex items-center justify-center hover:bg-muted/50 transition-colors"
                     >
-                      <Avatar className="h-9 w-9 relative overflow-visible ">
+                      <Avatar className="h-9 w-9 relative overflow-visible">
                         {user?.image && (
                           <AvatarImage
                             className="object-cover rounded-full"
@@ -101,19 +141,16 @@ const Navbar = () => {
                         <AvatarFallback className="font-semibold text-white bg-gradient-to-r from-cyan-400 to-blue-400">
                           {getInitialLetter(user.username)}
                         </AvatarFallback>
-                        {(pendingCount > 0 || unreadConversations > 0) && (
-                          <span className="absolute top-0 right-0 block w-2 h-2 rounded-full bg-red-500 z-10 ring-2 ring-white"></span>
-                        )}
                       </Avatar>
 
-                      <span className="text-gray-700 font-medium ml-2 mr-1 hidden sm:inline-block">
+                      <span className="text-gray-700 font-medium ml-2 mr-1 hidden lg:inline-block">
                         {user.username}
                       </span>
 
                       {isPopoverOpen ? (
-                        <ChevronUp className="h-4 w-4 text-gray-700" />
+                        <ChevronUp className="h-4 w-4 text-gray-700 hidden lg:inline-block" />
                       ) : (
-                        <ChevronDown className="h-4 w-4 text-gray-700" />
+                        <ChevronDown className="h-4 w-4 text-gray-700 hidden lg:inline-block" />
                       )}
                     </Button>
                   </PopoverTrigger>
@@ -145,15 +182,7 @@ const Navbar = () => {
                           variant="ghost"
                           className="w-full justify-start text-gray-700 hover:bg-muted/60"
                         >
-                          <User className="mr-2 h-4 w-4" /> profile
-                        </Button>
-                      </Link>
-                      <Link href="/feed">
-                        <Button
-                          variant="ghost"
-                          className="w-full justify-start text-gray-700 hover:bg-muted/60"
-                        >
-                          <Telescope className="mr-2 h-4 w-4" /> Explore
+                          <User className="mr-2 h-4 w-4" /> Profile
                         </Button>
                       </Link>
                       {user?.isAdmin && (
@@ -166,33 +195,6 @@ const Navbar = () => {
                           </Button>
                         </Link>
                       )}
-                      <Link href="/connections">
-                        <Button
-                          variant="ghost"
-                          className="w-full justify-start text-gray-700 hover:bg-muted/60 relative"
-                        >
-                          <Plus className="mr-2 h-4 w-4" /> Peers
-                          {pendingCount > 0 && (
-                            <Badge className="ml-2 bg-red-500 text-white text-xs px-2 py-0 rounded-full">
-                              {pendingCount}
-                            </Badge>
-                          )}
-                        </Button>
-                      </Link>
-                      <Link href="/conversations">
-                        <Button
-                          variant="ghost"
-                          className="w-full justify-start text-gray-700 hover:bg-muted/60"
-                        >
-                          <MessageCircle className="mr-2 h-4 w-4" /> Messages
-                          {unreadConversations > 0 && (
-                            <span className=" bg-red-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
-                              {unreadConversations}
-                            </span>
-                          )}
-                        </Button>
-                      </Link>
-
                       {!user.creatorType && user.role !== "BUSINESS" && (
                         <Link href="/onboarding" passHref>
                           <Button
@@ -213,8 +215,10 @@ const Navbar = () => {
                     </div>
                   </PopoverContent>
                 </Popover>
-              ) : (
-                <>
+              </>
+            ) : (
+              <>
+                <div className="hidden md:flex items-center space-x-4">
                   <Link href="/feed">
                     <Button variant="ghost" className="hover:bg-cyan-50">
                       Explore
@@ -225,20 +229,21 @@ const Navbar = () => {
                       variant="outline"
                       className="border-orange-300 hover:bg-orange-50 text-orange-600 bg-transparent"
                     >
-                      <Building2 />
+                      <Building2 className="h-4 w-4 mr-2" />
                       Business Login
                     </Button>
                   </Link>
                   <Link href="/signup">
                     <Button className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white shadow-lg">
-                      <Users />
+                      <Users className="h-4 w-4 mr-2" />
                       Join as Creator
                     </Button>
                   </Link>
-                </>
-              )}
-            </div>
+                </div>
+              </>
+            )}
 
+            {/* Mobile Menu Button */}
             <div className="md:hidden">
               <Button
                 variant="ghost"
@@ -255,7 +260,7 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* Mobile menu  */}
+        {/* Mobile menu */}
         {isMenuOpen && (
           <div className="md:hidden bg-white border-t border-cyan-100">
             <div className="px-2 pt-2 pb-3 space-y-1">
@@ -287,9 +292,13 @@ const Navbar = () => {
                       </div>
                     )}
                     <Link
-                      href={`/profile/${
-                        user?.username
-                      }/${user?.creatorType?.toLowerCase()}`}
+                      href={
+                        user.role === "BUSINESS"
+                          ? `/profile/business/${user.username}`
+                          : `/profile/${
+                              user.username
+                            }/${user?.creatorType?.toLowerCase()}`
+                      }
                       onClick={() => setIsMenuOpen(false)}
                     >
                       <Button
@@ -325,7 +334,7 @@ const Navbar = () => {
                         variant="ghost"
                         className="w-full justify-start text-gray-700 hover:text-cyan-600"
                       >
-                        <User className="mr-2 h-4 w-4" />
+                        <PeersIcon className="mr-2 h-4 w-4" />
                         Peers
                         {pendingCount > 0 && (
                           <Badge className="ml-2 bg-red-500 text-white text-xs px-2 py-0 rounded-full">
@@ -341,7 +350,7 @@ const Navbar = () => {
                       >
                         <MessageCircle className="mr-2 h-4 w-4" />
                         Messages
-                        <span className=" bg-red-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
+                        <span className="bg-red-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
                           {unreadConversations}
                         </span>
                       </Button>
@@ -378,13 +387,13 @@ const Navbar = () => {
                         variant="outline"
                         className="w-full border-orange-300 hover:bg-orange-50 text-orange-600 bg-transparent flex items-center"
                       >
-                        <Building2 />
+                        <Building2 className="mr-2 h-4 w-4" />
                         Business Login
                       </Button>
                     </Link>
                     <Link href="/signup" onClick={() => setIsMenuOpen(false)}>
                       <Button className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white shadow-lg flex items-center">
-                        <Users />
+                        <Users className="mr-2 h-4 w-4" />
                         Join as Creator
                       </Button>
                     </Link>

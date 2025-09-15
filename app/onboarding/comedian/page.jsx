@@ -66,14 +66,11 @@ export default function ComedianOnboarding() {
       instagram: "",
       twitter: "",
       youtube: "",
-      tiktok: "",
-      facebook: "",
     },
     socialStats: {
       instagram: "",
       twitter: "",
       youtube: "",
-      tiktok: "",
     },
 
     // Business
@@ -203,7 +200,6 @@ export default function ComedianOnboarding() {
               instagram: parseInt(syncedFormData.socialStats.instagram) || 0,
               twitter: parseInt(syncedFormData.socialStats.twitter) || 0,
               youtube: parseInt(syncedFormData.socialStats.youtube) || 0,
-              tiktok: parseInt(syncedFormData.socialStats.tiktok) || 0,
             },
           },
           // Business
@@ -719,7 +715,7 @@ export default function ComedianOnboarding() {
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="instagram">Instagram Handle</Label>
+                  <Label htmlFor="instagram">Instagram link</Label>
                   <Input
                     id="instagram"
                     value={formData.socialLinks.instagram}
@@ -732,7 +728,7 @@ export default function ComedianOnboarding() {
                         },
                       })
                     }
-                    placeholder="@yourusername"
+                    placeholder="your instagram link"
                   />
                 </div>
                 <div>
@@ -758,44 +754,7 @@ export default function ComedianOnboarding() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="tiktok">TikTok Handle</Label>
-                  <Input
-                    id="tiktok"
-                    value={formData.socialLinks.tiktok}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        socialLinks: {
-                          ...formData.socialLinks,
-                          tiktok: e.target.value,
-                        },
-                      })
-                    }
-                    placeholder="@yourusername"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="tiktokFollowers">TikTok Followers</Label>
-                  <Input
-                    id="tiktokFollowers"
-                    value={formData.socialStats.tiktok}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        socialStats: {
-                          ...formData.socialStats,
-                          tiktok: e.target.value,
-                        },
-                      })
-                    }
-                    placeholder="e.g., 15000"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="youtube">YouTube Channel</Label>
+                  <Label htmlFor="youtube">YouTube Channel link</Label>
                   <Input
                     id="youtube"
                     value={formData.socialLinks.youtube}
@@ -808,7 +767,7 @@ export default function ComedianOnboarding() {
                         },
                       })
                     }
-                    placeholder="Channel name or URL"
+                    placeholder="Channel URL"
                   />
                 </div>
                 <div>
@@ -834,7 +793,7 @@ export default function ComedianOnboarding() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="twitter">Twitter/X Handle</Label>
+                  <Label htmlFor="twitter">Twitter/X link</Label>
                   <Input
                     id="twitter"
                     value={formData.socialLinks.twitter}
@@ -847,7 +806,7 @@ export default function ComedianOnboarding() {
                         },
                       })
                     }
-                    placeholder="@yourusername"
+                    placeholder="your twitter link"
                   />
                 </div>
                 <div>

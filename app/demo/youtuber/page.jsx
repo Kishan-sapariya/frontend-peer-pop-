@@ -63,7 +63,6 @@ export default function YouTuberProfile() {
       instagram: { followers: 850000, verified: true },
       twitter: { followers: 420000, verified: true },
       tiktok: { followers: 1200000, verified: false },
-      twitch: { followers: 180000, verified: false },
       linkedin: { followers: 95000, verified: false },
     },
 
@@ -431,22 +430,6 @@ export default function YouTuberProfile() {
                       <div className="text-xs text-gray-300">followers</div>
                     </div>
                   </div>
-
-                  <div className="flex items-center justify-between p-2 rounded-lg bg-purple-50">
-                    <div className="flex items-center space-x-2">
-                      <Mic className="w-4 h-4 text-purple-600" />
-                      <span className="text-sm font-medium">Twitch</span>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-sm font-semibold text-purple-600">
-                        {(creator.socialStats.twitch.followers / 1000).toFixed(
-                          0
-                        )}
-                        K
-                      </div>
-                      <div className="text-xs text-gray-500">followers</div>
-                    </div>
-                  </div>
                 </div>
 
                 <div className="mt-4 p-3 bg-gradient-to-r from-red-50 to-purple-50 rounded-lg">
@@ -456,8 +439,7 @@ export default function YouTuberProfile() {
                         creator.socialStats.youtube.subscribers +
                         creator.socialStats.instagram.followers +
                         creator.socialStats.twitter.followers +
-                        creator.socialStats.tiktok.followers +
-                        creator.socialStats.twitch.followers / 1000000
+                        creator.socialStats.tiktok.followers / 1000000
                       ).toFixed(1)}
                       M
                     </div>
@@ -540,11 +522,6 @@ export default function YouTuberProfile() {
                     </div>
                   </div>
                 </div>
-
-                <Button className="w-full mt-4" size="sm">
-                  <Target className="w-4 h-4 mr-2" />
-                  Send Proposal
-                </Button>
               </CardContent>
             </Card>
           </div>

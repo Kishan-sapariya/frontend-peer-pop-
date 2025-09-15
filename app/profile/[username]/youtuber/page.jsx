@@ -29,10 +29,15 @@ import {
   Trash2,
   Phone,
   Lock,
+  Linkedin,
 } from "lucide-react";
 import { useYoutubeStore } from "@/store/useYoutubeStore";
 import { useParams } from "next/navigation";
-import { capitalizeInitials, formatNumber } from "@/utils/formatDate";
+import {
+  capitalizeInitials,
+  formatNumber,
+  getCompletionCateogryStyle,
+} from "@/utils/formatDate";
 import RecentContent from "@/component/youtube profile/RecentContent";
 import UploadImageModal from "../../../../component/profile/UploadImageModal";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -150,26 +155,22 @@ export default function YouTuberProfile() {
 
     socialStats: {
       youtube: {
+        link: socialMedia.links?.youtube,
         subscribers: statistics.subscriberCount || 0,
         verified: channelInfo.verified || false,
       },
       instagram: {
+        link: socialMedia.links?.instagram,
         followers: socialStats.instagram || 0,
         verified: false,
       },
       twitter: {
+        link: socialMedia.links?.twitter,
         followers: socialStats.twitter || 0,
         verified: false,
       },
-      tiktok: {
-        followers: socialStats.tiktok || 0,
-        verified: false,
-      },
-      twitch: {
-        followers: socialStats.twitch || 0,
-        verified: false,
-      },
       linkedin: {
+        link: socialMedia.links?.linkedin,
         followers: socialStats.linkedin || 0,
         verified: false,
       },
@@ -221,7 +222,9 @@ export default function YouTuberProfile() {
       ? primary
       : fallback;
   };
+
   const accountRestricted = profile?.restricted;
+  const style = getCompletionCateogryStyle(profile?.completion?.category);
 
   const isOwnProfile = profile?.userProfile?.id === user?.id;
   return (
@@ -271,8 +274,11 @@ export default function YouTuberProfile() {
                   <div className="mb-4 lg:mb-0">
                     <div className="flex items-center space-x-2 mb-2">
                       <h1 className="text-4xl font-bold text-gray-900">
-                        {capitalizeInitials(profile?.userProfile?.username)}
+                        {capitalizeInitials(profile?.userProfile?.username)}{" "}
                       </h1>
+                      <Badge className={style?.className}>
+                        {profile?.completion?.category}
+                      </Badge>
                       {stats && Object.keys(stats).length > 0 && (
                         <Badge className="bg-red-500">YouTube Verified</Badge>
                       )}
@@ -321,6 +327,20 @@ export default function YouTuberProfile() {
                             </Badge>
                           ))}
                         </div>
+                      </div>
+                    )}
+                    {profile?.completion?.percentage < 100 && isOwnProfile && (
+                      <div className="mt-4 p-3 bg-yellow-50 text-sm rounded-lg">
+                        🚀 Your profile is {profile.completion.percentage}%
+                        complete. Fill in the missing details to unlock{" "}
+                        <b>Pro</b> status.
+                      </div>
+                    )}
+                    {profile?.completion?.percentage < 70 && (
+                      <div className="mt-4 p-3 bg-yellow-50 text-sm rounded-lg">
+                        🚀 Your profile is {profile.completion.percentage}%
+                        complete. Fill in the missing details to unlock{" "}
+                        <b>Pro</b> status.
                       </div>
                     )}
                   </div>
@@ -460,7 +480,12 @@ export default function YouTuberProfile() {
                   <div className="space-y-4">
                     {/* Instagram */}
                     {creator.socialStats.instagram.followers > 0 && (
-                      <div className="flex items-center justify-between p-3 bg-gradient-to-r from-pink-50 to-purple-50 rounded-lg">
+                      <a
+                        href={creator.socialStats.instagram.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-between p-3 bg-gradient-to-r from-pink-50 to-purple-50 rounded-lg cursor-pointer"
+                      >
                         <div className="flex items-center space-x-3">
                           <Instagram className="w-6 h-6 text-pink-600" />
                           <div>
@@ -473,34 +498,17 @@ export default function YouTuberProfile() {
                             </div>
                           </div>
                         </div>
-                      </div>
-                    )}
-
-                    {/* TikTok */}
-                    {creator.socialStats.tiktok.followers > 0 && (
-                      <div className="flex items-center justify-between p-3 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg">
-                        <div className="flex items-center space-x-3">
-                          <div className="w-6 h-6 bg-black rounded-full flex items-center justify-center">
-                            <span className="text-white text-xs font-bold">
-                              T
-                            </span>
-                          </div>
-                          <div>
-                            <div className="font-medium">TikTok</div>
-                            <div className="text-sm text-gray-600">
-                              {formatNumber(
-                                creator.socialStats.tiktok.followers
-                              )}{" "}
-                              followers
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+                      </a>
                     )}
 
                     {/* YouTube */}
                     {creator.socialStats.youtube.subscribers > 0 && (
-                      <div className="flex items-center justify-between p-3 bg-gradient-to-r from-red-50 to-pink-50 rounded-lg">
+                      <a
+                        href={creator.socialStats.youtube.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-between p-3 bg-gradient-to-r from-red-50 to-pink-50 rounded-lg cursor-pointer"
+                      >
                         <div className="flex items-center space-x-3">
                           <Youtube className="w-6 h-6 text-red-600" />
                           <div>
@@ -513,12 +521,40 @@ export default function YouTuberProfile() {
                             </div>
                           </div>
                         </div>
-                      </div>
+                      </a>
+                    )}
+
+                    {/* LinkedIn */}
+                    {creator.socialStats.linkedin.followers > 0 && (
+                      <a
+                        href={creator.socialStats.linkedin.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-between p-3 bg-gradient-to-r from-sky-50 to-blue-50 rounded-lg cursor-pointer"
+                      >
+                        <div className="flex items-center space-x-3">
+                          <Linkedin className="w-6 h-6 text-sky-600" />
+                          <div>
+                            <div className="font-medium">LinkedIn</div>
+                            <div className="text-sm text-gray-600">
+                              {formatNumber(
+                                creator.socialStats.linkedin.followers
+                              )}{" "}
+                              followers
+                            </div>
+                          </div>
+                        </div>
+                      </a>
                     )}
 
                     {/* Twitter */}
                     {creator.socialStats.twitter.followers > 0 && (
-                      <div className="flex items-center justify-between p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg">
+                      <a
+                        href={creator.socialStats.twitter.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-between p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg cursor-pointer"
+                      >
                         <div className="flex items-center space-x-3">
                           <Twitter className="w-6 h-6 text-blue-600" />
                           <div>
@@ -531,7 +567,7 @@ export default function YouTuberProfile() {
                             </div>
                           </div>
                         </div>
-                      </div>
+                      </a>
                     )}
                   </div>
                 </CardContent>
@@ -647,10 +683,6 @@ export default function YouTuberProfile() {
                       </div>
                     </div>
                   )}
-                  <Button className="w-full mt-4" size="sm">
-                    <Target className="w-4 h-4 mr-2" />
-                    Send Proposal
-                  </Button>
                 </CardContent>
               </Card>
             </div>

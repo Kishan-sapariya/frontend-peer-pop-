@@ -132,7 +132,6 @@ export const useConnectionStore = create((set, get) => ({
     ).length;
   },
 
-  // 🔥 NEW: Listen for socket events
   listenForSocketEvents: () => {
     if (socket) return; // don’t re-initialize
 
