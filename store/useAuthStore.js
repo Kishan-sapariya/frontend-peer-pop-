@@ -20,15 +20,19 @@ export const useAuthStore = create((set, get) => ({
 
   signup: async (user) => {
     try {
-      const res = await axios.post(`${API_URL}/auth/signup`, {
-        username: user.username,
-        email: user.email,
-        password: user.password,
-        role: user.role,
-        companyName: user.companyName || null,
-        industry: user.industry || null,
-        companySize: user.companySize || null,
-      });
+      const res = await axios.post(
+        `${API_URL}/auth/signup`,
+        {
+          username: user.username,
+          email: user.email,
+          password: user.password,
+          role: user.role,
+          companyName: user.companyName || null,
+          industry: user.industry || null,
+          companySize: user.companySize || null,
+        },
+        { withCredentials: true }
+      );
       const parsedRes = res.data;
       if (parsedRes?.success) {
         toast.success(parsedRes.message);
@@ -48,7 +52,9 @@ export const useAuthStore = create((set, get) => ({
 
   login: async (user) => {
     try {
-      const res = await axios.post(`${API_URL}/auth/login`, user);
+      const res = await axios.post(`${API_URL}/auth/login`, user, {
+        withCredentials: true,
+      });
       const parsedRes = res.data;
 
       if (parsedRes.success) {
@@ -80,7 +86,9 @@ export const useAuthStore = create((set, get) => ({
 
   verifyOtp: async (user) => {
     try {
-      const res = await axios.post(`${API_URL}/auth/verify-otp`, user);
+      const res = await axios.post(`${API_URL}/auth/verify-otp`, user, {
+        withCredentials: true,
+      });
       const parsedRes = res.data;
       if (parsedRes.success) {
         set({ isAuthenticated: true, user: parsedRes.user, signedUpEmail: "" });
