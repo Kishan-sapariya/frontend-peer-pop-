@@ -57,25 +57,26 @@ export const useAuthStore = create((set, get) => ({
       });
       const parsedRes = res.data;
 
-      if (parsedRes.success) {
-        const userRes = await axios.get(`${API_URL}/auth/me`);
-        const fullUser = userRes.data.user;
-
-        set({ isAuthenticated: true, user: fullUser });
+      if (parsedRes.success && parsedRes.user) {
+        // Use the user data directly from login response
+        set({ isAuthenticated: true, user: parsedRes.user });
 
         // Connect socket if not already connected
         if (!socket.connected) {
           socket.connect();
         }
-        socket.emit("join", fullUser.id);
+        socket.emit("join", parsedRes.user.id);
 
         toast.success(parsedRes.message);
       } else {
-        toast.error(parsedRes.message);
+        toast.error(
+          parsedRes.message || "Login failed - no user data received"
+        );
       }
 
       return parsedRes;
     } catch (error) {
+      console.error("Login error:", error);
       toast.error(error?.response?.data?.message || "Login failed");
       return {
         success: false,
@@ -144,7 +145,11 @@ export const useAuthStore = create((set, get) => ({
 
       return parsedRes;
     } catch (error) {
-      set({ isAuthenticated: false, user: null });
+      console.error("getCurrentUser error:", error);
+      // Only clear auth state if it's a 401/403 error (unauthorized)
+      if (error?.response?.status === 401 || error?.response?.status === 403) {
+        set({ isAuthenticated: false, user: null });
+      }
       return {
         success: false,
         message:

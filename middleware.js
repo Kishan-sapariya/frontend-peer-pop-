@@ -2,13 +2,11 @@ import { NextResponse } from "next/server";
 
 export function middleware(request) {
   const authToken = request.cookies.get("token")?.value;
-  console.log("authToken",authToken)
 
   const { pathname } = request.nextUrl;
 
   const unauthenticatedPaths = ["/login", "/signup", "/verify-otp"];
   
-  // Define all protected routes that require authentication
   const protectedRoutes = [
     "/profile",
     "/onboarding", 

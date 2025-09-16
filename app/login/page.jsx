@@ -24,12 +24,18 @@ const LoginPage = () => {
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    if (isAuthenticated) {
-      router.push(`/feed`);
+    if (isAuthenticated && user) {
+      console.log("Redirecting to feed, user:", user);
+      // Add a small delay to ensure state is properly set
+      const timer = setTimeout(() => {
+        router.push(`/feed`);
+      }, 100);
+      
+      return () => clearTimeout(timer);
     }
-  }, [isAuthenticated, router]);
+  }, [isAuthenticated, user, router]);
 
-  if (isAuthenticated) {
+  if (isAuthenticated && user) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-cyan-50 via-blue-50 to-white">
         <LoadingSpinner size={40} text="Redirecting..." />
@@ -70,8 +76,15 @@ const LoginPage = () => {
         email: formData.email,
         password: formData.password,
       });
+      console.log("Login result:", result);
+      
+      // If login was successful, the useEffect will handle the redirect
+      if (result.success) {
+        console.log("Login successful, waiting for redirect...");
+      }
     } catch (error) {
-      console.log(error?.message || "Login failed. Please try again.");
+      console.error("Login error:", error);
+      setErrors({ general: error?.message || "Login failed. Please try again." });
     } finally {
       setIsLoading(false);
     }
