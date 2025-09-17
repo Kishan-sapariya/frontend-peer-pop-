@@ -10,7 +10,7 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { GoogleIcon } from "@/component/GoogleIcon";
 
 const LoginPage = () => {
-  const { login, isAuthenticated, user, isInitialized } = useAuthStore();
+  const { login } = useAuthStore();
   const router = useRouter();
 
   // Form state
@@ -54,7 +54,11 @@ const LoginPage = () => {
         password: formData.password,
       });
 
-      if (!result.success) {
+      if (result.success) {
+        // Redirect only on successful login
+        console.log("Login successful! Redirecting to /feed...");
+        router.push("/feed");
+      } else {
         setErrors({ general: result.message || "Login failed" });
       }
     } catch (error) {
@@ -68,6 +72,7 @@ const LoginPage = () => {
   };
 
   useEffect(() => {
+    const { isAuthenticated, user, isInitialized } = useAuthStore.getState();
     console.log("  isAuthenticated:", isAuthenticated);
     console.log("  isInitialized:", isInitialized);
     console.log("  user:", user);
@@ -76,7 +81,7 @@ const LoginPage = () => {
       console.log("⏩ Redirecting to /feed...");
       router.push("/feed");
     }
-  }, [isAuthenticated, user, isInitialized, router]);
+  }, [router]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-blue-50 to-white flex items-center justify-center p-4">
