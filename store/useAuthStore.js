@@ -62,11 +62,13 @@ export const useAuthStore = create((set, get) => ({
         set({
           isAuthenticated: true,
           user: parsedRes.user,
+          isInitialized: true,
         });
 
-        await get().getCurrentUser();
-
-        set({ isInitialized: true });
+        if (!socket.connected && parsedRes.user) {
+          socket.connect();
+          socket.emit("join", parsedRes.user.id);
+        }
 
         toast.success(parsedRes.message || "Login successful");
       } else {
@@ -170,7 +172,7 @@ export const useAuthStore = create((set, get) => ({
     const { isInitialized } = get();
     if (!isInitialized) {
       try {
-        await get().getCurrentUser();
+        await get().getCurrentUser(); 
       } finally {
         set({ isInitialized: true });
       }
