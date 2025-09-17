@@ -17,6 +17,7 @@ export const useAuthStore = create((set, get) => ({
   query: "",
   creatorType: undefined,
   location: undefined,
+  isInitialized: false,
 
   signup: async (user) => {
     try {
@@ -71,6 +72,11 @@ export const useAuthStore = create((set, get) => ({
 
       if (parsedRes.success) {
         console.log("✅ Login successful for:", user.email);
+        // Update authentication state immediately after successful login
+        set({ 
+          isAuthenticated: true, 
+          user: parsedRes.user 
+        });
       } else {
         console.warn("⚠️ Login failed:", parsedRes.message);
       }
@@ -129,7 +135,11 @@ export const useAuthStore = create((set, get) => ({
       const parsedRes = res.data;
 
       if (parsedRes.user) {
-        set({ isAuthenticated: true, user: parsedRes.user });
+        set({ 
+          isAuthenticated: true, 
+          user: parsedRes.user,
+          isInitialized: true 
+        });
 
         // Connect socket if not already connected
         if (!socket.connected) {
@@ -137,20 +147,36 @@ export const useAuthStore = create((set, get) => ({
         }
         socket.emit("join", parsedRes.user.id);
       } else {
-        set({ isAuthenticated: false, user: null });
+        set({ 
+          isAuthenticated: false, 
+          user: null,
+          isInitialized: true 
+        });
       }
 
       return parsedRes;
     } catch (error) {
       console.error("getCurrentUser error:", error);
       if (error?.response?.status === 401 || error?.response?.status === 403) {
-        set({ isAuthenticated: false, user: null });
+        set({ 
+          isAuthenticated: false, 
+          user: null,
+          isInitialized: true 
+        });
       }
       return {
         success: false,
         message:
           error?.response?.data?.message || "Failed to fetch current user",
       };
+    }
+  },
+
+  // Initialize auth state on app start
+  initializeAuth: async () => {
+    const { isInitialized } = get();
+    if (!isInitialized) {
+      await get().getCurrentUser();
     }
   },
 

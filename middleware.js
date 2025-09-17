@@ -11,6 +11,7 @@ export function middleware(request) {
     "/profile",
     "/onboarding",
     "/admin",
+    "/feed",
     "/connections",
     "/conversations",
     "/notification",

@@ -36,11 +36,14 @@ const LoginPage = () => {
       }));
     }
   };
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      console.log("⏳ User is authenticated, redirecting to feed...");
+      router.push("/feed");
+    }
+  }, [isAuthenticated, user, router]);
 
   if (isAuthenticated && user) {
-    console.log("⏳ User is authenticated, showing loader...");
-    console.log("🍪 Current cookies:", document.cookie);
-
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-cyan-50 via-blue-50 to-white">
         <LoadingSpinner size={40} text="Redirecting..." />
@@ -73,7 +76,7 @@ const LoginPage = () => {
 
       if (result.success) {
         console.log("✅ Login successful, redirecting to feed...");
-        router.push(result.redirect || "/feed"); 
+        router.push(result.redirect || "/feed");
       } else {
         setErrors({ general: result.message || "Login failed" });
       }
