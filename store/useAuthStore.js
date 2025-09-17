@@ -52,23 +52,36 @@ export const useAuthStore = create((set, get) => ({
 
   login: async (user) => {
     try {
+      console.log("📤 Sending login request:", user.email);
+
       const res = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
-        credentials: "include", 
+        credentials: "include", // important for cookies
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(user),
       });
-      if (res.redirected) {
-        window.location.href = res.url; 
-        return { success: true }; 
-      }
+
+      console.log("📥 Login response status:", res.status);
+
+      // Check cookies in the browser after response
+      console.log("🍪 Browser cookies:", document.cookie);
+
       const parsedRes = await res.json();
+      console.log("📄 Parsed login response:", parsedRes);
+
+      if (parsedRes.success) {
+        console.log("✅ Login successful for:", user.email);
+      } else {
+        console.warn("⚠️ Login failed:", parsedRes.message);
+      }
+
       return parsedRes;
     } catch (error) {
-      console.error("Login error:", error);
+      console.error("🔥 Login error:", error);
       return { success: false, message: "Login failed" };
     }
   },
+
   verifyOtp: async (user) => {
     try {
       const res = await axios.post(`${API_URL}/auth/verify-otp`, user, {

@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
 
 export function middleware(request) {
-  const { pathname } = request.nextUrl;
   const authToken = request.cookies.get("token")?.value;
-
   console.log("Auth token from cookie:", authToken, "Path:", pathname);
+
+  const { pathname } = request.nextUrl;
 
   const unauthenticatedPaths = ["/login", "/signup", "/verify-otp"];
 
@@ -24,6 +24,8 @@ export function middleware(request) {
       return NextResponse.redirect(new URL("/", request.url));
     }
   } else {
+    // If the user is NOT authenticated (no token cookie)
+    // Redirect to /login if accessing any protected routes
     const isProtectedRoute = protectedRoutes.some((route) =>
       pathname.startsWith(route)
     );

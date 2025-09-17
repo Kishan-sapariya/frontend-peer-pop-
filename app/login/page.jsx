@@ -23,14 +23,6 @@ const LoginPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
 
-  if (isAuthenticated && user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-cyan-50 via-blue-50 to-white">
-        <LoadingSpinner size={40} text="Redirecting..." />
-      </div>
-    );
-  }
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -45,6 +37,17 @@ const LoginPage = () => {
     }
   };
 
+  if (isAuthenticated && user) {
+    console.log("⏳ User is authenticated, showing loader...");
+    console.log("🍪 Current cookies:", document.cookie);
+
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-cyan-50 via-blue-50 to-white">
+        <LoadingSpinner size={40} text="Redirecting..." />
+      </div>
+    );
+  }
+
   const validateForm = () => {
     const newErrors = {};
     if (!formData.email.trim()) newErrors.email = "Email is required";
@@ -58,15 +61,37 @@ const LoginPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
+
     setIsLoading(true);
+    console.log("📝 Submitting login form:", formData.email);
+
     try {
       const result = await login({
         email: formData.email,
         password: formData.password,
       });
 
+      console.log("📄 Login result:", result);
+
+      // Wait for token cookie to appear before redirecting
+      if (result.success) {
+        const waitForCookie = (retries = 20) => {
+          if (document.cookie.includes("token=")) {
+            console.log("🍪 Token cookie found, redirecting...");
+            router.push(result.redirect || "/feed");
+          } else if (retries > 0) {
+            console.log("⌛ Waiting for token cookie...");
+            setTimeout(() => waitForCookie(retries - 1), 100);
+          } else {
+            console.warn("⚠️ Token cookie not found, reload may be needed.");
+          }
+        };
+        waitForCookie();
+      } else {
+        setErrors({ general: result.message || "Login failed" });
+      }
     } catch (error) {
-      console.error("Login error:", error);
+      console.error("🔥 Login error:", error);
       setErrors({
         general: error?.message || "Login failed. Please try again.",
       });
