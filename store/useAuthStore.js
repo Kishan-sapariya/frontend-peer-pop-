@@ -52,39 +52,23 @@ export const useAuthStore = create((set, get) => ({
 
   login: async (user) => {
     try {
-      const res = await axios.post(`${API_URL}/auth/login`, user, {
-        withCredentials: true,
+      const res = await fetch(`${API_URL}/auth/login`, {
+        method: "POST",
+        credentials: "include", 
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(user),
       });
-      const parsedRes = res.data;
-
-      if (parsedRes.success && parsedRes.user) {
-        // Use the user data directly from login response
-        set({ isAuthenticated: true, user: parsedRes.user });
-
-        // Connect socket if not already connected
-        if (!socket.connected) {
-          socket.connect();
-        }
-        socket.emit("join", parsedRes.user.id);
-
-        toast.success(parsedRes.message);
-      } else {
-        toast.error(
-          parsedRes.message || "Login failed - no user data received"
-        );
+      if (res.redirected) {
+        window.location.href = res.url; 
+        return { success: true }; 
       }
-
+      const parsedRes = await res.json();
       return parsedRes;
     } catch (error) {
       console.error("Login error:", error);
-      toast.error(error?.response?.data?.message || "Login failed");
-      return {
-        success: false,
-        message: error?.response?.data?.message || "Login failed",
-      };
+      return { success: false, message: "Login failed" };
     }
   },
-
   verifyOtp: async (user) => {
     try {
       const res = await axios.post(`${API_URL}/auth/verify-otp`, user, {

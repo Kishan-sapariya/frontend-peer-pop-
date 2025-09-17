@@ -23,20 +23,6 @@ const LoginPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
 
-  useEffect(() => {
-    if (isAuthenticated && user) {
-      const checkCookieAndRedirect = () => {
-        const tokenExists = document.cookie.includes("token=");
-        if (tokenExists) {
-          router.push("/feed");
-        } else {
-          setTimeout(checkCookieAndRedirect, 100);
-        }
-      };
-      checkCookieAndRedirect();
-    }
-  }, [isAuthenticated, user, router]);
-
   if (isAuthenticated && user) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-cyan-50 via-blue-50 to-white">
