@@ -13,7 +13,6 @@ export function middleware(request) {
     "/admin",
     "/connections",
     "/conversations",
-    "/feed",
     "/notification",
     "/search",
   ];
