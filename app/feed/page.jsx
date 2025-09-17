@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -15,8 +15,10 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export default function HomeFeed() {
+    const { isAuthenticated, user, isInitialized } = useAuthStore();
   const [activeNav, setActiveNav] = useState("home");
   const [activeFilter, setActiveFilter] = useState("all");
 
@@ -146,6 +148,13 @@ export default function HomeFeed() {
     { tag: "#DigitalArt", posts: "423", trend: "stable", category: "Art" },
     { tag: "#PodcastProduction", posts: "312", trend: "up", category: "Audio" },
   ];
+
+   useEffect(() => {
+    console.log("from feed page")
+      console.log("  isAuthenticated:", isAuthenticated);
+      console.log("  isInitialized:", isInitialized);
+      console.log("  user:", user);
+    }, [isAuthenticated, user, isInitialized, router]);
 
   const activeFilterCount = getActiveFilterCount();
   return (
