@@ -1,10 +1,9 @@
 import { NextResponse } from "next/server";
 
 export function middleware(request) {
+  const { pathname } = request.nextUrl;
   const authToken = request.cookies.get("token")?.value;
   console.log("Auth token from cookie:", authToken, "Path:", pathname);
-
-  const { pathname } = request.nextUrl;
 
   const unauthenticatedPaths = ["/login", "/signup", "/verify-otp"];
 
