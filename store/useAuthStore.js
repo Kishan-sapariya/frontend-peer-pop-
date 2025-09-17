@@ -53,41 +53,23 @@ export const useAuthStore = create((set, get) => ({
 
   login: async (user) => {
     try {
-      console.log("📤 Sending login request:", user.email);
-
-      const res = await fetch(`${API_URL}/auth/login`, {
-        method: "POST",
-        credentials: "include", // important for cookies
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(user),
+      const res = await axios.post(`${API_URL}/auth/login`, user, {
+        withCredentials: true,
       });
-
-      console.log("📥 Login response status:", res.status);
-
-      // Check cookies in the browser after response
-      console.log("🍪 Browser cookies:", document.cookie);
-
-      const parsedRes = await res.json();
-      console.log("📄 Parsed login response:", parsedRes);
-
+      const parsedRes = res.data;
       if (parsedRes.success) {
-        console.log("✅ Login successful for:", user.email);
-        // Update authentication state immediately after successful login
-        set({ 
-          isAuthenticated: true, 
-          user: parsedRes.user 
+        set({
+          isAuthenticated: true,
+          user: parsedRes.user,
+          isInitialized: true,
         });
-      } else {
-        console.warn("⚠️ Login failed:", parsedRes.message);
       }
-
       return parsedRes;
     } catch (error) {
-      console.error("🔥 Login error:", error);
+      console.error("Login error:", error);
       return { success: false, message: "Login failed" };
     }
   },
-
   verifyOtp: async (user) => {
     try {
       const res = await axios.post(`${API_URL}/auth/verify-otp`, user, {
@@ -131,26 +113,27 @@ export const useAuthStore = create((set, get) => ({
 
   getCurrentUser: async () => {
     try {
-      const res = await axios.get(`${API_URL}/auth/me`);
+      const res = await axios.get(`${API_URL}/auth/me`, {
+        withCredentials: true,
+      });
       const parsedRes = res.data;
 
       if (parsedRes.user) {
-        set({ 
-          isAuthenticated: true, 
+        set({
+          isAuthenticated: true,
           user: parsedRes.user,
-          isInitialized: true 
+          isInitialized: true,
         });
 
-        // Connect socket if not already connected
-        if (!socket.connected) {
+        if (!socket.connected && parsedRes.user) {
           socket.connect();
+          socket.emit("join", parsedRes.user.id);
         }
-        socket.emit("join", parsedRes.user.id);
       } else {
-        set({ 
-          isAuthenticated: false, 
+        set({
+          isAuthenticated: false,
           user: null,
-          isInitialized: true 
+          isInitialized: true,
         });
       }
 
@@ -158,10 +141,10 @@ export const useAuthStore = create((set, get) => ({
     } catch (error) {
       console.error("getCurrentUser error:", error);
       if (error?.response?.status === 401 || error?.response?.status === 403) {
-        set({ 
-          isAuthenticated: false, 
+        set({
+          isAuthenticated: false,
           user: null,
-          isInitialized: true 
+          isInitialized: true,
         });
       }
       return {
@@ -172,11 +155,14 @@ export const useAuthStore = create((set, get) => ({
     }
   },
 
-  // Initialize auth state on app start
   initializeAuth: async () => {
     const { isInitialized } = get();
     if (!isInitialized) {
-      await get().getCurrentUser();
+      try {
+        await get().getCurrentUser();
+      } finally {
+        set({ isInitialized: true });
+      }
     }
   },
 

@@ -11,10 +11,10 @@ import LoadingSpinner from "@/component/LoadingSpinner";
 import { GoogleIcon } from "@/component/GoogleIcon";
 
 const LoginPage = () => {
-  const { login, isAuthenticated, user } = useAuthStore();
+  const { login, isAuthenticated, user, isInitialized } = useAuthStore();
   const router = useRouter();
 
-  // Declare all useState hooks at the top level
+  // Form state
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -23,34 +23,17 @@ const LoginPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
 
+  // Input change handler
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
+
     if (errors[name]) {
-      setErrors((prev) => ({
-        ...prev,
-        [name]: "",
-      }));
+      setErrors((prev) => ({ ...prev, [name]: "" }));
     }
   };
-  useEffect(() => {
-    if (isAuthenticated && user) {
-      console.log("⏳ User is authenticated, redirecting to feed...");
-      router.push("/feed");
-    }
-  }, [isAuthenticated, user, router]);
 
-  if (isAuthenticated && user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-cyan-50 via-blue-50 to-white">
-        <LoadingSpinner size={40} text="Redirecting..." />
-      </div>
-    );
-  }
-
+  // Form validation
   const validateForm = () => {
     const newErrors = {};
     if (!formData.email.trim()) newErrors.email = "Email is required";
@@ -61,6 +44,7 @@ const LoginPage = () => {
     return Object.keys(newErrors).length === 0;
   };
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
@@ -74,12 +58,10 @@ const LoginPage = () => {
 
       console.log("📄 Login result:", result);
 
-      if (result.success) {
-        console.log("✅ Login successful, redirecting to feed...");
-        router.push(result.redirect || "/feed");
-      } else {
+      if (!result.success) {
         setErrors({ general: result.message || "Login failed" });
       }
+      // Don't call router.push() here; useEffect handles redirect
     } catch (error) {
       console.error("🔥 Login error:", error);
       setErrors({
@@ -89,6 +71,19 @@ const LoginPage = () => {
       setIsLoading(false);
     }
   };
+
+  // Redirect after successful login
+  useEffect(() => {
+    console.log("Auth state changed:", {
+      isAuthenticated,
+      user,
+      isInitialized,
+    });
+    if (isInitialized && isAuthenticated && user) {
+      console.log("⏳ User is authenticated, redirecting to feed...");
+      router.push("/feed");
+    }
+  }, [isAuthenticated, user, isInitialized, router]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-blue-50 to-white flex items-center justify-center p-4">
