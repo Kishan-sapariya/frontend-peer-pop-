@@ -146,7 +146,6 @@ export const useAuthStore = create((set, get) => ({
       return parsedRes;
     } catch (error) {
       console.error("getCurrentUser error:", error);
-      // Only clear auth state if it's a 401/403 error (unauthorized)
       if (error?.response?.status === 401 || error?.response?.status === 403) {
         set({ isAuthenticated: false, user: null });
       }

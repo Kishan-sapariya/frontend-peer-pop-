@@ -25,13 +25,15 @@ const LoginPage = () => {
 
   useEffect(() => {
     if (isAuthenticated && user) {
-      console.log("Redirecting to feed, user:", user);
-      // Add a small delay to ensure state is properly set
-      const timer = setTimeout(() => {
-        router.push(`/feed`);
-      }, 100);
-      
-      return () => clearTimeout(timer);
+      const checkCookieAndRedirect = () => {
+        const tokenExists = document.cookie.includes("token=");
+        if (tokenExists) {
+          router.push("/feed");
+        } else {
+          setTimeout(checkCookieAndRedirect, 100);
+        }
+      };
+      checkCookieAndRedirect();
     }
   }, [isAuthenticated, user, router]);
 
@@ -76,15 +78,12 @@ const LoginPage = () => {
         email: formData.email,
         password: formData.password,
       });
-      console.log("Login result:", result);
-      
-      // If login was successful, the useEffect will handle the redirect
-      if (result.success) {
-        console.log("Login successful, waiting for redirect...");
-      }
+
     } catch (error) {
       console.error("Login error:", error);
-      setErrors({ general: error?.message || "Login failed. Please try again." });
+      setErrors({
+        general: error?.message || "Login failed. Please try again.",
+      });
     } finally {
       setIsLoading(false);
     }
