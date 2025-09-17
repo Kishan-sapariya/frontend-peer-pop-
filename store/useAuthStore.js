@@ -62,10 +62,11 @@ export const useAuthStore = create((set, get) => ({
         set({
           isAuthenticated: true,
           user: parsedRes.user,
-          isInitialized: true,
         });
 
         await get().getCurrentUser();
+
+        set({ isInitialized: true });
 
         toast.success(parsedRes.message || "Login successful");
       } else {

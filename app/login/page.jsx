@@ -68,7 +68,13 @@ const LoginPage = () => {
   };
 
   useEffect(() => {
+    console.log("🔍 Debug auth state in useEffect:");
+    console.log("  isAuthenticated:", isAuthenticated);
+    console.log("  isInitialized:", isInitialized);
+    console.log("  user:", user);
+
     if (isInitialized && isAuthenticated && user) {
+      console.log("⏩ Redirecting to /feed...");
       router.push("/feed");
     }
   }, [isAuthenticated, user, isInitialized, router]);
