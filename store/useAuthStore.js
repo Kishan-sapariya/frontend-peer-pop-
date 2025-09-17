@@ -57,57 +57,26 @@ export const useAuthStore = create((set, get) => ({
         withCredentials: true,
       });
       const parsedRes = res.data;
+
       if (parsedRes.success) {
         set({
           isAuthenticated: true,
           user: parsedRes.user,
           isInitialized: true,
         });
+
+        await get().getCurrentUser();
+
+        toast.success(parsedRes.message || "Login successful");
+      } else {
+        toast.error(parsedRes.message || "Login failed");
       }
+
       return parsedRes;
     } catch (error) {
       console.error("Login error:", error);
+      toast.error(error?.response?.data?.message || "Login failed");
       return { success: false, message: "Login failed" };
-    }
-  },
-  verifyOtp: async (user) => {
-    try {
-      const res = await axios.post(`${API_URL}/auth/verify-otp`, user, {
-        withCredentials: true,
-      });
-      const parsedRes = res.data;
-      if (parsedRes.success) {
-        set({ isAuthenticated: true, user: parsedRes.user, signedUpEmail: "" });
-        toast.success(parsedRes.message);
-      } else {
-        toast.error(parsedRes.message);
-      }
-      return parsedRes;
-    } catch (error) {
-      toast.error(error?.response?.data?.message || "OTP verification failed");
-      return {
-        success: false,
-        message: error?.response?.data?.message || "OTP verification failed",
-      };
-    }
-  },
-
-  logout: async () => {
-    try {
-      const res = await axios.post(
-        `${API_URL}/auth/logout`,
-        {},
-        { withCredentials: true }
-      );
-      const parsedRes = res.data;
-      set({ isAuthenticated: false, user: null, signedUpEmail: "" });
-
-      // Disconnect socket on logout
-      socket.disconnect();
-
-      toast.success(parsedRes.message || "Logged out successfully!");
-    } catch (error) {
-      toast.error(error?.response?.data?.message || "Logout failed");
     }
   },
 
@@ -144,7 +113,6 @@ export const useAuthStore = create((set, get) => ({
         set({
           isAuthenticated: false,
           user: null,
-          isInitialized: true,
         });
       }
       return {
@@ -152,6 +120,48 @@ export const useAuthStore = create((set, get) => ({
         message:
           error?.response?.data?.message || "Failed to fetch current user",
       };
+    } finally {
+      set({ isInitialized: true });
+    }
+  },
+
+  verifyOtp: async (user) => {
+    try {
+      const res = await axios.post(`${API_URL}/auth/verify-otp`, user, {
+        withCredentials: true,
+      });
+      const parsedRes = res.data;
+      if (parsedRes.success) {
+        set({ isAuthenticated: true, user: parsedRes.user, signedUpEmail: "" });
+        toast.success(parsedRes.message);
+      } else {
+        toast.error(parsedRes.message);
+      }
+      return parsedRes;
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "OTP verification failed");
+      return {
+        success: false,
+        message: error?.response?.data?.message || "OTP verification failed",
+      };
+    }
+  },
+
+  logout: async () => {
+    try {
+      const res = await axios.post(
+        `${API_URL}/auth/logout`,
+        {},
+        { withCredentials: true }
+      );
+      const parsedRes = res.data;
+      set({ isAuthenticated: false, user: null, signedUpEmail: "" });
+
+      socket.disconnect();
+
+      toast.success(parsedRes.message || "Logged out successfully!");
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Logout failed");
     }
   },
 

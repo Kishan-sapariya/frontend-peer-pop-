@@ -5,9 +5,8 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Heart, Eye, EyeOff, Mail, Lock } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
-import LoadingSpinner from "@/component/LoadingSpinner";
 import { GoogleIcon } from "@/component/GoogleIcon";
 
 const LoginPage = () => {
@@ -28,8 +27,8 @@ const LoginPage = () => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
 
-    if (errors[name]) {
-      setErrors((prev) => ({ ...prev, [name]: "" }));
+    if (errors[name] || errors.general) {
+      setErrors((prev) => ({ ...prev, [name]: "", general: "" }));
     }
   };
 
@@ -44,7 +43,6 @@ const LoginPage = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
@@ -56,12 +54,9 @@ const LoginPage = () => {
         password: formData.password,
       });
 
-      console.log("📄 Login result:", result);
-
       if (!result.success) {
         setErrors({ general: result.message || "Login failed" });
       }
-      // Don't call router.push() here; useEffect handles redirect
     } catch (error) {
       console.error("🔥 Login error:", error);
       setErrors({
@@ -72,15 +67,8 @@ const LoginPage = () => {
     }
   };
 
-  // Redirect after successful login
   useEffect(() => {
-    console.log("Auth state changed:", {
-      isAuthenticated,
-      user,
-      isInitialized,
-    });
     if (isInitialized && isAuthenticated && user) {
-      console.log("⏳ User is authenticated, redirecting to feed...");
       router.push("/feed");
     }
   }, [isAuthenticated, user, isInitialized, router]);
@@ -98,19 +86,32 @@ const LoginPage = () => {
             </p>
           </div>
 
+          {/* Google login */}
           <Button
             type="button"
-            onClick={() =>
-              (window.location.href = `${process.env.NEXT_PUBLIC_BASE_API_URL}/auth/google`)
-            }
+            disabled={isLoading}
+            onClick={() => {
+              setIsLoading(true);
+              window.location.href = `${process.env.NEXT_PUBLIC_BASE_API_URL}/auth/google`;
+            }}
             className="w-full flex items-center justify-center gap-3 py-6 border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 font-semibold rounded-xl shadow-sm hover:shadow-md transition-all duration-300 mb-6"
           >
-            <GoogleIcon />
-            Continue with Google
+            {isLoading ? (
+              <div className="flex items-center justify-center space-x-2">
+                <div className="w-5 h-5 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
+                <span>Redirecting...</span>
+              </div>
+            ) : (
+              <>
+                <GoogleIcon />
+                Continue with Google
+              </>
+            )}
           </Button>
 
           <div className="relative border-t border-gray-300 my-6"></div>
 
+          {/* Email/password login */}
           <form onSubmit={handleSubmit} className="space-y-6">
             <InputGroup
               id="email"
@@ -160,7 +161,7 @@ const LoginPage = () => {
             </Button>
 
             <p className="text-gray-600 text-center text-sm mt-4">
-              Don't have an account?{" "}
+              Don&apos;t have an account?{" "}
               <Link
                 href="/signup"
                 className="text-cyan-600 hover:text-cyan-700 font-semibold transition-colors duration-200"

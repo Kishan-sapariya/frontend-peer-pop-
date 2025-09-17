@@ -3,9 +3,8 @@ import { NextResponse } from "next/server";
 export function middleware(request) {
   const { pathname } = request.nextUrl;
   const authToken = request.cookies.get("token")?.value;
-  console.log("Auth token from cookie:", authToken, "Path:", pathname);
 
-  const unauthenticatedPaths = ["/login", "/signup", "/verify-otp"];
+  const publicPaths = ["/login", "/signup", "/verify-otp"];
 
   const protectedRoutes = [
     "/profile",
@@ -19,16 +18,16 @@ export function middleware(request) {
   ];
 
   if (authToken) {
-    if (unauthenticatedPaths.includes(pathname)) {
-      return NextResponse.redirect(new URL("/", request.url));
+    if (publicPaths.includes(pathname)) {
+      console.log("🔄 Redirecting logged-in user away from auth page");
+      return NextResponse.redirect(new URL("/feed", request.url));
     }
   } else {
-    // If the user is NOT authenticated (no token cookie)
-    // Redirect to /login if accessing any protected routes
-    const isProtectedRoute = protectedRoutes.some((route) =>
+    const isProtected = protectedRoutes.some((route) =>
       pathname.startsWith(route)
     );
-    if (isProtectedRoute) {
+    if (isProtected) {
+      console.log("🔒 No token, redirecting to login");
       return NextResponse.redirect(new URL("/login", request.url));
     }
   }
