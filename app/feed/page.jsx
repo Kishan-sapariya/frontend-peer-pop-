@@ -154,7 +154,7 @@ export default function HomeFeed() {
       console.log("  isAuthenticated:", isAuthenticated);
       console.log("  isInitialized:", isInitialized);
       console.log("  user:", user);
-    }, [isAuthenticated, user, isInitialized, router]);
+    }, [isAuthenticated, user, isInitialized]);
 
   const activeFilterCount = getActiveFilterCount();
   return (
