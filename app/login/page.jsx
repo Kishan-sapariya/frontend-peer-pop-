@@ -63,8 +63,6 @@ const LoginPage = () => {
     if (!validateForm()) return;
 
     setIsLoading(true);
-    console.log("📝 Submitting login form:", formData.email);
-
     try {
       const result = await login({
         email: formData.email,
@@ -73,20 +71,9 @@ const LoginPage = () => {
 
       console.log("📄 Login result:", result);
 
-      // Wait for token cookie to appear before redirecting
       if (result.success) {
-        const waitForCookie = (retries = 20) => {
-          if (document.cookie.includes("token=")) {
-            console.log("🍪 Token cookie found, redirecting...");
-            router.push(result.redirect || "/feed");
-          } else if (retries > 0) {
-            console.log("⌛ Waiting for token cookie...");
-            setTimeout(() => waitForCookie(retries - 1), 100);
-          } else {
-            console.warn("⚠️ Token cookie not found, reload may be needed.");
-          }
-        };
-        waitForCookie();
+        console.log("✅ Login successful, redirecting to feed...");
+        router.push(result.redirect || "/feed"); 
       } else {
         setErrors({ general: result.message || "Login failed" });
       }
