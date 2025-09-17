@@ -74,6 +74,78 @@ export default function HomeFeed() {
       (engagementRange[0] !== 0 || engagementRange[1] !== 20 ? 1 : 0)
     );
   };
+  const suggestions = [
+    {
+      name: "David Kim",
+      profession: "Motion Graphics Designer",
+      avatar: "/?height=50&width=50&text=DK",
+      mutualConnections: 8,
+      location: "Austin, TX",
+      tier: "Elite",
+      specialty: "Motion Graphics & Animation",
+      availability: "Available Now",
+      skills: ["After Effects", "Cinema 4D", "Motion Design"],
+      portfolio: "davidkim.motion",
+      recentWork: "Nike Commercial Animation",
+    },
+    {
+      name: "Sofia Martinez",
+      profession: "Voice Actor & Audio Producer",
+      avatar: "/?height=50&width=50&text=SM",
+      mutualConnections: 15,
+      location: "Miami, FL",
+      tier: "Rising",
+      specialty: "Commercial VO & Podcast Production",
+      availability: "Available This Week",
+      skills: ["Voice Acting", "Audio Editing", "Podcast Production"],
+      languages: ["English", "Spanish", "Portuguese"],
+      recentWork: "Spotify Podcast Series",
+    },
+    {
+      name: "Taylor Swift",
+      profession: "Content Creator & Strategist",
+      avatar: "/?height=50&width=50&text=TS",
+      mutualConnections: 20,
+      location: "Nashville, TN",
+      tier: "Elite",
+      specialty: "Social Media Strategy & Content",
+      availability: "Available Now",
+      skills: ["Content Strategy", "Social Media", "Brand Development"],
+      clients: ["Major Record Labels", "Fashion Brands"],
+      recentWork: "Grammy Awards Social Campaign",
+    },
+  ];
+
+  const trendingTopics = [
+    {
+      tag: "#CreativeCollabs",
+      posts: "2.1k",
+      trend: "up",
+      category: "Collaboration",
+    },
+    {
+      tag: "#InfluencerMarketing",
+      posts: "1.8k",
+      trend: "up",
+      category: "Marketing",
+    },
+    { tag: "#FilmFestival2024", posts: "1.2k", trend: "up", category: "Film" },
+    {
+      tag: "#SustainableDesign",
+      posts: "956",
+      trend: "up",
+      category: "Design",
+    },
+    { tag: "#MusicCollabs", posts: "642", trend: "stable", category: "Music" },
+    {
+      tag: "#CreativeJobs",
+      posts: "534",
+      trend: "up",
+      category: "Opportunities",
+    },
+    { tag: "#DigitalArt", posts: "423", trend: "stable", category: "Art" },
+    { tag: "#PodcastProduction", posts: "312", trend: "up", category: "Audio" },
+  ];
 
   const activeFilterCount = getActiveFilterCount();
   return (
