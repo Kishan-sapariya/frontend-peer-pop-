@@ -19,7 +19,6 @@ export function middleware(request) {
 
   if (authToken) {
     if (publicPaths.includes(pathname)) {
-      console.log("🔄 Redirecting logged-in user away from auth page");
       return NextResponse.redirect(new URL("/feed", request.url));
     }
   } else {
@@ -27,7 +26,6 @@ export function middleware(request) {
       pathname.startsWith(route)
     );
     if (isProtected) {
-      console.log("🔒 No token, redirecting to login");
       return NextResponse.redirect(new URL("/login", request.url));
     }
   }
