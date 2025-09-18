@@ -92,10 +92,6 @@ const LoginPage = () => {
     }
   }, [router]);
 
-  if (!isInitialized && !user) {
-    return <LoadingSpinner text="redirecting" />;
-  }
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-blue-50 to-white flex items-center justify-center p-4">
       <div className="w-full max-w-md">
