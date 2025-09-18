@@ -64,6 +64,7 @@ const Navbar = () => {
       setIsMenuOpen(false);
       setIsPopoverOpen(false);
       router.push("/");
+      window.location.href = "/";
     } catch (error) {
       console.error("Logout error:", error);
     }

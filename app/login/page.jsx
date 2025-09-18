@@ -50,22 +50,13 @@ const LoginPage = () => {
 
     setIsLoading(true);
     try {
-      console.log("🍪 Before login (document.cookie):", document.cookie);
-
       const result = await login({
         email: formData.email,
         password: formData.password,
       });
 
-      console.log("📩 Login result:", result);
-      console.log("🍪 After login (document.cookie):", document.cookie);
-
       if (result.success) {
-        // Redirect only on successful login
-        console.log("Login successful! Redirecting to /feed...");
         router.push("/feed");
-        console.log("✅ Login successful!");
-        // Force full reload so middleware sees the cookie immediately
         window.location.href = "/feed";
       } else {
         setErrors({ general: result.message || "Login failed" });
@@ -79,18 +70,6 @@ const LoginPage = () => {
       setIsLoading(false);
     }
   };
-
-  useEffect(() => {
-    const { isAuthenticated, user, isInitialized } = useAuthStore.getState();
-    console.log("  isAuthenticated:", isAuthenticated);
-    console.log("  isInitialized:", isInitialized);
-    console.log("  user:", user);
-
-    if (isInitialized && isAuthenticated && user) {
-      console.log("⏩ Redirecting to /feed...");
-      router.push("/feed");
-    }
-  }, [router]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-blue-50 to-white flex items-center justify-center p-4">
