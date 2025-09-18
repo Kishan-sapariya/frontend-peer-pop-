@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
 import { GoogleIcon } from "@/component/GoogleIcon";
+import LoadingSpinner from "@/component/LoadingSpinner";
 
 const LoginPage = () => {
   const { login } = useAuthStore();
@@ -49,15 +50,23 @@ const LoginPage = () => {
 
     setIsLoading(true);
     try {
+      console.log("🍪 Before login (document.cookie):", document.cookie);
+
       const result = await login({
         email: formData.email,
         password: formData.password,
       });
 
+      console.log("📩 Login result:", result);
+      console.log("🍪 After login (document.cookie):", document.cookie);
+
       if (result.success) {
         // Redirect only on successful login
         console.log("Login successful! Redirecting to /feed...");
         router.push("/feed");
+        console.log("✅ Login successful!");
+        // Force full reload so middleware sees the cookie immediately
+        window.location.href = "/feed";
       } else {
         setErrors({ general: result.message || "Login failed" });
       }
@@ -82,6 +91,10 @@ const LoginPage = () => {
       router.push("/feed");
     }
   }, [router]);
+
+  if (!isInitialized && !user) {
+    return <LoadingSpinner text="redirecting" />;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-blue-50 to-white flex items-center justify-center p-4">

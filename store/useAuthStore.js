@@ -59,23 +59,14 @@ export const useAuthStore = create((set, get) => ({
       const parsedRes = res.data;
 
       if (parsedRes.success) {
-        set({
-          isAuthenticated: true,
-          user: parsedRes.user,
-          isInitialized: true,
-        });
-
-        if (!socket.connected && parsedRes.user) {
-          socket.connect();
-          socket.emit("join", parsedRes.user.id);
-        }
+        await get().getCurrentUser();
 
         toast.success(parsedRes.message || "Login successful");
+        return parsedRes;
       } else {
         toast.error(parsedRes.message || "Login failed");
+        return parsedRes;
       }
-
-      return parsedRes;
     } catch (error) {
       console.error("Login error:", error);
       toast.error(error?.response?.data?.message || "Login failed");
@@ -172,7 +163,7 @@ export const useAuthStore = create((set, get) => ({
     const { isInitialized } = get();
     if (!isInitialized) {
       try {
-        await get().getCurrentUser(); 
+        await get().getCurrentUser();
       } finally {
         set({ isInitialized: true });
       }
