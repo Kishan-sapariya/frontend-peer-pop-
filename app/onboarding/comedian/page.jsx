@@ -219,7 +219,7 @@ export default function ComedianOnboarding() {
       };
       const result = await createComedianProfile(profileData);
       if (result) {
-        router.push("/feed");
+        window.location.href = "/feed";
       }
     } catch (error) {
       console.error("Error creating comedian profile:", error);

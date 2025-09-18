@@ -125,12 +125,16 @@ export const useAuthStore = create((set, get) => ({
         withCredentials: true,
       });
       const parsedRes = res.data;
+
       if (parsedRes.success) {
-        set({ isAuthenticated: true, user: parsedRes.user, signedUpEmail: "" });
+        await get().getCurrentUser();
+        set({ signedUpEmail: "" });
+
         toast.success(parsedRes.message);
       } else {
         toast.error(parsedRes.message);
       }
+
       return parsedRes;
     } catch (error) {
       toast.error(error?.response?.data?.message || "OTP verification failed");

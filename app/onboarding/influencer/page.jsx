@@ -233,7 +233,7 @@ export default function InfluencerOnboarding() {
       };
       const result = await createInfluencerProfile(profileData);
       if (result) {
-        router.push("/feed");
+        window.location.href = "/feed";
       }
     } catch (error) {
       console.error("Error creating influencer profile:", error);
@@ -614,7 +614,6 @@ export default function InfluencerOnboarding() {
               <div>
                 <Label htmlFor="instagramLink">Instagram Link *</Label>
                 <div className="relative">
-                  
                   <Input
                     id="instagramLink"
                     value={formData.socialPlatforms.instagram.link}
@@ -715,7 +714,6 @@ export default function InfluencerOnboarding() {
                 Connect your other social media accounts
               </p>
             </div>
-
 
             {/* YouTube */}
             <div className="p-4 border rounded-lg">

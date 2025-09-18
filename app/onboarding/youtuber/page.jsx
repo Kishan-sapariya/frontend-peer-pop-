@@ -288,7 +288,7 @@ export default function YouTuberOnboarding() {
       const result = await createYoutubeProfile(profileData);
 
       if (result) {
-        router.push("/feed");
+        window.location.href = "/feed";
       }
     } catch (error) {
       console.error("Error creating YouTube profile:", error);
@@ -747,7 +747,9 @@ export default function YouTuberOnboarding() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="instagramFollowers">Instagram Followers</Label>
+                  <Label htmlFor="instagramFollowers">
+                    Instagram Followers
+                  </Label>
                   <Input
                     id="instagramFollowers"
                     value={formData.socialStats.instagram}
