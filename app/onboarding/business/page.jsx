@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/select";
 import { useBusinessStore } from "@/store/useBusinessStore";
 import { Loader2 } from "lucide-react";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export default function BusinessOnboardingForm() {
   const { getCurrentUser } = useAuthStore();
