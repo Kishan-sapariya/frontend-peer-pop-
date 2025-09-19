@@ -66,23 +66,14 @@ export default function UpcomingShowModal() {
 
   const handleSubmit = () => {
     setOpen(false);
-    const payload = {
-      upcomingShows: [
-        {
-          title: formData.title,
-          date: formData.date,
-          time: formData.time,
-          place: formData.place,
-        },
-      ],
+    const show = {
+      title: formData.title,
+      date: formData.date,
+      time: formData.time,
+      place: formData.place,
     };
-    addUpcomingShow(payload);
-    setFormData({
-      title: "",
-      date: undefined,
-      time: "",
-      place: "",
-    });
+    addUpcomingShow(show); 
+    setFormData({ title: "", date: undefined, time: "", place: "" });
   };
 
   const generateTimeSlots = () => {

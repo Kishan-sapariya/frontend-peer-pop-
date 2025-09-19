@@ -119,16 +119,16 @@ export const useInfluencerStore = create((set, get) => ({
         campaignData
       );
 
+      const updatedUser = res.data.user;
+
       set((state) => ({
         profile: {
           ...state.profile,
           data: {
             ...state.profile?.data,
-            campaigns: [
-              ...(state.profile?.data?.campaigns || []),
-              ...(res.data?.campaigns || []),
-            ],
+            ...updatedUser.data,
           },
+          completion: updatedUser.completion,
         },
       }));
 
@@ -141,6 +141,7 @@ export const useInfluencerStore = create((set, get) => ({
       );
     }
   },
+
   deleteCampaign: async (campaignId) => {
     try {
       await axios.delete(`${API_URL}/influencer/delete-campaign/${campaignId}`);
@@ -166,9 +167,12 @@ export const useInfluencerStore = create((set, get) => ({
   },
   updateInfluencerProfile: async (profileData) => {
     try {
-      const response = await axios.patch(`${API_URL}/influencer/update-profile`, {
-        data: profileData,
-      });
+      const response = await axios.patch(
+        `${API_URL}/influencer/update-profile`,
+        {
+          data: profileData,
+        }
+      );
 
       const updatedProfile = response.data.profile;
 

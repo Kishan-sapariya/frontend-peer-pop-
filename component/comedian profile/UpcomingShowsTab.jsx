@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 
 export default function UpcomingShowsTab({ isOwnProfile }) {
   const { profile, deleteShow } = useComedianStore();
-  const upcomingShow = profile?.data?.upcomingShows;
+  const upcomingShow = profile?.data?.upcomingShows || [];
 
   return (
     <div className="p-4 pt-2 sm:p-6 max-w-full md:max-w-4xl mx-auto bg-gray-50 rounded-lg shadow-inner">
@@ -28,14 +28,12 @@ export default function UpcomingShowsTab({ isOwnProfile }) {
 
       {/* Show List */}
       <div className="space-y-4">
-        {upcomingShow?.length > 0 ? (
-          upcomingShow.map((show, index) => {
-            const showDate =
-              show.date instanceof Date ? show.date : new Date(show.date);
-
+        {upcomingShow && upcomingShow.length > 0 ? (
+          upcomingShow.map((show) => {
+            const showDate = show.date ? new Date(show.date) : null;
             return (
               <div
-                key={index}
+                key={show.id || `show-${show.title}-${show.date}`}
                 className="relative bg-white rounded-xl shadow-sm p-4 pr-16"
               >
                 {/* Fixed Three-dot Menu */}
@@ -69,7 +67,11 @@ export default function UpcomingShowsTab({ isOwnProfile }) {
                 <div className="flex flex-col sm:flex-row sm:items-center text-gray-600 text-sm gap-x-6 gap-y-2">
                   <div className="flex items-center">
                     <Calendar className="w-4 h-4 mr-1 text-gray-500" />
-                    <span>{format(showDate, "MMM dd, yyyy")}</span>
+                    <span>
+                      {showDate && !isNaN(showDate)
+                        ? format(showDate, "MMM dd, yyyy")
+                        : "No date"}
+                    </span>
                   </div>
                   <div className="flex items-center">
                     <Clock className="w-4 h-4 mr-1 text-gray-500" />

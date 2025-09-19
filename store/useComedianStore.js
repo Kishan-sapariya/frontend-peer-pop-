@@ -47,17 +47,34 @@ export const useComedianStore = create((set, get) => ({
     try {
       const response = await axios.post(
         `${API_URL}/comedian/add-upcoming-show`,
-        show
+        { upcomingShows: [show] }
       );
-      toast.success("Content uploaded successfully!");
+
+      toast.success("Show added successfully!");
+
+      const updatedUser = response.data.user;
+
+      // Update the profile with the new data structure
+      set((state) => ({
+        profile: {
+          ...state.profile,
+          data: {
+            ...state.profile?.data,
+            ...updatedUser.data,
+          },
+          completion: updatedUser.completion,
+        },
+      }));
+
       return response.data;
     } catch (error) {
       console.error("Error adding upcoming show:", error);
       toast.error(
-        error?.response?.data?.message || "Failed to add  upcoming show."
+        error?.response?.data?.message || "Failed to add upcoming show."
       );
     }
   },
+
   deleteShow: async (upcomingShowId) => {
     try {
       const response = await axios.delete(
