@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -15,11 +15,10 @@ import {
 } from "@/components/ui/select";
 import { useBusinessStore } from "@/store/useBusinessStore";
 import { Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
 
 export default function BusinessOnboardingForm() {
+  const { getCurrentUser } = useAuthStore();
   const { postBusinessDetails } = useBusinessStore();
-  const router=useRouter()
   const [loading, setLoading] = useState(false);
 
   const [currentStep, setCurrentStep] = useState(1);
@@ -105,6 +104,7 @@ export default function BusinessOnboardingForm() {
 
     try {
       setLoading(true);
+
       await postBusinessDetails(
         payload.basicInfo,
         payload.contact,
@@ -115,7 +115,9 @@ export default function BusinessOnboardingForm() {
         formData.gstFile,
         formData.panFile
       );
-      router.push("/feed")
+
+      await getCurrentUser();
+      window.location.href = "/feed";
     } catch (err) {
       console.error("Error submitting business profile:", err);
     } finally {
