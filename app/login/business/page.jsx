@@ -190,7 +190,7 @@ export default function BusinessLoginPage() {
         password: loginData.password,
       });
       if (result.success) {
-        router.push("/feed");
+        window.location.href="/feed"
       }
     } catch (error) {
       console.log(error.message || "Login failed. Please try again.");
