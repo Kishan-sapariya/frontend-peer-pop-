@@ -295,13 +295,15 @@ export default function InfluencerProfile() {
                     )}
                   </div>
                 </div>
-                {isOwnProfile && profile?.completion?.percentage < 70 && (
-                  <div className="mt-4 p-3 bg-yellow-50 text-sm rounded-lg">
-                    🚀 Your profile is {profile.completion.percentage}%
-                    complete. Fill in the missing details to unlock <b>Pro</b>{" "}
-                    status.
-                  </div>
-                )}
+                {isOwnProfile &&
+                  profile?.completion?.percentage < 70 &&
+                  profile?.completion?.percentage > 99 && (
+                    <div className="mt-4 p-3 bg-yellow-50 text-sm rounded-lg">
+                      🚀 Your profile is {profile.completion.percentage}%
+                      complete. Fill in the missing details to unlock <b>Elite</b>{" "}
+                      status.
+                    </div>
+                  )}
                 {isOwnProfile && profile?.completion?.percentage < 100 && (
                   <div className="mt-4 p-3 bg-yellow-50 text-sm rounded-lg">
                     🚀 Your profile is {profile.completion.percentage}%
@@ -421,8 +423,7 @@ export default function InfluencerProfile() {
                     )}
 
                     {/* YouTube */}
-                    {influencer?.socialStats?.youtube
-                      ?.subscribers && (
+                    {influencer?.socialStats?.youtube?.subscribers && (
                       <a
                         href={influencer.socialStats.youtube.link}
                         target="_blank"
@@ -435,8 +436,7 @@ export default function InfluencerProfile() {
                             <div className="font-medium">YouTube</div>
                             <div className="text-sm text-gray-600">
                               {formatNumber(
-                                influencer.socialStats.youtube
-                                  .subscribers
+                                influencer.socialStats.youtube.subscribers
                               )}{" "}
                               subscribers
                             </div>
@@ -467,8 +467,7 @@ export default function InfluencerProfile() {
                             <div className="font-medium">Twitter</div>
                             <div className="text-sm text-gray-600">
                               {formatNumber(
-                                influencer.socialStats.twitter
-                                  .followers
+                                influencer.socialStats.twitter.followers
                               )}{" "}
                               followers
                             </div>
@@ -476,11 +475,7 @@ export default function InfluencerProfile() {
                         </div>
                         <div className="text-right">
                           <div className="text-sm font-medium">
-                            {
-                              influencer.socialStats.twitter
-                                .engagement
-                            }
-                            %
+                            {influencer.socialStats.twitter.engagement}%
                           </div>
                           <div className="text-xs text-gray-500">
                             engagement

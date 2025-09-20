@@ -21,10 +21,6 @@ export const useConnectionStore = create((set, get) => ({
     } catch (error) {
       console.error("Error fetching connections:", error);
       set({ isLoading: false });
-      toast.error(
-        error?.response?.data?.message ||
-          "Failed to fetch connections. Please try again."
-      );
     }
   },
 

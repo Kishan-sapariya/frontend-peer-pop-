@@ -72,7 +72,7 @@ export const getCategoryLabel = (category) => {
       };
     case "OPPORTUNITY":
       return {
-        label: "Job/Gig Post",
+        label: "Opportunity Post",
         className: "bg-gradient-to-r from-blue-400 to-sky-400 text-white",
       };
     case "SHOWCASE":
@@ -83,7 +83,7 @@ export const getCategoryLabel = (category) => {
     default:
       return {
         label: "General Post",
-        className: "bg-gradient-to-r from-gray-300 to-gray-500 text-white",
+        className: "hidden",
       };
   }
 };

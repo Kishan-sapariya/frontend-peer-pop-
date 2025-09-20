@@ -15,10 +15,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { useAuthStore } from "@/store/useAuthStore";
 
 export default function HomeFeed() {
-    const { isAuthenticated, user, isInitialized } = useAuthStore();
   const [activeNav, setActiveNav] = useState("home");
   const [activeFilter, setActiveFilter] = useState("all");
 
@@ -258,7 +256,7 @@ export default function HomeFeed() {
                             setActiveFilter("SHOWCASE");
                           }}
                         >
-                          Project Posts
+                          Showcase work Posts
                         </Button>
                         <Button
                           variant="ghost"
