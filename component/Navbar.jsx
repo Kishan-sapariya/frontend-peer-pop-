@@ -168,7 +168,44 @@ const Navbar = () => {
                           {user.email}
                         </p>
                       </div>
-                      <div className="border-t my-2"></div>
+                      <div className="md:hidden">
+                        <div className="border-t"></div>
+                        <Link href="/feed" passHref>
+                          <Button
+                            variant="ghost"
+                            className="w-full justify-start text-gray-700 hover:bg-muted/60"
+                          >
+                            <HomeIcon className="mr-2 h-4 w-4" /> Home
+                          </Button>
+                        </Link>
+                        <Link href="/connections" passHref>
+                          <Button
+                            variant="ghost"
+                            className="w-full justify-start text-gray-700 hover:bg-muted/60"
+                          >
+                            <PeersIcon className="mr-2 h-4 w-4" /> Peers
+                            {pendingCount > 0 && (
+                              <Badge className="ml-auto bg-red-500 text-white text-xs px-2 py-0 rounded-full">
+                                {pendingCount}
+                              </Badge>
+                            )}
+                          </Button>
+                        </Link>
+                        <Link href="/conversations" passHref>
+                          <Button
+                            variant="ghost"
+                            className="w-full justify-start text-gray-700 hover:bg-muted/60"
+                          >
+                            <MessageCircle className="mr-2 h-4 w-4" /> Messages
+                            {unreadConversations > 0 && (
+                              <Badge className="ml-auto bg-red-500 text-white text-xs px-2 py-0 rounded-full">
+                                {unreadConversations}
+                              </Badge>
+                            )}
+                          </Button>
+                        </Link>
+                      </div>
+                      <div className="border-t "></div>
                       <Link
                         href={
                           user.role === "BUSINESS"
@@ -206,7 +243,7 @@ const Navbar = () => {
                           </Button>
                         </Link>
                       )}
-                      <div className="border-t my-2"></div>
+                      <div className="border-t "></div>
                       <Button
                         onClick={handleLogout}
                         className="w-full justify-start bg-red-50 hover:bg-red-100 text-red-500 hover:text-red-600 transition-colors"
@@ -241,169 +278,59 @@ const Navbar = () => {
                     </Button>
                   </Link>
                 </div>
+
+                {/* Mobile menu for logged-out users */}
+                <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
+                  <PopoverTrigger asChild>
+                    <Button variant="ghost" className="md:hidden text-gray-700">
+                      <Menu className="h-8 w-8" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent
+                    align="end"
+                    className="w-56 rounded-md border bg-white shadow-md p-2"
+                  >
+                    <div className="flex flex-col space-y-1">
+                      <Link
+                        href="/feed"
+                        onClick={() => setIsPopoverOpen(false)}
+                      >
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-start text-gray-700 hover:bg-muted/60"
+                        >
+                          <Telescope className="mr-2 h-4 w-4" /> Explore
+                        </Button>
+                      </Link>
+                      <Link
+                        href="/login/business"
+                        onClick={() => setIsPopoverOpen(false)}
+                      >
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-start text-gray-700 hover:bg-muted/60"
+                        >
+                          <Building2 className="mr-2 h-4 w-4" /> Business Login
+                        </Button>
+                      </Link>
+                      <Link
+                        href="/signup"
+                        onClick={() => setIsPopoverOpen(false)}
+                      >
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-start text-gray-700 hover:bg-muted/60"
+                        >
+                          <Users className="mr-2 h-4 w-4" /> Join as Creator
+                        </Button>
+                      </Link>
+                    </div>
+                  </PopoverContent>
+                </Popover>
               </>
             )}
-
-            {/* Mobile Menu Button */}
-            <div className="md:hidden">
-              <Button
-                variant="ghost"
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="text-gray-700"
-              >
-                {isMenuOpen ? (
-                  <X className="h-8 w-8" />
-                ) : (
-                  <Menu className="h-8 w-8" />
-                )}
-              </Button>
-            </div>
           </div>
         </div>
-
-        {/* Mobile menu */}
-        {isMenuOpen && (
-          <div className="md:hidden bg-white border-t border-cyan-100">
-            <div className="px-2 pt-2 pb-3 space-y-1">
-              <div className="flex flex-col space-y-2 px-3 pt-4">
-                {isAuthenticated ? (
-                  <>
-                    {user && (
-                      <div className="flex items-center space-x-3 pb-2">
-                        <Avatar className="h-8 w-8">
-                          {user?.image && (
-                            <AvatarImage
-                              className="object-cover"
-                              src={user.image}
-                              alt={user.username || "User Avatar"}
-                            />
-                          )}
-                          <AvatarFallback className="font-semibold text-white bg-gradient-to-r from-cyan-400 to-blue-400 text-sm">
-                            {getInitialLetter(user.username || user.email)}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="flex flex-col">
-                          <span className="text-sm font-medium truncate">
-                            {user.username}
-                          </span>
-                          <span className="text-xs text-muted-foreground truncate">
-                            {user.email}
-                          </span>
-                        </div>
-                      </div>
-                    )}
-                    <Link
-                      href={
-                        user.role === "BUSINESS"
-                          ? `/profile/business/${user.username}`
-                          : `/profile/${
-                              user.username
-                            }/${user?.creatorType?.toLowerCase()}`
-                      }
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      <Button
-                        variant="ghost"
-                        className="w-full justify-start text-gray-700 hover:text-cyan-600"
-                      >
-                        <User className="mr-2 h-4 w-4" />
-                        Profile
-                      </Button>
-                    </Link>
-                    <Link href="/feed">
-                      <Button
-                        variant="ghost"
-                        className="w-full justify-start text-gray-700 hover:text-cyan-600"
-                      >
-                        <Telescope className="mr-2 h-4 w-4" />
-                        Explore
-                      </Button>
-                    </Link>
-                    {user?.isAdmin && (
-                      <Link href="/admin">
-                        <Button
-                          variant="ghost"
-                          className="w-full justify-start text-gray-700 hover:text-cyan-600"
-                        >
-                          <User2 className="mr-2 h-4 w-4" />
-                          Admin
-                        </Button>
-                      </Link>
-                    )}
-                    <Link href="/connections">
-                      <Button
-                        variant="ghost"
-                        className="w-full justify-start text-gray-700 hover:text-cyan-600"
-                      >
-                        <PeersIcon className="mr-2 h-4 w-4" />
-                        Peers
-                        {pendingCount > 0 && (
-                          <Badge className="ml-2 bg-red-500 text-white text-xs px-2 py-0 rounded-full">
-                            {pendingCount}
-                          </Badge>
-                        )}
-                      </Button>
-                    </Link>
-                    <Link href="/conversations">
-                      <Button
-                        variant="ghost"
-                        className="w-full justify-start text-gray-700 hover:text-cyan-600"
-                      >
-                        <MessageCircle className="mr-2 h-4 w-4" />
-                        Messages
-                        <span className="bg-red-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
-                          {unreadConversations}
-                        </span>
-                      </Button>
-                    </Link>
-                    {!user.creatorType && user.role !== "BUSINESS" && (
-                      <Link
-                        href="/onboarding"
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                        <Button
-                          variant="ghost"
-                          className="w-full justify-start text-gray-700 hover:text-cyan-600"
-                        >
-                          <Settings className="mr-2 h-4 w-4" />
-                          Onboarding
-                        </Button>
-                      </Link>
-                    )}
-                    <Button
-                      onClick={handleLogout}
-                      className="w-full bg-red-500 text-white hover:bg-red-600 justify-start"
-                    >
-                      <LogOut className="mr-2 h-4 w-4" />
-                      Logout
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <Link
-                      href="/login/business"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      <Button
-                        variant="outline"
-                        className="w-full border-orange-300 hover:bg-orange-50 text-orange-600 bg-transparent flex items-center"
-                      >
-                        <Building2 className="mr-2 h-4 w-4" />
-                        Business Login
-                      </Button>
-                    </Link>
-                    <Link href="/signup" onClick={() => setIsMenuOpen(false)}>
-                      <Button className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white shadow-lg flex items-center">
-                        <Users className="mr-2 h-4 w-4" />
-                        Join as Creator
-                      </Button>
-                    </Link>
-                  </>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </header>
   );
