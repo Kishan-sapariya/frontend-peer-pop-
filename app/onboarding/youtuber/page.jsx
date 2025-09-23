@@ -784,7 +784,7 @@ export default function YouTuberOnboarding() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="LinkedinFollowers">Linkedin Followers</Label>
+                  <Label htmlFor="LinkedinFollowers">Linkedin Connections</Label>
                   <Input
                     id="LinkedinFollowers"
                     value={formData.socialStats.linkedin}
@@ -793,7 +793,7 @@ export default function YouTuberOnboarding() {
                         ...formData,
                         socialStats: {
                           ...formData.socialStats,
-                          Linkedin: e.target.value,
+                          linkedin: e.target.value,
                         },
                       })
                     }
