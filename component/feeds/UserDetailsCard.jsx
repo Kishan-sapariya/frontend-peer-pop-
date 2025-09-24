@@ -1,19 +1,27 @@
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { useFeedStore } from "@/store/useFeedStore";
-import { CheckCircle, MapPin, Sparkles } from "lucide-react";
+import {
+  capitalizeInitials,
+  getCompletionCateogryStyle,
+} from "@/utils/formatDate";
+import { Briefcase, MapPin } from "lucide-react";
 import React, { useEffect } from "react";
 
 const UserDetailsCard = () => {
-  const { getUserDetails, userDetails } = useFeedStore();
+  const { getUserDetails, userDetail } = useFeedStore();
 
   useEffect(() => {
     getUserDetails();
   }, [getUserDetails]);
 
-  if (!userDetails) {
+  const userDetails = userDetail?.userDetails;
+  const businessDetails = userDetail?.businessDetails;
+
+  if (!userDetail) {
     return (
       <div className="h-70 flex flex-col items-center p-6 bg-white rounded-xl shadow-sm border border-gray-100 animate-pulse">
         <div className="w-24 h-24 bg-gray-200 rounded-full mb-4"></div>
@@ -33,12 +41,15 @@ const UserDetailsCard = () => {
       </div>
     );
   }
+
+  const style = getCompletionCateogryStyle(userDetail?.completion?.category);
+
   return (
     <div className="space-y-6">
-      <Card className="border-0 shadow-md bg-white/90 backdrop-blur-md rounded-2xl transition-all duration-300 hover:shadow-lg">
+      <Card className="border-0 shadow-md bg-white transition-all duration-300 rounded-2xl pt-4 pb-0 hover:shadow-lg">
         <CardContent className="p-6 text-center">
           <div className="relative mb-4">
-            <Avatar className="w-24 h-24 mx-auto border-[3px] border-blue-400 p-[2px] transition-all duration-300">
+            <Avatar className="w-24 h-24 mx-auto border-[3px] border-blue-400 p-[2px] transition-all duration-300 mb-2">
               <AvatarImage
                 className="object-cover rounded-full"
                 src={userDetails.image}
@@ -47,42 +58,75 @@ const UserDetailsCard = () => {
                 {userDetails.username?.[0]?.toUpperCase() || "U"}
               </AvatarFallback>
             </Avatar>
-          </div>
 
-          <div className="flex items-center justify-center gap-2 mb-1">
-            <h3 className="font-extrabold text-lg md:text-xl text-gray-900">
-              {userDetails.username}
-            </h3>
-            <CheckCircle className="w-4 h-4 text-blue-500" />
-          </div>
-
-          <p className="text-sm text-gray-600 mb-2 font-medium">
-            {userDetails?.creatorType?.toLowerCase() || "Creator"}
-          </p>
-
-          {userDetails.location && (
-            <div className="flex items-center justify-center space-x-1 mb-4">
-              <MapPin className="w-4 h-4 text-gray-400" />
-              <span className="text-sm text-gray-500 font-light">
-                {userDetails.location}
-              </span>
+            <div className="flex items-center justify-center gap-2">
+              <h3 className="font-medium text-2xl text-gray-900">
+                {userDetails.username}
+              </h3>
+              {userDetails?.role === "CREATOR" && (
+                <Badge className={style?.className}>
+                  {userDetail?.completion?.category}
+                </Badge>
+              )}
             </div>
-          )}
 
-          <div className="grid grid-cols-2 gap-4 mt-6 text-center border-t pt-4 border-gray-200">
+            {userDetails?.location && (
+              <div className="flex items-center justify-center gap-2">
+                <MapPin className="w-4 h-4 text-violet-500" />
+                <p className="text-sm text-gray-800 font-medium">
+                  {userDetails.location}
+                </p>
+              </div>
+            )}
+
+            {userDetails?.creatorType && (
+              <p className="text-base text-gray-600 font-medium mt-1">
+                {capitalizeInitials(userDetails?.creatorType?.toLowerCase())}
+              </p>
+            )}
+            {userDetails?.role === "BUSINESS" && (
+              <p className="text-sm text-gray-500 font-medium mt-1">
+                Business account
+              </p>
+            )}
+          </div>
+
+          {/* Business Info Section */}
+          <div className="space-y-2 mb-6">
+            {businessDetails?.location && (
+              <div className="flex items-center justify-center gap-2">
+                <MapPin className="w-4 h-4 text-violet-500" />
+                <p className="text-sm text-gray-600 font-medium">
+                  {businessDetails.location}
+                </p>
+              </div>
+            )}
+            {businessDetails?.industry && (
+              <div className="flex items-center justify-center gap-2">
+                <Briefcase className="w-4 h-4 text-orange-500" />
+                <p className="text-sm text-gray-600 font-medium">
+                  <span className="font-bold text-gray-800">Industry:</span>{" "}
+                  {businessDetails.industry}
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* Stats Section */}
+          <div className="grid grid-cols-2 gap-6 py-3 border-t border-gray-200">
             <div>
-              <div className="font-bold text-blue-600 text-xl">
+              <div className="font-medium text-blue-600 text-2xl">
                 {userDetails.postCount}
               </div>
-              <div className="text-gray-500 text-xs font-medium uppercase tracking-wider">
+              <div className="text-gray-500 text-sm font-semibold uppercase tracking-wide mt-1">
                 Posts
               </div>
             </div>
             <div>
-              <div className="font-bold text-blue-600 text-xl">
+              <div className="font-medium text-blue-600 text-2xl">
                 {userDetails.peersCount}
               </div>
-              <div className="text-gray-500 text-xs font-medium uppercase tracking-wider">
+              <div className="text-gray-500 text-sm font-semibold uppercase tracking-wide mt-1">
                 Peers
               </div>
             </div>
