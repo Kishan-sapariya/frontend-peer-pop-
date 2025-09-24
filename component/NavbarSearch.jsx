@@ -16,9 +16,10 @@ export function NavbarSearch() {
   return (
     <form onSubmit={handleSearch} className="flex gap-2">
       <Input
-        placeholder="Search users..."
+        placeholder="Search User by Name or Profession"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
+        className="w-50 sm:w-65"
       />
     </form>
   );

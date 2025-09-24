@@ -64,8 +64,8 @@ export default function SearchPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const q = searchParams.get("q") || "";
-  const creatorType = searchParams.get("creatorType") || "";
-  const location = searchParams.get("location") || "";
+  const creatorTypeParam = searchParams.get("creatorType") || "";
+  const locationParam = searchParams.get("location") || "";
 
   const { results, fetchSearchResults, loading } = useAuthStore();
   const [showFilters, setShowFilters] = useState(false);
@@ -74,11 +74,28 @@ export default function SearchPage() {
   const [customLocationInput, setCustomLocationInput] = useState("");
   const [activeFilterCount, setActiveFilterCount] = useState(0);
 
+  // Initialize filters from URL params
   useEffect(() => {
-    if (q || creatorType || location) {
-      fetchSearchResults(q, creatorType, location);
-    }
-  }, [q, creatorType, location, fetchSearchResults]);
+    const creatorTypes = creatorTypeParam ? creatorTypeParam.split(",") : [];
+    const locations = locationParam ? locationParam.split(",") : [];
+    setSelectedProfessions(creatorTypes);
+    setSelectedLocations(locations);
+  }, [creatorTypeParam, locationParam]);
+
+  // Fetch results when search params change
+  useEffect(() => {
+    const creatorTypes =
+      selectedProfessions.length > 0 ? selectedProfessions.join(",") : "";
+    const locations =
+      selectedLocations.length > 0 ? selectedLocations.join(",") : "";
+
+    fetchSearchResults(q, creatorTypes, locations);
+  }, [q, selectedProfessions, selectedLocations, fetchSearchResults]);
+
+  // Update active filter count
+  useEffect(() => {
+    setActiveFilterCount(selectedProfessions.length + selectedLocations.length);
+  }, [selectedProfessions, selectedLocations]);
 
   // --- UI helpers ---
   const handleProfessionToggle = (enumValue) => {
@@ -150,38 +167,9 @@ export default function SearchPage() {
     updateURL({ creatorType: [], location: [] });
   };
 
-  // --- Local filtering on already fetched results ---
-  const filteredResults = results.filter((user) => {
-    const professionMatch =
-      selectedProfessions.length === 0 ||
-      (user.type === "CREATOR" &&
-        selectedProfessions.includes(user.creatorType));
-
-    const userLocation =
-      user.type === "CREATOR"
-        ? user?.data?.personalInfo?.location || ""
-        : user?.headquarters || "";
-
-    const locationMatch =
-      selectedLocations.length === 0 ||
-      selectedLocations.some((loc) =>
-        userLocation.toLowerCase().includes(loc.toLowerCase())
-      );
-
-    return professionMatch && locationMatch;
-  });
-
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const creatorType = params.get("creatorType")?.split(",") || [];
-    const location = params.get("location")?.split(",") || [];
-    setSelectedProfessions(creatorType);
-    setSelectedLocations(location);
-  }, []);
-
   // --- Render ---
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-sky-50">
       <div className="container mx-auto p-6 max-w-7xl">
         {/* Header */}
         <div className="mb-8">
@@ -191,13 +179,18 @@ export default function SearchPage() {
                 <Search className="w-4 h-4" />
                 Search Results For
               </div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 via-sky-600 to-indigo-600 bg-clip-text text-transparent">
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 via-sky-500 to-indigo-600 bg-clip-text text-transparent">
                 "{q}"
               </h1>
               <p className="text-slate-600">
-                Found {filteredResults.length} user
-                {filteredResults.length !== 1 ? "s" : ""}
+                Found {results.length} user{results.length !== 1 ? "s" : ""}
               </p>
+              {results.length === 0 && !loading && (
+                <p className="text-sm text-slate-500 italic">
+                  Tip: You can search by username, name, or creator type (e.g.,
+                  "youtuber").
+                </p>
+              )}
             </div>
 
             <Dialog open={showFilters} onOpenChange={setShowFilters}>
@@ -205,10 +198,7 @@ export default function SearchPage() {
                 <Button
                   variant="outline"
                   size="lg"
-                  className={`
-        relative overflow-hidden transition-all duration-300 shadow-lg hover:shadow-xl
-        border-2 border-blue-200 hover:border-blue-300 bg-white/80 backdrop-blur-sm text-blue-600 hover:bg-blue-50
-      `}
+                  className="relative overflow-hidden transition-all duration-300 shadow-lg hover:shadow-xl border-2 border-blue-200 hover:border-blue-300 bg-white/80 backdrop-blur-sm text-blue-600 hover:bg-blue-50"
                 >
                   <div className="flex items-center gap-2">
                     <Filter className="w-5 h-5" />
@@ -227,9 +217,8 @@ export default function SearchPage() {
 
               <DialogContent
                 className="sm:max-w-[700px] max-h-[80vh] overflow-y-auto bg-white shadow-xl rounded-2xl flex flex-col"
-                style={{ padding: 0 }} // Keep padding minimal but allow for content to fill
+                style={{ padding: 0 }}
               >
-                {/* Dialog Header - Keep it as is */}
                 <DialogHeader className="p-6 pb-4 border-b border-slate-100 flex-row items-center justify-between sticky top-0 bg-white z-10">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-sky-500 flex items-center justify-center">
@@ -246,13 +235,11 @@ export default function SearchPage() {
                   </div>
                 </DialogHeader>
 
-                {/* The main content area where the scrollbar should appear */}
                 <div className="p-6 pt-4 flex-1 overflow-y-auto custom-scrollbar">
                   <div className="flex flex-col md:flex-row gap-8">
-                    {/* Professions Filter */}
                     <div className="flex-1 space-y-4">
                       <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 rounded bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center">
+                        <div className="w-6 h-6 rounded bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center">
                           <Users className="w-4 h-4 text-white" />
                         </div>
                         <h4 className="font-semibold text-slate-800">
@@ -261,7 +248,7 @@ export default function SearchPage() {
                         {selectedProfessions.length > 0 && (
                           <Badge
                             variant="secondary"
-                            className="bg-purple-100 text-purple-700"
+                            className="bg-blue-100 text-blue-700"
                           >
                             {selectedProfessions.length} selected
                           </Badge>
@@ -272,14 +259,11 @@ export default function SearchPage() {
                           ([label, enumValue]) => (
                             <div
                               key={enumValue}
-                              className={`
-      flex items-center space-x-3 p-2 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer
-      ${
-        selectedProfessions.includes(enumValue)
-          ? "bg-blue-50 border border-blue-200"
-          : ""
-      }
-    `}
+                              className={`flex items-center space-x-3 p-2 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer ${
+                                selectedProfessions.includes(enumValue)
+                                  ? "bg-blue-50 border border-blue-200"
+                                  : ""
+                              }`}
                               onClick={() => handleProfessionToggle(enumValue)}
                             >
                               <Checkbox
@@ -303,10 +287,10 @@ export default function SearchPage() {
                         )}
                       </div>
                     </div>
-                    {/* Locations Filter */}
+
                     <div className="flex-1 space-y-4">
                       <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 rounded bg-gradient-to-r from-emerald-500 to-teal-500 flex items-center justify-center">
+                        <div className="w-6 h-6 rounded bg-gradient-to-r from-sky-500 to-cyan-500 flex items-center justify-center">
                           <MapPin className="w-4 h-4 text-white" />
                         </div>
                         <h4 className="font-semibold text-slate-800">
@@ -315,15 +299,14 @@ export default function SearchPage() {
                         {selectedLocations.length > 0 && (
                           <Badge
                             variant="secondary"
-                            className="bg-emerald-100 text-emerald-700"
+                            className="bg-sky-100 text-sky-700"
                           >
                             {selectedLocations.length} selected
                           </Badge>
                         )}
                       </div>
 
-                      {/* Custom Location Input */}
-                      <div className="space-y-3 p-4 bg-gradient-to-r from-slate-50 to-blue-50 rounded-lg border border-slate-200">
+                      <div className="space-y-3 p-4 bg-gradient-to-r from-slate-50 to-sky-50 rounded-lg border border-slate-200">
                         <Label className="text-sm font-medium text-slate-700">
                           Add Custom Location
                         </Label>
@@ -342,13 +325,13 @@ export default function SearchPage() {
                           <Button
                             onClick={handleAddCustomLocation}
                             disabled={!customLocationInput.trim()}
-                            className="bg-gradient-to-r from-blue-500 to-sky-500 hover:from-blue-600 hover:to-sky-600 text-white px-4"
+                            className="bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-600 hover:to-cyan-600 text-white px-4"
                           >
                             <Plus className="w-4 h-4" />
                           </Button>
                         </div>
                       </div>
-                      {/* Selected Locations Display */}
+
                       {selectedLocations.length > 0 && (
                         <div className="space-y-2">
                           <Label className="text-xs font-medium text-slate-600 uppercase tracking-wide">
@@ -359,7 +342,7 @@ export default function SearchPage() {
                               <Badge
                                 key={id}
                                 variant="secondary"
-                                className="bg-blue-100 text-blue-800 hover:bg-blue-200 cursor-pointer transition-colors"
+                                className="bg-sky-100 text-sky-800 hover:bg-sky-200 cursor-pointer transition-colors"
                               >
                                 {location}
                                 <button
@@ -373,7 +356,7 @@ export default function SearchPage() {
                           </div>
                         </div>
                       )}
-                      {/* Popular Locations */}
+
                       <div className="space-y-3">
                         <Label className="text-xs font-medium text-slate-600 uppercase tracking-wide">
                           Popular Locations
@@ -382,14 +365,11 @@ export default function SearchPage() {
                           {popularLocations.map((location) => (
                             <div
                               key={location}
-                              className={`
-      flex items-center space-x-3 p-2 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer
-      ${
-        selectedLocations.includes(location)
-          ? "bg-emerald-50 border border-emerald-200"
-          : ""
-      }
-    `}
+                              className={`flex items-center space-x-3 p-2 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer ${
+                                selectedLocations.includes(location)
+                                  ? "bg-sky-50 border border-sky-200"
+                                  : ""
+                              }`}
                               onClick={() => handleLocationToggle(location)}
                             >
                               <Checkbox
@@ -398,7 +378,7 @@ export default function SearchPage() {
                                 onCheckedChange={() =>
                                   handleLocationToggle(location)
                                 }
-                                className="data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-emerald-500 data-[state=checked]:to-teal-500"
+                                className="data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-sky-500 data-[state=checked]:to-cyan-500"
                               />
                               <label
                                 htmlFor={`location-${location}`}
@@ -413,6 +393,7 @@ export default function SearchPage() {
                     </div>
                   </div>
                 </div>
+
                 <div className="p-4 border-t border-slate-100 flex justify-end sticky bottom-0 bg-white z-10">
                   <Button
                     variant="ghost"
@@ -429,7 +410,6 @@ export default function SearchPage() {
           </div>
         </div>
 
-        {/* Results */}
         <div className="space-y-6">
           {loading && (
             <div className="flex items-center justify-center py-12">
@@ -438,26 +418,26 @@ export default function SearchPage() {
             </div>
           )}
 
-          {!loading && filteredResults.length === 0 && (
+          {!loading && results.length === 0 && (
             <div className="text-center py-12">
               <Users className="w-8 h-8 mx-auto text-slate-400 mb-4" />
               <p className="text-xl font-semibold text-slate-600">
-                No User found
+                No users found for "{q}"
               </p>
-              <p className="text-slate-500">
-                Try adjusting your filters or search terms
+              <p className="text-slate-500 mb-2">
+                Try adjusting your filters or search terms.
               </p>
             </div>
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredResults.map((user) => (
+            {results.map((user) => (
               <Card
                 key={user.id}
-                className="border-0 shadow-lg hover:shadow-xl transition-all rounded-2xl bg-white "
+                className="border-0 shadow-lg hover:shadow-xl transition-all rounded-2xl bg-white"
               >
                 <CardHeader className="p-0 relative h-32">
-                  <div className="absolute inset-0 bg-gradient-to-br from-blue-200 to-indigo-200 opacity-80"></div>
+                  <div className="absolute inset-0 bg-gradient-to-br from-blue-200 to-sky-200 opacity-80"></div>
                   <Avatar className="w-24 h-24 absolute -bottom-12 left-6 ring-4 ring-white shadow-sm">
                     <AvatarImage
                       src={user.image}
@@ -478,20 +458,23 @@ export default function SearchPage() {
                         ? user.companyName
                         : user.username}
                     </h3>
-                    <Badge className="bg-green-200 text-black">
+                    <Badge className="bg-blue-100 text-blue-800 font-medium">
                       {user.type === "BUSINESS"
-                        ? "Business account"
-                        : "Creator account"}
+                        ? "Business"
+                        : user.creatorType.charAt(0) +
+                          user.creatorType.slice(1).toLowerCase()}
                     </Badge>
                   </div>
                   <p className="text-slate-600 text-sm">
-                    {user.type === "CREATOR" ? user.creatorType : user.industry}
+                    {user.type === "BUSINESS" ? user.industry : ""}
                   </p>
                   <div className="flex items-center gap-1 text-sm text-slate-500">
                     <MapPin className="w-4 h-4" />
                     {user.type === "BUSINESS"
                       ? user.headquarters
-                      : user?.data?.personalInfo?.location}
+                      : user?.location ||
+                        user?.data?.personalInfo?.location ||
+                        "Location not specified"}
                   </div>
                   <Link
                     href={
@@ -502,7 +485,7 @@ export default function SearchPage() {
                           }/${user.creatorType?.toLowerCase()}`
                     }
                   >
-                    <Button className="w-full mt-3 bg-gradient-to-r from-blue-500 via-sky-500 to-indigo-500 text-white">
+                    <Button className="w-full mt-3 bg-gradient-to-r from-blue-500 via-sky-500 to-indigo-500 text-white hover:opacity-90 transition-opacity">
                       <Eye className="w-4 h-4 mr-2" /> View Profile
                     </Button>
                   </Link>
@@ -512,6 +495,24 @@ export default function SearchPage() {
           </div>
         </div>
       </div>
+
+      <style jsx global>{`
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 6px;
+          height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: #f1f1f1;
+          border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: #aab2c0; /* A neutral gray-blue */
+          border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: #8b96a8;
+        }
+      `}</style>
     </div>
   );
 }
