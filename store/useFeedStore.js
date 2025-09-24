@@ -16,7 +16,7 @@ export const useFeedStore = create((set, get) => ({
   getUserDetails: async () => {
     try {
       const response = await axios.get(`${API_URL}/feed/user-detail`);
-      set({ userDetails: response.data.userDetails });
+      set({ userDetail: response.data });
     } catch (error) {
       console.log(error);
       toast.error("Error fetching user details");
