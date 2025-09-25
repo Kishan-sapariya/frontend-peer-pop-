@@ -86,7 +86,16 @@ export default function ComedianProfile() {
       `${personalInfo.firstName || ""} ${personalInfo.lastName || ""}`.trim() ||
       "Comedian",
     title: personalInfo.title || "Stand-Up Comedian",
-    location: personalInfo.location || "Location not specified",
+    location: (() => {
+      if (!personalInfo.state) return "Location not specified";
+
+      const city =
+        personalInfo.city === "Other"
+          ? personalInfo.customCity
+          : personalInfo.city;
+
+      return city ? `${personalInfo.state}, ${city}` : personalInfo.state;
+    })(),
     joinDate: personalInfo.joinDate || "Not specified",
     website: personalInfo.website || "",
     email: personalInfo.email || "",

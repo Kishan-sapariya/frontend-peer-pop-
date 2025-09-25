@@ -29,6 +29,7 @@ import {
 } from "lucide-react";
 import { useComedianStore } from "@/store/useComedianStore";
 import { useAuthStore } from "@/store/useAuthStore";
+import { LocationSelector } from "@/component/LocationSelector";
 
 export default function ComedianProfileUpdate() {
   const { profile, updateComedianProfile, getComedianProfileByUsername } =
@@ -48,8 +49,10 @@ export default function ComedianProfileUpdate() {
     lastName: "",
     stageName: "",
     email: "",
+    state: "",
+    city: "",
+    customCity: "",
     phone: "",
-    location: "",
     website: "",
     bio: "",
     profileImage: null,
@@ -134,7 +137,9 @@ export default function ComedianProfileUpdate() {
         stageName: data.personalInfo?.stageName || "",
         email: data.personalInfo?.email || "",
         phone: data.personalInfo?.phone || "",
-        location: data.personalInfo?.location || "",
+        state: data.personalInfo?.state || "",
+        city: data.personalInfo?.city || "",
+        customCity: data.personalInfo?.customCity || "",
         website: data.personalInfo?.website || "",
         bio: data.personalInfo?.bio || "",
         profileImage: data.personalInfo?.profileImage || null,
@@ -216,7 +221,9 @@ export default function ComedianProfileUpdate() {
           stageName: formData.stageName,
           email: formData.email,
           phone: formData.phone,
-          location: formData.location,
+          state: formData.state,
+          city: formData.city,
+          customCity: formData.customCity,
           website: formData.website,
           bio: formData.bio,
           profileImage: formData.profileImage,
@@ -380,7 +387,7 @@ export default function ComedianProfileUpdate() {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div>
               <div>
                 <Label htmlFor="email">Email Address *</Label>
                 <Input
@@ -393,18 +400,16 @@ export default function ComedianProfileUpdate() {
                   placeholder="your.email@example.com"
                 />
               </div>
-              <div>
-                <Label htmlFor="location">Location *</Label>
-                <Input
-                  id="location"
-                  value={formData.location}
-                  onChange={(e) =>
-                    setFormData({ ...formData, location: e.target.value })
-                  }
-                  placeholder="City, State/Country"
-                />
-              </div>
             </div>
+
+            <LocationSelector
+              selectedState={formData.state}
+              city={formData.city}
+              customCity={formData.customCity}
+              onLocationChange={(updates) =>
+                setFormData({ ...formData, ...updates })
+              }
+            />
 
             <div>
               <Label htmlFor="bio">Comedy Bio *</Label>

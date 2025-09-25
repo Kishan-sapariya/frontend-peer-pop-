@@ -135,7 +135,16 @@ export default function YouTuberProfile() {
       "Creator",
     title: personalInfo.title || "YouTube Creator",
     channel: channelInfo.channelHandle ? `@${channelInfo.channelHandle}` : "",
-    location: personalInfo.location || "Location not specified",
+    location: (() => {
+      if (!personalInfo.state) return "Location not specified";
+
+      const city =
+        personalInfo.city === "Other"
+          ? personalInfo.customCity
+          : personalInfo.city;
+
+      return city ? `${personalInfo.state}, ${city}` : personalInfo.state;
+    })(),
     joinDate: channelInfo.channelAge || "Not specified",
     website: personalInfo.website || "",
     email: personalInfo.email || "",
@@ -297,6 +306,7 @@ export default function YouTuberProfile() {
                         <MapPin className="w-4 h-4 mr-1" />
                         {capitalizeInitials(creator.location)}
                       </div>
+                      {console.log(creator)}
                       <div className="flex items-center">
                         <Calendar className="w-4 h-4 mr-1" />
                         Creating since {creator.joinDate}

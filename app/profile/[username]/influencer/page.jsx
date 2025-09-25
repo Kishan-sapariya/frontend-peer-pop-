@@ -99,7 +99,18 @@ export default function InfluencerProfile() {
       "Influencer",
     title: personalInfo.displayName || "Influencer",
     niche: contentInfo.primaryNiche || "",
-    location: personalInfo.location || "Location not specified",
+
+    location: (() => {
+      if (!personalInfo.state) return "Location not specified";
+
+      const city =
+        personalInfo.city === "Other"
+          ? personalInfo.customCity
+          : personalInfo.city;
+
+      return city ? `${personalInfo.state}, ${city}` : personalInfo.state;
+    })(),
+
     joinDate: personalInfo.joinDate || "Not specified",
     website: personalInfo.website || "",
     email: personalInfo.email || "",
@@ -300,8 +311,8 @@ export default function InfluencerProfile() {
                   profile?.completion?.percentage > 99 && (
                     <div className="mt-4 p-3 bg-yellow-50 text-sm rounded-lg">
                       🚀 Your profile is {profile.completion.percentage}%
-                      complete. Fill in the missing details to unlock <b>Elite</b>{" "}
-                      status.
+                      complete. Fill in the missing details to unlock{" "}
+                      <b>Elite</b> status.
                     </div>
                   )}
                 {isOwnProfile && profile?.completion?.percentage < 100 && (

@@ -30,6 +30,7 @@ import {
 } from "lucide-react";
 import { useYoutubeStore } from "@/store/useYoutubeStore";
 import { useAuthStore } from "@/store/useAuthStore";
+import { LocationSelector } from "../LocationSelector";
 
 export default function UpdateYouTuberProfile() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -54,7 +55,9 @@ export default function UpdateYouTuberProfile() {
     channelHandle: "",
     email: "",
     phone: "",
-    location: "",
+    state: "",
+    city: "",
+    customCity: "",
     website: "",
     bio: "",
     profileImage: null,
@@ -124,7 +127,9 @@ export default function UpdateYouTuberProfile() {
         channelHandle: data.channelInfo?.channelHandle || "",
         email: data.personalInfo?.email || "",
         phone: data.personalInfo?.phone || "",
-        location: data.personalInfo?.location || "",
+        state: data.personalInfo?.state || "",
+        city: data.personalInfo?.city || "",
+        customCity: data.personalInfo?.customCity || "",
         website: data.personalInfo?.website || "",
         bio: data.personalInfo?.bio || "",
         subscriberCount: data.statistics?.subscriberCount || "",
@@ -221,7 +226,9 @@ export default function UpdateYouTuberProfile() {
           lastName: syncedFormData.lastName,
           email: syncedFormData.email,
           phone: syncedFormData.phone,
-          location: syncedFormData.location,
+          state: syncedFormData.state,
+          city: syncedFormData.city,
+          customCity: syncedFormData.customCity,
           website: syncedFormData.website,
           bio: syncedFormData.bio,
           profileImage: syncedFormData.profileImage,
@@ -337,18 +344,6 @@ export default function UpdateYouTuberProfile() {
             </div>
 
             <div>
-              <Label htmlFor="channelName">Channel Name *</Label>
-              <Input
-                id="channelName"
-                value={formData.channelName}
-                onChange={(e) =>
-                  setFormData({ ...formData, channelName: e.target.value })
-                }
-                placeholder="Your YouTube channel name"
-              />
-            </div>
-
-            <div>
               <Label htmlFor="channelHandle">Channel Handle *</Label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
@@ -366,7 +361,7 @@ export default function UpdateYouTuberProfile() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div>
               <div>
                 <Label htmlFor="email">Email Address *</Label>
                 <Input
@@ -379,18 +374,16 @@ export default function UpdateYouTuberProfile() {
                   placeholder="your.email@example.com"
                 />
               </div>
-              <div>
-                <Label htmlFor="location">Location *</Label>
-                <Input
-                  id="location"
-                  value={formData.location}
-                  onChange={(e) =>
-                    setFormData({ ...formData, location: e.target.value })
-                  }
-                  placeholder="City, State/Country"
-                />
-              </div>
             </div>
+
+            <LocationSelector
+              selectedState={formData.state}
+              city={formData.city}
+              customCity={formData.customCity}
+              onLocationChange={(updates) =>
+                setFormData({ ...formData, ...updates })
+              }
+            />
 
             <div>
               <Label htmlFor="bio">Channel Description *</Label>

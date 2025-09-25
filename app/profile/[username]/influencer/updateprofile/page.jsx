@@ -28,6 +28,7 @@ import {
   ArrowLeft,
 } from "lucide-react";
 import { useInfluencerStore } from "@/store/useInfluencerStore";
+import { LocationSelector } from "@/component/LocationSelector";
 
 export default function InfluencerProfileUpdate() {
   const { profile, updateInfluencerProfile, getInfluencerProfileByUsername } =
@@ -47,7 +48,9 @@ export default function InfluencerProfileUpdate() {
     displayName: "",
     email: "",
     phone: "",
-    location: "",
+    state: "",
+    city: "",
+    customCity: "",
     website: "",
     bio: "",
     profileImage: null,
@@ -146,7 +149,9 @@ export default function InfluencerProfileUpdate() {
         displayName: data.personalInfo?.displayName || "",
         email: data.personalInfo?.email || "",
         phone: data.personalInfo?.phone || "",
-        location: data.personalInfo?.location || "",
+        state: data.personalInfo?.state || "",
+        city: data.personalInfo?.city || "",
+        customCity: data.personalInfo?.customCity || "",
         website: data.personalInfo?.website || "",
         bio: data.personalInfo?.bio || "",
         profileImage: data.personalInfo?.profileImage || null,
@@ -243,7 +248,9 @@ export default function InfluencerProfileUpdate() {
           displayName: formData.displayName,
           email: formData.email,
           phone: formData.phone,
-          location: formData.location,
+          state: syncedFormData.state,
+          city: syncedFormData.city,
+          customCity: syncedFormData.customCity,
           website: formData.website,
           bio: formData.bio,
           profileImage: formData.profileImage,
@@ -430,7 +437,7 @@ export default function InfluencerProfileUpdate() {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div>
               <div>
                 <Label htmlFor="email">Email Address *</Label>
                 <Input
@@ -443,18 +450,16 @@ export default function InfluencerProfileUpdate() {
                   placeholder="your.email@example.com"
                 />
               </div>
-              <div>
-                <Label htmlFor="location">Location *</Label>
-                <Input
-                  id="location"
-                  value={formData.location}
-                  onChange={(e) =>
-                    setFormData({ ...formData, location: e.target.value })
-                  }
-                  placeholder="City, State/Country"
-                />
-              </div>
             </div>
+
+            <LocationSelector
+              selectedState={formData.state}
+              city={formData.city}
+              customCity={formData.customCity}
+              onLocationChange={(updates) =>
+                setFormData({ ...formData, ...updates })
+              }
+            />
 
             <div>
               <Label htmlFor="bio">Bio *</Label>

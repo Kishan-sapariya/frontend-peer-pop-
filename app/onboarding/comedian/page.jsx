@@ -28,6 +28,7 @@ import {
   Star,
 } from "lucide-react";
 import { useComedianStore } from "@/store/useComedianStore";
+import { LocationSelector } from "@/component/LocationSelector";
 
 export default function ComedianOnboarding() {
   const { createComedianProfile } = useComedianStore();
@@ -41,7 +42,9 @@ export default function ComedianOnboarding() {
     stageName: "",
     email: "",
     phone: "",
-    location: "",
+    state: "",
+    city: "",
+    customCity: "",
     website: "",
     bio: "",
     profileImage: null,
@@ -122,7 +125,6 @@ export default function ComedianOnboarding() {
       firstName: "First Name",
       lastName: "Last Name",
       email: "Email Address",
-      location: "Location",
       yearsPerforming: "Years Performing",
       bio: "Comedy Bio",
     };
@@ -171,7 +173,9 @@ export default function ComedianOnboarding() {
             stageName: syncedFormData.stageName,
             email: syncedFormData.email,
             phone: syncedFormData.phone,
-            location: syncedFormData.location,
+            state: syncedFormData.state,
+            city: syncedFormData.city,
+            customCity: syncedFormData.customCity,
             website: syncedFormData.website,
             bio: syncedFormData.bio,
             profileImage: syncedFormData.profileImage,
@@ -331,7 +335,7 @@ export default function ComedianOnboarding() {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div>
               <div>
                 <Label htmlFor="email">Email Address *</Label>
                 <Input
@@ -344,18 +348,15 @@ export default function ComedianOnboarding() {
                   placeholder="your.email@example.com"
                 />
               </div>
-              <div>
-                <Label htmlFor="location">Location *</Label>
-                <Input
-                  id="location"
-                  value={formData.location}
-                  onChange={(e) =>
-                    setFormData({ ...formData, location: e.target.value })
-                  }
-                  placeholder="City, State/Country"
-                />
-              </div>
             </div>
+            <LocationSelector
+              selectedState={formData.state}
+              city={formData.city}
+              customCity={formData.customCity}
+              onLocationChange={(updates) =>
+                setFormData({ ...formData, ...updates })
+              }
+            />
 
             <div>
               <Label htmlFor="bio">Comedy Bio *</Label>
