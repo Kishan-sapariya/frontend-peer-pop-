@@ -306,7 +306,6 @@ export default function YouTuberProfile() {
                         <MapPin className="w-4 h-4 mr-1" />
                         {capitalizeInitials(creator.location)}
                       </div>
-                      {console.log(creator)}
                       <div className="flex items-center">
                         <Calendar className="w-4 h-4 mr-1" />
                         Creating since {creator.joinDate}
