@@ -49,7 +49,7 @@ export default function YouTuberOnboarding() {
   const { createYoutubeProfile } = useYoutubeStore();
 
   const handleConnectYouTube = () => {
-    window.location.href = "http://localhost:5000/api/youtube/auth";
+    window.location.href = `${process.env.NEXT_PUBLIC_BASE_API_URL}/youtube/auth`;
   };
 
   const [formData, setFormData] = useState({
