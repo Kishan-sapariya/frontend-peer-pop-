@@ -363,14 +363,14 @@ export default function InfluencerOnboarding() {
             </div>
 
             <div>
-              <Label htmlFor="displayName">Display Name/Brand Name *</Label>
+              <Label htmlFor="displayName">Instagram username *</Label>
               <Input
                 id="displayName"
                 value={formData.displayName}
                 onChange={(e) =>
                   setFormData({ ...formData, displayName: e.target.value })
                 }
-                placeholder="How you want to be known (e.g., @username or brand name)"
+                placeholder="Enter your instagram username"
               />
             </div>
 
