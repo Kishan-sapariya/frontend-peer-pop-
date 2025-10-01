@@ -312,7 +312,7 @@ export default function SearchPage() {
                         </Label>
                         <div className="flex gap-2">
                           <Input
-                            placeholder="Enter city name (e.g., mumbai)"
+                            placeholder="Enter state or city name"
                             value={customLocationInput}
                             onChange={(e) =>
                               setCustomLocationInput(e.target.value)

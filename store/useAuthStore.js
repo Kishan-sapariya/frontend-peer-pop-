@@ -265,22 +265,51 @@ export const useAuthStore = create((set, get) => ({
     try {
       set({ loading: true });
 
-      const res = await axios.get(`${API_URL}/auth/search`, {
-        params: {
-          q: q?.trim() || undefined, // only add if not empty
-          creatorType: Array.isArray(creatorType)
-            ? creatorType.join(",") // ✅ backend expects string (comma-separated)
-            : creatorType || undefined,
-          location: Array.isArray(location)
-            ? location.join(",") // ✅ same for location
-            : location || undefined,
-          limit,
-        },
-      });
+      // Build params object, only including non-empty values
+      const params = {
+        limit,
+      };
+
+      // Only add q if it has a value
+      if (q && q.trim()) {
+        params.q = q.trim();
+      }
+
+      // Only add creatorType if it has a value
+      if (creatorType) {
+        params.creatorType = Array.isArray(creatorType)
+          ? creatorType.join(",")
+          : creatorType;
+      }
+
+      // Only add location if it has a value
+      if (location) {
+        params.location = Array.isArray(location)
+          ? location.join(",")
+          : location;
+      }
+
+      const res = await axios.get(`${API_URL}/auth/search`, { params });
 
       const results = (res.data.users || [])
         .map((user) => {
           if (user.creatorProfile) {
+            // Extract location information from the new structure
+            const personalInfo = user.creatorProfile.data?.personalInfo || {};
+            const locationParts = [];
+
+            if (personalInfo.customCity) {
+              locationParts.push(personalInfo.customCity);
+            } else if (personalInfo.city) {
+              locationParts.push(personalInfo.city);
+            }
+
+            if (personalInfo.state) {
+              locationParts.push(personalInfo.state);
+            }
+
+            const locationString = locationParts.join(", ");
+
             return {
               type: "CREATOR",
               id: user.id,
@@ -288,6 +317,7 @@ export const useAuthStore = create((set, get) => ({
               image: user.image,
               creatorType: user.creatorProfile.creatorType,
               data: user.creatorProfile.data,
+              location: locationString || null,
             };
           }
           if (user.businessProfile) {
@@ -295,6 +325,7 @@ export const useAuthStore = create((set, get) => ({
               type: "BUSINESS",
               id: user.id,
               username: user.username,
+              image: user.image,
               companyName: user.businessProfile.companyName,
               industry: user.businessProfile.industry,
               size: user.businessProfile.size,
