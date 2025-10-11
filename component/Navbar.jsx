@@ -14,10 +14,8 @@ import {
   Sparkle,
   Building2,
   Users,
-  Plus,
   MessageCircle,
   Telescope,
-  Search,
   User2,
   Home,
   Users as PeersIcon,
@@ -34,7 +32,7 @@ import {
 } from "@/components/ui/popover";
 import NotificationBell from "./notifications/NotificationBell";
 import { NavbarSearch } from "./NavbarSearch";
-import { getInitialLetter } from "@/utils/formatDate";
+import { capitalizeInitials, getInitialLetter } from "@/utils/formatDate";
 import { useConnectionStore } from "@/store/useConnectionStore";
 import { Badge } from "@/components/ui/badge";
 import { useConversationStore } from "@/store/useConversationStore";
@@ -71,35 +69,40 @@ const Navbar = () => {
   };
 
   return (
-    <header className="bg-white/90 backdrop-blur-lg border-b border-cyan-200 sticky top-0 z-50 shadow-lg">
+    <header className="bg-black text-white backdrop-blur-lg sticky top-0 z-50 shadow-lg">
       <div className="max-w-6xl mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-lg flex items-center justify-center shadow-lg">
+            <div className="w-8 h-8 bg-[#F0AF1B] rounded-lg flex items-center justify-center shadow-lg">
               <Sparkle className="text-white" />
             </div>
             <Link href="/">
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-cyan-500 to-blue-600 bg-clip-text text-transparent hidden sm:block">
+              <h1 className="text-2xl font-bold text-[#F0AF1B] hidden sm:block">
                 Peerpop
               </h1>
             </Link>
-            <NavbarSearch />
+            {user && <NavbarSearch />}
           </div>
 
           <div className="flex items-center gap-3">
             {isAuthenticated ? (
               <>
-                {/* Desktop and Tablet Icons */}
                 <div className="hidden md:flex items-center space-x-4">
                   <Link href="/feed">
-                    <Button variant="ghost" className="relative">
+                    <Button
+                      variant="ghost"
+                      className="relative text-white hover:bg-[#041049]/50 hover:text-[#F0AF1B]"
+                    >
                       <HomeIcon className="h-5 w-5 mr-1" />
                       <span className="hidden lg:inline">Home</span>
                     </Button>
                   </Link>
 
                   <Link href="/connections">
-                    <Button variant="ghost" className="relative">
+                    <Button
+                      variant="ghost"
+                      className="relative text-white hover:bg-[#041049]/50 hover:text-[#F0AF1B]"
+                    >
                       <PeersIcon className="h-5 w-5 mr-1" />
                       <span className="hidden lg:inline">Peers</span>
                       {pendingCount > 0 && (
@@ -111,7 +114,10 @@ const Navbar = () => {
                   </Link>
 
                   <Link href="/conversations">
-                    <Button variant="ghost" className="relative">
+                    <Button
+                      variant="ghost"
+                      className="relative text-white hover:bg-[#041049]/50 hover:text-[#F0AF1B]"
+                    >
                       <MessageCircle className="h-5 w-5 mr-1" />
                       <span className="hidden lg:inline">Messages</span>
                       {unreadConversations > 0 && (
@@ -123,13 +129,12 @@ const Navbar = () => {
                   </Link>
                 </div>
 
-                {/* Notification bell and user popover for all screens */}
                 <NotificationBell />
                 <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
                   <PopoverTrigger asChild>
                     <Button
                       variant="ghost"
-                      className="h-10 rounded-full flex items-center justify-center hover:bg-muted/50 transition-colors"
+                      className="h-10 rounded-full flex items-center justify-center text-white hover:bg-[#041049]/50 hover:text-[#F0AF1B] transition-colors cursor-pointer"
                     >
                       <Avatar className="h-9 w-9 relative overflow-visible">
                         {user?.image && (
@@ -139,19 +144,19 @@ const Navbar = () => {
                             alt={user.username || "User Avatar"}
                           />
                         )}
-                        <AvatarFallback className="font-semibold text-white bg-gradient-to-r from-cyan-400 to-blue-400">
+                        <AvatarFallback className="font-semibold text-white bg-gradient-to-r from-yellow-500 to-yellow-600">
                           {getInitialLetter(user.username)}
                         </AvatarFallback>
                       </Avatar>
 
-                      <span className="text-gray-700 font-medium ml-2 mr-1 hidden lg:inline-block">
-                        {user.username}
+                      <span className="font-medium ml-2 mr-1 hidden lg:inline-block">
+                        {capitalizeInitials(user.username)}
                       </span>
 
                       {isPopoverOpen ? (
-                        <ChevronUp className="h-4 w-4 text-gray-700 hidden lg:inline-block" />
+                        <ChevronUp className="h-4 w-4 hidden lg:inline-block" />
                       ) : (
-                        <ChevronDown className="h-4 w-4 text-gray-700 hidden lg:inline-block" />
+                        <ChevronDown className="h-4 w-4 hidden lg:inline-block" />
                       )}
                     </Button>
                   </PopoverTrigger>
@@ -161,10 +166,10 @@ const Navbar = () => {
                   >
                     <div className="flex flex-col space-y-1">
                       <div className="py-2 px-2">
-                        <p className="text-sm font-medium leading-none truncate">
+                        <p className="text-sm font-medium leading-none truncate text-gray-900">
                           {user.username}
                         </p>
-                        <p className="text-xs leading-none text-muted-foreground truncate">
+                        <p className="text-xs leading-none truncate text-gray-500">
                           {user.email}
                         </p>
                       </div>
@@ -258,21 +263,21 @@ const Navbar = () => {
               <>
                 <div className="hidden md:flex items-center space-x-4">
                   <Link href="/feed">
-                    <Button variant="ghost" className="hover:bg-cyan-50">
+                    <Button className="text-white hover:text-yellow-400">
                       Explore
                     </Button>
                   </Link>
                   <Link href="/login/business">
                     <Button
                       variant="outline"
-                      className="border-orange-300 hover:bg-orange-50 text-orange-600 bg-transparent"
+                      className=" bg-[#F0AF1B] hover:bg-[#F0AF1B] hover:border-yellow-400"
                     >
                       <Building2 className="h-4 w-4 mr-2" />
                       Business Login
                     </Button>
                   </Link>
                   <Link href="/signup">
-                    <Button className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white shadow-lg">
+                    <Button className="bg-[#F0AF1B] hover:bg-[#f0af1b]/90 text-[#041049] shadow-lg">
                       <Users className="h-4 w-4 mr-2" />
                       Join as Creator
                     </Button>
@@ -282,12 +287,17 @@ const Navbar = () => {
                 {/* Mobile menu for logged-out users */}
                 <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
                   <PopoverTrigger asChild>
-                    <Button variant="ghost" className="md:hidden text-gray-700">
+                    {/* Menu Icon - Set to yellow */}
+                    <Button
+                      variant="ghost"
+                      className="md:hidden text-[#F0AF1B] hover:bg-[#041049]/50"
+                    >
                       <Menu className="h-8 w-8" />
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent
                     align="end"
+                    // Popover Content - Kept white background, ensured text is visible (default gray/black)
                     className="w-56 rounded-md border bg-white shadow-md p-2"
                   >
                     <div className="flex flex-col space-y-1">

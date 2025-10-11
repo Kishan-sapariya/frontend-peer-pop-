@@ -68,17 +68,17 @@ export const getCategoryLabel = (category) => {
     case "COLLABORATION":
       return {
         label: "Seeking Collab",
-        className: "bg-gradient-to-r from-yellow-400 to-orange-500 text-white",
+        className: "bg-teal-500 text-white",
       };
     case "OPPORTUNITY":
       return {
         label: "Opportunity Post",
-        className: "bg-gradient-to-r from-blue-400 to-sky-400 text-white",
+        className: "bg-[#F0AF1B]  text-white",
       };
     case "SHOWCASE":
       return {
         label: "Projects",
-        className: "bg-gradient-to-r from-emerald-400 to-teal-500 text-white",
+        className: "bg-red-500  text-white",
       };
     default:
       return {
@@ -91,7 +91,7 @@ export const getCompletionCateogryStyle = (category) => {
   switch (category) {
     case "Elite":
       return {
-        className: "bg-gradient-to-r from-yellow-400 to-orange-500 text-white",
+        className: "bg-[#F0AF1B] text-white",
       };
     case "Rising":
       return {

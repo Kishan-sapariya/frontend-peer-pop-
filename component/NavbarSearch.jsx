@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation"; 
-import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 export function NavbarSearch() {
   const [search, setSearch] = useState("");
   const router = useRouter();
@@ -19,7 +17,7 @@ export function NavbarSearch() {
         placeholder="Search User by Name or Profession"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        className="w-50 sm:w-65"
+        className="w-50 sm:w-65 bg-accent text-gray-800"
       />
     </form>
   );

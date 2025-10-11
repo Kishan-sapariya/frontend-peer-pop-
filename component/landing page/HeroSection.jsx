@@ -1,75 +1,158 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { motion, useReducedMotion } from "framer-motion";
+import { Sparkles, ArrowRight, Building2, Telescope } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import {
-  Sparkles,
-  ArrowRight,
-  Building2,
-  Users,
-  Telescope,
-} from "lucide-react";
 
+// --- Constants ---
+const BG_COLOR = "#041049";
+const ACCENT_COLOR = "#F0AF1B";
+
+// --- Animations ---
+const fadeInUp = {
+  hidden: { opacity: 0, y: 20 },
+  visible: (delay = 0) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.35, ease: "easeOut", delay },
+  }),
+};
+
+const buttonVariants = {
+  hidden: { opacity: 0, y: 10 },
+  visible: (delay = 0) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.3, delay },
+  }),
+  hover: { scale: 1.05, transition: { duration: 0.05 } },
+  tap: { scale: 0.97 },
+};
 const HeroSection = () => {
-  return (
-    <section className="py-20 px-4 bg-gradient-to-br from-blue-50 via-white to-orange-50 relative overflow-hidden">
-      <div className="absolute top-20 left-10 w-32 h-32 bg-blue-200 rounded-full opacity-20 blur-xl"></div>
-      <div className="absolute bottom-20 right-10 w-40 h-40 bg-orange-200 rounded-full opacity-20 blur-xl"></div>
-      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-blue-100 to-orange-100 rounded-full opacity-10 blur-3xl"></div>
+  const prefersReducedMotion = useReducedMotion();
 
-      <div className="container mx-auto text-center max-w-4xl relative z-10">
-        <h1 className="text-5xl md:text-6xl font-bold text-balance mb-6 leading-tight text-foreground">
+  return (
+    <section className="relative flex items-center justify-center h-[92vh] px-4">
+      {/* Background Image */}
+      <motion.div
+        className="absolute inset-0 z-0"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1, delay: 0.1 }}
+      >
+        <img
+          src="https://res.cloudinary.com/dvzqfb2z3/image/upload/v1760167314/2_p2juhp.png"
+          className="w-full h-full object-cover "
+        />
+        <div className="absolute inset-0 " />
+      </motion.div>
+
+      {/* Content */}
+      <motion.div
+        className="relative z-10 text-center max-w-4xl mx-auto"
+        initial="hidden"
+        animate="visible"
+      >
+        <motion.h1
+          variants={fadeInUp}
+          custom={0.2}
+          style={{
+            willChange: "transform, opacity",
+            transform: "translate3d(0,0,0)",
+          }}
+          className="text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight"
+        >
           Where Creators
           <br />
-          <span className="bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent ">
             Connect & Collaborate
           </span>
-        </h1>
+        </motion.h1>
 
-        <p className="text-xl text-muted-foreground text-pretty mb-8 max-w-3xl mx-auto leading-relaxed">
-          Join the premier network for creative professionals. Find
-          collaborators, discover opportunities, and grow your creative career
-          with YouTubers, influencers, filmmakers, photographers, and more.
-        </p>
+        <motion.p
+          variants={fadeInUp}
+          custom={0.4}
+          style={{ willChange: "transform, opacity" }}
+          className="text-lg md:text-xl font-bold text-white/80 mb-10 max-w-2xl mx-auto leading-relaxed"
+        >
+          Join the premier network for creative professionals.
+        </motion.p>
 
-        <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-          {/* Join as Creator Button */}
-          <Link href="/signup" passHref>
-            <Button
-              size="lg"
-              className="inline-flex items-center justify-center px-8 py-3 text-lg font-medium text-white shadow-lg transition-all duration-300 hover:shadow-xl group bg-gradient-to-r from-blue-600 to-blue-800"
+        <motion.div
+          className="flex flex-col sm:flex-row justify-center gap-3 mb-12"
+          variants={fadeInUp}
+          custom={0.6}
+        >
+          <motion.a
+            href="/signup"
+            variants={buttonVariants}
+            whileHover="hover"
+            whileTap="tap"
+            className="inline-flex items-center justify-center px-6 py-3 text-base font-semibold rounded-lg border-2 transition-all duration-300 shadow-lg"
+            style={{
+              backgroundColor: ACCENT_COLOR,
+              borderColor: ACCENT_COLOR,
+              color: BG_COLOR,
+            }}
+          >
+            <Sparkles className="w-4 h-4 mr-2" />
+            Start Creating Together
+            <motion.div
+              animate={!prefersReducedMotion ? { x: [0, 3, 0] } : {}}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+              className="ml-2"
             >
-              <Sparkles className="w-5 h-5 mr-2" />
-              Start Creating Together
-              <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
-            </Button>
-          </Link>
-          {/* I'm a Business Button */}
-          <Link href="/login/business" passHref>
-            <Button
-              size="lg"
-              variant="outline"
-              className="text-orange-600 border-orange-600 hover:bg-orange-50 px-8 bg-transparent shadow-md hover:shadow-lg transition-all duration-300"
-            >
-              <Building2 className="w-5 h-5 mr-2" />
-              I'm a Business
-            </Button>
-          </Link>
-          {/* Explore Community Button */}
-          <Link href="/feed" passHref>
-            <Button
-              size="lg"
-              variant="ghost"
-              className="text-blue-600 hover:bg-blue-50 px-8 transition-all duration-300 hover:shadow-md"
-            >
-              <Telescope className="w-5 h-5 mr-2" />
-              Explore Community
-            </Button>
-          </Link>
-        </div>
-      </div>
+              <ArrowRight className="w-4 h-4" />
+            </motion.div>
+          </motion.a>
+
+          <motion.a
+            href="/login/business"
+            variants={buttonVariants}
+            whileHover="hover"
+            whileTap="tap"
+            className="inline-flex items-center justify-center px-6 py-3 text-base font-semibold rounded-lg border-2 transition-all duration-300 shadow-lg"
+            style={{
+              backgroundColor: ACCENT_COLOR,
+              borderColor: ACCENT_COLOR,
+              color: BG_COLOR,
+            }}
+          >
+            <Building2 className="w-4 h-4 mr-2" />
+            I'm a Business
+          </motion.a>
+
+          <motion.a
+            href="/feed"
+            variants={buttonVariants}
+            whileHover="hover"
+            whileTap="tap"
+            className="inline-flex items-center justify-center px-6 py-3 text-base font-semibold rounded-lg border-2 text-white hover:bg-white/10 backdrop-blur-sm transition-all duration-300"
+            style={{ borderColor: "rgba(255, 255, 255, 0.3)" }}
+          >
+            <Telescope className="w-4 h-4 mr-2" />
+            Explore Community
+          </motion.a>
+        </motion.div>
+
+        <motion.div
+          variants={fadeInUp}
+          custom={0.8}
+          className="flex flex-wrap justify-center items-center gap-6 text-black font-bold text-sm mt-8"
+        >
+          {[
+            { color: "bg-green-400", text: "Free to join" },
+            { color: "bg-blue-400", text: "Verified creators" },
+            { color: "bg-purple-400", text: "Global community" },
+          ].map((item, i) => (
+            <div key={i} className="flex items-center">
+              <div className={`w-2 h-2 ${item.color} rounded-full mr-2`} />
+              <Badge className="bg-white text-black">{item.text}</Badge>
+            </div>
+          ))}
+        </motion.div>
+      </motion.div>
     </section>
   );
 };
