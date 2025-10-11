@@ -8,7 +8,7 @@ import FeaturesSection from "@/component/landing page/featuresSection";
 import HeroSection from "@/component/landing page/HeroSection";
 import { useAuthStore } from "@/store/useAuthStore";
 import WhyChooseUs from "@/component/landing page/WhyChooseUs";
-import ComingSoon from "@/component/landing page/ComingSoon";
+import VideoAnimations from "@/component/landing page/VideoAnimations";
 
 const LandingPage = () => {
   const { isAuthenticated, getCurrentUser } = useAuthStore();
@@ -27,12 +27,11 @@ const LandingPage = () => {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
       <div className="min-h-screen bg-white">
         <HeroSection />
         <FeaturesSection />
-        <WhyChooseUs/>
-        <ComingSoon/>
+        <VideoAnimations/>
+        <WhyChooseUs />
         <CTASection />
         <Footer />
       </div>
