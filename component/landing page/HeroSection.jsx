@@ -1,155 +1,148 @@
 "use client";
 
-import React from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import React, { useEffect, useState } from "react";
+import Link from "next/link";
 import { Sparkles, ArrowRight, Building2, Telescope } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { motion } from "framer-motion";
 
-// --- Constants ---
-const BG_COLOR = "#041049";
-const ACCENT_COLOR = "#F0AF1B";
-
-// --- Animations ---
-const fadeInUp = {
-  hidden: { opacity: 0, y: 20 },
-  visible: (delay = 0) => ({
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
     opacity: 1,
-    y: 0,
-    transition: { duration: 0.35, ease: "easeOut", delay },
-  }),
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
 };
 
-const buttonVariants = {
-  hidden: { opacity: 0, y: 10 },
-  visible: (delay = 0) => ({
+const itemVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.3, delay },
-  }),
-  hover: { scale: 1.05, transition: { duration: 0.05 } },
-  tap: { scale: 0.97 },
+    transition: {
+      type: "spring",
+      damping: 20,
+      stiffness: 100,
+    },
+  },
 };
+
 const HeroSection = () => {
-  const prefersReducedMotion = useReducedMotion();
+  const [hasMounted, setHasMounted] = useState(false);
+
+  useEffect(() => {
+    // Set state after mount to reduce initial render blocking
+    setHasMounted(true);
+  }, []);
 
   return (
-    <section className="relative flex items-center justify-center h-[92vh] px-4">
-      {/* Background Image */}
-      <motion.div
-        className="absolute inset-0 z-0"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1, delay: 0.1 }}
-      >
+    <section className="relative flex items-center justify-center min-h-[92vh] px-4 py-16 md:py-0 overflow-hidden bg-black">
+      <div className="absolute inset-0 w-full h-full">
+        {/* For better performance, consider using Next.js <Image> component */}
         <img
-          src="https://res.cloudinary.com/dvzqfb2z3/image/upload/v1760167314/2_p2juhp.png"
-          className="w-full h-full object-cover "
+          src="https://res.cloudinary.com/dvzqfb2z3/image/upload/w_1920,f_auto,q_auto/v1760167314/2_p2juhp.png"
+          alt="Abstract geometric background (Large)"
+          className="hidden sm:block w-full h-full object-cover"
+          loading="eager"
+          decoding="async"
         />
-        <div className="absolute inset-0 " />
-      </motion.div>
 
-      {/* Content */}
+        <img
+          src="https://res.cloudinary.com/dvzqfb2z3/image/upload/w_720,f_auto,q_auto/v1760166030/1_onw1fq.png"
+          alt="Abstract geometric background (Small)"
+          className="sm:hidden w-full h-full object-cover"
+          loading="eager"
+          decoding="async"
+        />
+      </div>
+
+      <div className="absolute inset-0 bg-black/40" />
+
       <motion.div
-        className="relative z-10 text-center max-w-4xl mx-auto"
+        className="relative z-10 text-center max-w-4xl mx-auto p-4"
+        variants={containerVariants}
         initial="hidden"
-        animate="visible"
+        // Use hasMounted to only animate once the component is ready
+        animate={hasMounted ? "visible" : "hidden"}
+        // Alternative: Use 'whileInView' to delay animation until it enters the viewport
+        // whileInView="visible"
+        // viewport={{ once: true, amount: 0.8 }}
       >
         <motion.h1
-          variants={fadeInUp}
-          custom={0.2}
-          style={{
-            willChange: "transform, opacity",
-            transform: "translate3d(0,0,0)",
-          }}
-          className="text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight"
+          className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-white mb-6 leading-tight tracking-tight"
+          variants={itemVariants}
         >
           Where Creators
           <br />
-          <span className="bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent ">
+          <span className="bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">
             Connect & Collaborate
           </span>
         </motion.h1>
 
         <motion.p
-          variants={fadeInUp}
-          custom={0.4}
-          style={{ willChange: "transform, opacity" }}
-          className="text-lg md:text-xl font-bold text-white/80 mb-10 max-w-2xl mx-auto leading-relaxed"
+          className="text-lg md:text-xl font-medium text-white/90 mb-10 max-w-2xl mx-auto leading-relaxed"
+          variants={itemVariants}
         >
           Join the premier network for creative professionals.
         </motion.p>
 
         <motion.div
-          className="flex flex-col sm:flex-row justify-center gap-3 mb-12"
-          variants={fadeInUp}
-          custom={0.6}
+          className="flex flex-col sm:flex-row flex-wrap justify-center gap-4 mb-12"
+          variants={containerVariants}
         >
-          <motion.a
-            href="/signup"
-            variants={buttonVariants}
-            whileHover="hover"
-            whileTap="tap"
-            className="inline-flex items-center justify-center px-6 py-3 text-base font-semibold rounded-lg border-2 transition-all duration-300 shadow-lg"
-            style={{
-              backgroundColor: ACCENT_COLOR,
-              borderColor: ACCENT_COLOR,
-              color: BG_COLOR,
-            }}
-          >
-            <Sparkles className="w-4 h-4 mr-2" />
-            Start Creating Together
-            <motion.div
-              animate={!prefersReducedMotion ? { x: [0, 3, 0] } : {}}
-              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-              className="ml-2"
+          <motion.div variants={itemVariants}>
+            <Link
+              href="/signup"
+              className="inline-flex items-center justify-center px-6 py-3 text-base font-semibold rounded-xl border-2 border-[#F0AF1B] bg-[#F0AF1B] text-black transition-all duration-200 min-w-[200px] hover:opacity-90"
             >
-              <ArrowRight className="w-4 h-4" />
-            </motion.div>
-          </motion.a>
+              <Sparkles className="w-5 h-5 mr-2" />
+              Start Creating Together
+              <ArrowRight className="w-4 h-4 ml-2" />
+            </Link>
+          </motion.div>
 
-          <motion.a
-            href="/login/business"
-            variants={buttonVariants}
-            whileHover="hover"
-            whileTap="tap"
-            className="inline-flex items-center justify-center px-6 py-3 text-base font-semibold rounded-lg border-2 transition-all duration-300 shadow-lg"
-            style={{
-              backgroundColor: ACCENT_COLOR,
-              borderColor: ACCENT_COLOR,
-              color: BG_COLOR,
-            }}
-          >
-            <Building2 className="w-4 h-4 mr-2" />
-            I'm a Business
-          </motion.a>
+          <motion.div variants={itemVariants}>
+            <Link
+              href="/login/business"
+              className="inline-flex items-center justify-center px-6 py-3 text-base font-semibold rounded-xl border-2 border-[#F0AF1B] bg-[#F0AF1B] text-black transition-all duration-200 min-w-[200px] hover:opacity-90"
+            >
+              <Building2 className="w-5 h-5 mr-2" />
+              I'm a Business
+            </Link>
+          </motion.div>
 
-          <motion.a
-            href="/feed"
-            variants={buttonVariants}
-            whileHover="hover"
-            whileTap="tap"
-            className="inline-flex items-center justify-center px-6 py-3 text-base font-semibold rounded-lg border-2 text-white hover:bg-white/10 backdrop-blur-sm transition-all duration-300"
-            style={{ borderColor: "rgba(255, 255, 255, 0.3)" }}
-          >
-            <Telescope className="w-4 h-4 mr-2" />
-            Explore Community
-          </motion.a>
+          <motion.div variants={itemVariants}>
+            <Link
+              href="/feed"
+              className="inline-flex items-center justify-center px-6 py-3 text-base font-semibold rounded-xl border-2 border-white/40 text-white hover:bg-white/10 backdrop-blur-sm transition-all duration-200 min-w-[200px]"
+            >
+              <Telescope className="w-5 h-5 mr-2" />
+              Explore Community
+            </Link>
+          </motion.div>
         </motion.div>
 
         <motion.div
-          variants={fadeInUp}
-          custom={0.8}
-          className="flex flex-wrap justify-center items-center gap-6 text-black font-bold text-sm mt-8"
+          className="flex flex-wrap justify-center items-center gap-4 text-black font-semibold text-sm mt-8"
+          variants={containerVariants}
         >
           {[
             { color: "bg-green-400", text: "Free to join" },
             { color: "bg-blue-400", text: "Verified creators" },
             { color: "bg-purple-400", text: "Global community" },
           ].map((item, i) => (
-            <div key={i} className="flex items-center">
+            <motion.div
+              key={i}
+              className="flex items-center"
+              variants={itemVariants}
+            >
               <div className={`w-2 h-2 ${item.color} rounded-full mr-2`} />
-              <Badge className="bg-white text-black">{item.text}</Badge>
-            </div>
+              <Badge className="bg-white text-black border border-white/40 shadow-sm">
+                {item.text}
+              </Badge>
+            </motion.div>
           ))}
         </motion.div>
       </motion.div>

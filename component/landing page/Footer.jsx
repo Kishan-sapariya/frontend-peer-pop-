@@ -1,35 +1,29 @@
+"use client";
+
 import React from "react";
 import Link from "next/link";
-import { Sparkles } from "lucide-react";
+import { Sparkles, Instagram, Facebook, Twitter, Linkedin } from "lucide-react";
 
-// --- Theme Constants (matching your Hero Section) ---
-const BG_DARK_BLUE = "";
-const ACCENT_YELLOW = "#F0AF1B";
+// Define a dark color for better contrast against yellow
+const DARK_TEXT = "text-[#041049]"; // A deep, nearly black blue
 
 const Footer = () => {
   return (
-    // Updated background color to a darker shade of blue/navy
-    <footer className=" py-12 px-4 bg-gradient-to-r from-yellow-500 via-yellow-600 to-orange-400 text-black">
+    <footer className="bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 py-12 px-4">
       <div className="max-w-6xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          {/* Logo & Description */}
           <div>
             <div className="flex items-center space-x-2 mb-4">
-              {/* Logo icon with the accent yellow/gold */}
-              <div
-                className="w-8 h-8 rounded-lg flex items-center justify-center shadow-lg"
-                style={{
-                  backgroundColor: ACCENT_YELLOW,
-                  boxShadow: `0 0 10px ${ACCENT_YELLOW}50`, // Subtle glow
-                }}
-              >
-                <Sparkles className="w-5 h-5 text-black" />{" "}
-                {/* Text-black for contrast on yellow */}
+              {/* Logo icon kept white for high contrast */}
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-[#041049] shadow-lg">
+                <Sparkles className="w-5 h-5 text-white" />
               </div>
-              <h3 className="text-xl font-bold">Peerpop</h3>
+              {/* Logo text uses the dark color */}
+              <h3 className={`text-xl font-bold ${DARK_TEXT}`}>Peerpop</h3>
             </div>
+            {/* Description text uses a slightly lighter dark shade for readability */}
             <p className="text-gray-800">
-              {" "}
-              {/* Slightly lighter gray for better contrast */}
               The creative professional network where collaboration meets
               opportunity.
             </p>
@@ -37,12 +31,13 @@ const Footer = () => {
 
           {/* Platform Links */}
           <div>
-            <h4 className="font-bold mb-4 text-black">Platform</h4>
-            <ul className="space-y-2 text-gray-800">
+            <h4 className={`font-bold mb-4 ${DARK_TEXT}`}>Platform</h4>
+            <ul className="space-y-2">
               <li>
                 <Link
                   href="/feed"
-                  className="transition-colors text-gray-700 hover:text-gray-900"
+                  // Link color is dark, hover is even darker for feedback
+                  className={`transition-colors text-gray-800 hover:${DARK_TEXT}`}
                 >
                   Explore
                 </Link>
@@ -50,7 +45,7 @@ const Footer = () => {
               <li>
                 <Link
                   href="/onboarding"
-                  className="transition-colors  text-gray-700 hover:text-gray-900"
+                  className={`transition-colors text-gray-800 hover:${DARK_TEXT}`}
                 >
                   Join
                 </Link>
@@ -58,7 +53,7 @@ const Footer = () => {
               <li>
                 <Link
                   href="/login/business"
-                  className="transition-colors  text-gray-700 hover:text-gray-900"
+                  className={`transition-colors text-gray-800 hover:${DARK_TEXT}`}
                 >
                   Business
                 </Link>
@@ -66,85 +61,84 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Community Links */}
+          {/* Support Links */}
           <div>
-            <h4 className="font-bold mb-4 text-black">
-              Community
-            </h4>
-            <ul className="space-y-2 text-gray-800">
+            <h4 className={`font-bold mb-4 ${DARK_TEXT}`}>Support</h4>
+            <ul className="space-y-2">
               <li>
-                <a
+                <Link
                   href="#"
-                  className="transition-colors  text-gray-700 hover:text-gray-900"
+                  className={`transition-colors text-gray-800 hover:${DARK_TEXT}`}
                 >
-                  Success Stories
-                </a>
+                  Help Center
+                </Link>
               </li>
               <li>
-                <a
+                <Link
                   href="#"
-                  className="transition-colors  text-gray-700 hover:text-gray-900"
+                  className={`transition-colors text-gray-800 hover:${DARK_TEXT}`}
                 >
-                  Blog
-                </a>
+                  Contact
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
-                  className="transition-colors  text-gray-700 hover:text-gray-900"
+                <Link
+                  href="/privacy-policy"
+                  className={`transition-colors text-gray-800 hover:${DARK_TEXT}`}
                 >
-                  Events
-                </a>
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/terms-of-service"
+                  className={`transition-colors text-gray-800 hover:${DARK_TEXT}`}
+                >
+                  Terms of Service
+                </Link>
               </li>
             </ul>
           </div>
 
-          {/* Support Links */}
+          {/* Social Links */}
           <div>
-            <h4 className="font-bold mb-4 text-black">
-              Support
-            </h4>
-            <ul className="space-y-2 text-gray-800">
-              <li>
-                <a
-                  href="#"
-                  className="transition-colors text-gray-700 hover:text-gray-900"
-                >
-                  Help Center
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="transition-colors  text-gray-700 hover:text-gray-900"
-                >
-                  Contact
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/privacy-policy"
-                  className="transition-colors  text-gray-700 hover:text-gray-900"
-                >
-                  Privacy Policy
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/terms-of-service"
-                  className="transition-colors  text-gray-700 hover:text-gray-900"
-                >
-                  Terms of service
-                </a>
-              </li>
-            </ul>
+            <h4 className={`font-bold mb-4 ${DARK_TEXT}`}>Follow Us</h4>
+            <div className="flex space-x-4">
+              {/* Social icons now use the DARK_TEXT color, maintaining original hover accents */}
+              <a
+                href="#"
+                className={`text-[#041049] hover:text-pink-600 transition-colors`}
+                aria-label="Instagram"
+              >
+                <Instagram className="w-6 h-6" />
+              </a>
+              <a
+                href="#"
+                className={`text-[#041049] hover:text-blue-700 transition-colors`}
+                aria-label="Facebook"
+              >
+                <Facebook className="w-6 h-6" />
+              </a>
+              <a
+                href="#"
+                className={`text-[#041049] hover:text-blue-500 transition-colors`}
+                aria-label="X / Twitter"
+              >
+                <Twitter className="w-6 h-6" />
+              </a>
+              <a
+                href="#"
+                className={`text-[#041049] hover:text-blue-800 transition-colors`}
+                aria-label="LinkedIn"
+              >
+                <Linkedin className="w-6 h-6" />
+              </a>
+            </div>
           </div>
         </div>
 
-        {/* Bottom copyright section */}
-        <div
-          className="border-t mt-8 pt-8 text-center text-gray-900 border-gray-700"
-        >
+        {/* Bottom Copyright */}
+        <div className="border-t mt-8 pt-8 text-center border-yellow-700 text-gray-800">
           <p>&copy; 2025 Peerpop. All rights reserved.</p>
         </div>
       </div>

@@ -1,4 +1,3 @@
-// CTASection.jsx (Simplified to only show Parallax Background Stars)
 "use client";
 
 import React, { useEffect, useState, useRef, useCallback } from "react";
@@ -8,16 +7,18 @@ import { Button } from "@/components/ui/button";
 
 const BackgroundStar = React.memo(
   ({ initialX, initialY, size, duration, delay }) => {
+    const starStyle = {
+      width: `${size}px`,
+      height: `${size}px`,
+      left: `${initialX}%`,
+      top: `${initialY}%`,
+      opacity: size * 0.2 + 0.1,
+    };
+
     return (
       <motion.div
         className="absolute bg-white rounded-full pointer-events-none"
-        style={{
-          width: `${size}px`,
-          height: `${size}px`,
-          left: `${initialX}%`,
-          top: `${initialY}%`,
-          opacity: size * 0.2 + 0.1,
-        }}
+        style={starStyle}
         animate={{
           x: [0, 5],
           y: [0, 5],
@@ -38,8 +39,11 @@ BackgroundStar.displayName = "BackgroundStar";
 const TOTAL_BG_STARS = 500;
 
 export default function CTASection() {
-  const [bgStars] = useState(() => {
-    return Array.from({ length: TOTAL_BG_STARS }).map((_, i) => ({
+  const bgStarsRef = useRef(null);
+  const [isClient, setIsClient] = useState(false);
+
+  if (bgStarsRef.current === null) {
+    bgStarsRef.current = Array.from({ length: TOTAL_BG_STARS }).map((_, i) => ({
       id: i,
       initialX: Math.random() * 100,
       initialY: Math.random() * 100,
@@ -47,21 +51,27 @@ export default function CTASection() {
       duration: Math.random() * 8 + 12,
       delay: Math.random() * 20,
     }));
-  });
+  }
+  const bgStars = bgStarsRef.current;
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   return (
     <section className="relative py-20 px-4 bg-black text-white overflow-hidden flex items-center justify-center min-h-[700px]">
       <div className="absolute inset-0 z-0 overflow-hidden">
-        {bgStars.map((star) => (
-          <BackgroundStar
-            key={star.id}
-            initialX={star.initialX}
-            initialY={star.initialY}
-            size={star.size}
-            duration={star.duration}
-            delay={star.delay}
-          />
-        ))}
+        {isClient &&
+          bgStars.map((star) => (
+            <BackgroundStar
+              key={star.id}
+              initialX={star.initialX}
+              initialY={star.initialY}
+              size={star.size}
+              duration={star.duration}
+              delay={star.delay}
+            />
+          ))}
       </div>
 
       <div className="container mx-auto text-center relative z-20">

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Play,
   Laugh,
@@ -11,26 +11,17 @@ import {
   Theater,
   Users,
 } from "lucide-react";
+// Import shadcn/ui components
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
 
-// --- Reusable Components ---
-const CardTitle = ({ className, children }) => (
-  <h3 className={`text-xl font-bold mb-2 ${className}`}>{children}</h3>
-);
-
-const CardDescription = ({ className, children }) => (
-  <p className={`text-sm text-gray-300 ${className}`}>{children}</p>
-);
-
-const Badge = ({ children, className }) => (
-  <span
-    className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded-full ${className}`}
-  >
-    {children}
-  </span>
-);
-
-// --- Creative Fields Data ---
 const creativeFields = [
   {
     id: 1,
@@ -40,8 +31,7 @@ const creativeFields = [
     icon: Play,
     accentColor: "from-red-500 to-pink-500",
     videoUrl:
-      "https://res.cloudinary.com/dvzqfb2z3/video/upload/q_auto:good,w_480/youtuber_video_tk7gxk.mp4",
-    comingSoon: false,
+      "https://res.cloudinary.com/dvzqfb2z3/video/upload/f_webm,q_auto:best,w_720/youtuber_video_tk7gxk.mp4",
   },
   {
     id: 2,
@@ -50,8 +40,7 @@ const creativeFields = [
     icon: Laugh,
     accentColor: "from-yellow-400 to-orange-500",
     videoUrl:
-      "https://res.cloudinary.com/dvzqfb2z3/video/upload/q_auto:good,w_480/comedian_video_ytkn8e.mp4",
-    comingSoon: false,
+      "https://res.cloudinary.com/dvzqfb2z3/video/upload/f_webm,q_auto:best,w_720/comedian_video_ytkn8e.mp4",
   },
   {
     id: 3,
@@ -60,8 +49,7 @@ const creativeFields = [
     icon: Instagram,
     accentColor: "from-pink-500 to-purple-500",
     videoUrl:
-      "https://res.cloudinary.com/dvzqfb2z3/video/upload/q_auto:good,w_480/self_video_recording_dbjwix.mp4",
-    comingSoon: false,
+      "https://res.cloudinary.com/dvzqfb2z3/video/upload/f_webm,q_auto:best,w_720/self_video_recording_dbjwix.mp4",
   },
   {
     id: 4,
@@ -71,7 +59,7 @@ const creativeFields = [
     icon: Music,
     accentColor: "from-teal-400 to-green-500",
     videoUrl:
-      "https://res.cloudinary.com/dvzqfb2z3/video/upload/q_auto:good,w_480/guitar_video_fl0w76.mp4",
+      "https://res.cloudinary.com/dvzqfb2z3/video/upload/f_webm,q_auto:best,w_720/guitar_video_fl0w76.mp4",
     comingSoon: true,
   },
   {
@@ -82,7 +70,7 @@ const creativeFields = [
     icon: Theater,
     accentColor: "from-indigo-400 to-purple-500",
     videoUrl:
-      "https://res.cloudinary.com/dvzqfb2z3/video/upload/q_auto:good,w_480/dance_video_ao5otz.mp4",
+      "https://res.cloudinary.com/dvzqfb2z3/video/upload/f_webm,q_auto:best,w_720/dance_video_ao5otz.mp4",
     comingSoon: true,
   },
   {
@@ -92,18 +80,18 @@ const creativeFields = [
     icon: Camera,
     accentColor: "from-sky-400 to-indigo-500",
     videoUrl:
-      "https://res.cloudinary.com/dvzqfb2z3/video/upload/q_auto:good,w_480/camera_video_fisiak.mp4",
+      "https://res.cloudinary.com/dvzqfb2z3/video/upload/f_webm,q_auto:best,w_720/camera_video_fisiak.mp4",
     comingSoon: true,
   },
   {
     id: 7,
     title: "Podcasters",
     description:
-      "Audio creators and hosts building communities through engaging conversations.",
+      "Audio creators and hosts building communities through conversations.",
     icon: Mic,
     accentColor: "from-cyan-400 to-blue-500",
     videoUrl:
-      "https://res.cloudinary.com/dvzqfb2z3/video/upload/q_auto:good,w_480/podcaster_video_wclrgx.mp4",
+      "https://res.cloudinary.com/dvzqfb2z3/video/upload/f_webm,q_auto:best,w_720/podcaster_video_wclrgx.mp4",
     comingSoon: true,
   },
   {
@@ -113,49 +101,93 @@ const creativeFields = [
     icon: Users,
     accentColor: "from-purple-400 to-pink-500",
     videoUrl:
-      "https://res.cloudinary.com/dvzqfb2z3/video/upload/q_auto:good,w_480/actor_video_2_v297vu.mp4",
+      "https://res.cloudinary.com/dvzqfb2z3/video/upload/f_webm,q_auto:best,w_720/actor_video_2_v297vu.mp4",
     comingSoon: true,
   },
 ];
 
-const gridContainerVariants = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.07 } },
-};
-
-const cardVariants = {
-  hidden: { y: 20, opacity: 0 },
-  visible: { y: 0, opacity: 1, transition: { duration: 0.4, ease: "easeOut" } },
-};
-
 const CreativeFieldsSection = () => {
   const [hoveredCardId, setHoveredCardId] = useState(null);
-  const videoRef = useRef(null);
-  let hoverTimeout;
+  const videoRefs = useRef({});
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 50 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        type: "spring",
+        damping: 15,
+        stiffness: 100,
+      },
+    },
+  };
+
+  useEffect(() => {
+    creativeFields.forEach((field) => {
+      const video = document.createElement("video");
+      video.src = field.videoUrl;
+      video.preload = "auto";
+      video.style.display = "none";
+      document.body.appendChild(video);
+    });
+  }, []);
+
+  useEffect(() => {
+    Object.keys(videoRefs.current).forEach((id) => {
+      const video = videoRefs.current[id];
+      if (video && parseInt(id) !== hoveredCardId) {
+        video.pause();
+        video.currentTime = 0;
+      }
+    });
+
+    const currentVideo = videoRefs.current[hoveredCardId];
+    if (currentVideo) {
+      currentVideo.play().catch(() => {});
+    }
+  }, [hoveredCardId]);
 
   return (
     <section className="py-20 px-4 bg-black overflow-hidden relative">
-      <div className="container mx-auto">
-        {/* Section Header */}
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          whileInView={{ y: 0, opacity: 1 }}
-          viewport={{ once: true }}
-          className="text-center mb-16"
-        >
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">
+      <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-900 opacity-90"></div>
+
+      <div className="container mx-auto relative z-10">
+        <div className="text-center mb-16">
+          <motion.h2
+            className="text-3xl md:text-4xl font-bold mb-4 text-white"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
             Every Creative Field Represented
-          </h2>
-          <p className="text-xl text-yellow-400 max-w-2xl mx-auto">
+          </motion.h2>
+          <motion.p
+            className="text-lg md:text-xl text-yellow-400 max-w-2xl mx-auto"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+          >
             From YouTubers to Actors, find your creative community and
             collaborate.
-          </p>
-        </motion.div>
+          </motion.p>
+        </div>
 
-        {/* Cards Grid */}
         <motion.div
-          className="grid grid-cols-2 gap-6 md:grid-cols-4 max-w-6xl mx-auto"
-          variants={gridContainerVariants}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto"
+          variants={containerVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
@@ -163,72 +195,70 @@ const CreativeFieldsSection = () => {
           {creativeFields.map((field) => (
             <motion.div
               key={field.id}
-              variants={cardVariants}
-              onMouseEnter={() => {
-                hoverTimeout = setTimeout(() => {
-                  setHoveredCardId(field.id);
-                  videoRef.current?.play();
-                }, 150);
-              }}
-              onMouseLeave={() => {
-                clearTimeout(hoverTimeout);
-                setHoveredCardId(null);
-                if (videoRef.current) {
-                  videoRef.current.pause();
-                  videoRef.current.currentTime = 0;
-                }
-              }}
-              className={`
-                relative backdrop-blur-xl bg-white/10 text-white
-                text-center p-6 flex flex-col justify-between items-center 
-                rounded-3xl overflow-hidden border border-white/20 
-                transition-all duration-500 cursor-pointer
-                hover:bg-white/15 hover:scale-[1.05]
-              `}
+              variants={itemVariants}
+              onMouseEnter={() => setHoveredCardId(field.id)}
+              onMouseLeave={() => setHoveredCardId(null)}
             >
-              {/* Video or Icon */}
-              <div className="relative z-10 w-full h-32 mx-auto mb-4 flex items-center justify-center overflow-hidden rounded-2xl">
-                {hoveredCardId === field.id && (
-                  <motion.video
-                    ref={videoRef}
-                    src={field.videoUrl}
-                    className="absolute inset-0 w-full h-full object-cover rounded-2xl"
-                    loop
-                    muted
-                    playsInline
-                    preload="metadata"
-                    autoPlay
-                  />
+              <Card
+                className={`
+                  relative text-white border-white/10
+                  text-center flex flex-col justify-between items-center 
+                  rounded-3xl overflow-hidden shadow-xl shadow-black/50
+                  backdrop-blur-lg bg-white/5
+                  px-2 py-3 h-full
+                  transition-all duration-300 hover:bg-white/10 hover:scale-[1.03]
+                `}
+              >
+                <CardHeader className="p-0 w-full">
+                  <div className="relative w-full h-32 mb-4 flex items-center justify-center overflow-hidden rounded-t-3xl">
+                    <video
+                      ref={(el) => (videoRefs.current[field.id] = el)}
+                      src={field.videoUrl}
+                      className={`absolute inset-0 w-full h-full object-cover rounded-2xl transition-opacity duration-300 ${
+                        hoveredCardId === field.id ? "opacity-100" : "opacity-0"
+                      }`}
+                      loop
+                      muted
+                      playsInline
+                      preload="auto"
+                    />
+
+                    <div
+                      className={`relative w-16 h-16 rounded-2xl flex items-center justify-center 
+                        text-white bg-gradient-to-br ${
+                          field.accentColor
+                        } shadow-xl transition-opacity duration-300 ${
+                        hoveredCardId === field.id ? "opacity-0" : "opacity-100"
+                      }`}
+                    >
+                      <field.icon size={32} />
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="flex flex-col items-center p-6 pt-0 w-full">
+                  <CardTitle className="text-white text-lg md:text-xl">
+                    {field.title}
+                  </CardTitle>
+                  <CardDescription className="text-gray-300">
+                    {field.description}
+                  </CardDescription>
+                </CardContent>
+
+                {field.comingSoon && (
+                  <div className="absolute top-4 right-4">
+                    <Badge
+                      variant="outline"
+                      className="bg-white/20 text-white border border-white/30 backdrop-blur-sm"
+                    >
+                      Coming Soon
+                    </Badge>
+                  </div>
                 )}
-
-                <motion.div
-                  className={`relative w-16 h-16 rounded-2xl flex items-center justify-center 
-                      text-white bg-gradient-to-br ${field.accentColor} shadow-xl z-20`}
-                  animate={{
-                    opacity: hoveredCardId === field.id ? 0 : 1,
-                    scale: hoveredCardId === field.id ? 0.9 : 1,
-                  }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <field.icon size={32} />
-                </motion.div>
-              </div>
-
-              <CardTitle className="text-white">{field.title}</CardTitle>
-              <CardDescription>{field.description}</CardDescription>
-
-              {field.comingSoon && (
-                <div className="absolute top-5 right-5 z-20">
-                  <Badge className="bg-white/20 text-white border border-white/30 backdrop-blur-sm">
-                    Coming Soon
-                  </Badge>
-                </div>
-              )}
+              </Card>
             </motion.div>
           ))}
         </motion.div>
       </div>
-      
     </section>
   );
 };

@@ -8,8 +8,8 @@ import {
   Rocket,
   DollarSign,
 } from "lucide-react";
-
 import { motion } from "framer-motion";
+
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 
 const features = [
@@ -60,97 +60,110 @@ const features = [
   },
 ];
 
-// --- Animation Variants ---
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.1, delayChildren: 0.1 },
-  },
-};
-
-const itemVariants = {
-  hidden: { y: 20, opacity: 0 },
-  visible: {
-    y: 0,
-    opacity: 1,
-    transition: { type: "spring", stiffness: 100, damping: 15 },
-  },
-};
-
-const MotionCard = motion(Card);
-
 const WhyChooseUs = () => {
+  // Framer Motion Variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 50 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        type: "spring",
+        stiffness: 100,
+        damping: 15,
+      },
+    },
+  };
+
   return (
-    <section className="py-20 px-4 bg-[black] relative overflow-hidden">
-      <div className="absolute inset-0 opacity-20 backdrop-blur-sm"></div>
+    <section className="py-24 px-4 bg-black relative overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-900 opacity-90"></div>
+
       <div className="container mx-auto relative z-10">
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          whileInView={{
-            y: 0,
-            opacity: 1,
-            transition: { duration: 0.5, ease: "easeOut" },
-          }}
-          viewport={{ once: true, amount: 0.3 }}
-          className="text-center mb-16"
-        >
-          {/* Text is now White/Yellow for high contrast */}
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">
+        <div className="text-center mb-16">
+          <motion.h2
+            className="text-4xl md:text-5xl font-extrabold mb-4 text-white"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
             Why Creators Choose Us
-          </h2>
-          <p className="text-xl text-yellow-400 max-w-3xl mx-auto">
+          </motion.h2>
+          <motion.p
+            className="text-xl text-yellow-400 max-w-4xl mx-auto"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+          >
             Everything you need to showcase, connect, and grow your creative
             career.
-          </p>
-        </motion.div>
+          </motion.p>
+        </div>
 
-        {/* Feature Grid */}
+        {/* Feature Grid - Animated Container */}
         <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto"
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
+          viewport={{ once: true, amount: 0.3 }} // Animation triggers when 30% of the container is visible
         >
           {features.map((feature, index) => (
-            <MotionCard
+            <motion.div
               key={index}
               variants={itemVariants}
-              className={`
-                p-8 rounded-3xl transition-all duration-300 bg-white/10
-                backdrop-blur-md text-white border border-white/20 
-                hover:scale-105 hover:bg-white/15 hover:shadow-2xl 
-                ${feature.className} flex flex-col group
-              `}
+              // Use a standard div for motion, wrap the content in Card
+              className={feature.className}
             >
-              {/* Icon */}
-              <div
+              <Card
                 className={`
-                  w-16 h-16 ${feature.accentColor} 
-                  rounded-2xl mb-6 flex items-center justify-center 
-                  text-white shadow-xl shrink-0 transition-transform duration-300
-                  ${feature.align === "center" ? "mx-auto" : "mr-auto"}
-                  group-hover:scale-110
+                  p-8 rounded-3xl transition-all duration-500 bg-white/5 
+                  backdrop-blur-xl text-white border border-white/10 
+                  shadow-2xl shadow-black/50 h-full
+                  hover:scale-[1.02] hover:bg-white/10 hover:border-white/20 
+                  flex flex-col group
                 `}
               >
-                <feature.icon size={32} />
-              </div>
+                {/* Icon */}
+                <div
+                  className={`
+                    w-16 h-16 ${feature.accentColor} 
+                    rounded-2xl mb-6 flex items-center justify-center 
+                    text-white shadow-xl shrink-0 transition-transform duration-300
+                    ${feature.align === "center" ? "mx-auto" : "mr-auto"}
+                    group-hover:rotate-6
+                  `}
+                >
+                  <feature.icon size={32} />
+                </div>
 
-              {/* Text Content */}
-              <div
-                className={`flex flex-col ${
-                  feature.align === "left" ? "text-left" : "text-center"
-                }`}
-              >
-                <CardTitle className="text-xl font-bold mb-3 text-white">
-                  {feature.title}
-                </CardTitle>
-                <CardDescription className="text-base text-gray-300">
-                  {feature.description}
-                </CardDescription>
-              </div>
-            </MotionCard>
+                {/* Text Content */}
+                <div
+                  className={`flex flex-col ${
+                    feature.align === "left" ? "text-left" : "text-center"
+                  }`}
+                >
+                  <CardTitle className="text-2xl font-bold mb-3 text-white">
+                    {feature.title}
+                  </CardTitle>
+                  <CardDescription className="text-base text-gray-300">
+                    {feature.description}
+                  </CardDescription>
+                </div>
+              </Card>
+            </motion.div>
           ))}
         </motion.div>
       </div>
