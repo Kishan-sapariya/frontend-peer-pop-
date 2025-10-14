@@ -5,6 +5,7 @@ import { io } from "socket.io-client";
 import { useAuthStore } from "./useAuthStore";
 
 const API_URL = process.env.NEXT_PUBLIC_BASE_API_URL;
+console.log("API_URL", API_URL);
 axios.defaults.withCredentials = true;
 
 let socket;
@@ -141,7 +142,7 @@ export const useConnectionStore = create((set, get) => ({
         if (type === "NEW_REQUEST") {
           const { user } = useAuthStore.getState();
           if (request.receiverId === user.id) {
-            updatedConnections.push(request); 
+            updatedConnections.push(request);
           }
         }
 

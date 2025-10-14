@@ -95,12 +95,10 @@ export const getCompletionCateogryStyle = (category) => {
       };
     case "Rising":
       return {
-        label: "Job/Gig Post",
         className: "bg-gradient-to-r from-blue-400 to-sky-400 text-white",
       };
     case "Pro":
       return {
-        label: "Projects",
         className: "bg-gradient-to-r from-emerald-400 to-teal-500 text-white",
       };
   }

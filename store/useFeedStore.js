@@ -12,6 +12,7 @@ export const useFeedStore = create((set, get) => ({
   cursor: null,
   loading: false,
   loadingMore: false,
+  suggestedUsers: [],
 
   getUserDetails: async () => {
     try {
@@ -67,7 +68,7 @@ export const useFeedStore = create((set, get) => ({
       if (isLoadMore) {
         set({ loadingMore: true });
       } else {
-        set({ loading: true, cursor: null, hasMore: true }); 
+        set({ loading: true, cursor: null, hasMore: true });
       }
 
       const res = await axios.get(`${API_URL}/feed/my-posts/${profileId}`, {
@@ -229,6 +230,18 @@ export const useFeedStore = create((set, get) => ({
       toast.error(
         error.response?.data?.message || "Failed to delete comment on post"
       );
+    }
+  },
+  getSuggestedUsers: async () => {
+    try {
+      set({ loading: true });
+      const res = await axios.get(`${API_URL}/feed/get-suggested-users`);
+      set({ suggestedUsers: res.data.users || [] });
+    } catch (error) {
+      console.error("Error fetching suggested users:", error);
+      toast.error("Failed to load suggested peers");
+    } finally {
+      set({ loading: false });
     }
   },
 }));
