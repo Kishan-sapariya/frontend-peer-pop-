@@ -107,7 +107,7 @@ export default function HomeFeed() {
       avatar: "/?height=50&width=50&text=TS",
       mutualConnections: 20,
       location: "Nashville, TN",
-      tier: "Elite",
+      tier: "Pro",
       specialty: "Social Media Strategy & Content",
       availability: "Available Now",
       skills: ["Content Strategy", "Social Media", "Brand Development"],
@@ -149,7 +149,7 @@ export default function HomeFeed() {
 
   const activeFilterCount = getActiveFilterCount();
   return (
-    <div className="min-h-screen bg-slate-100">
+    <div className="min-h-screen bg-gray-100">
       <div className="max-w-7xl mx-auto px-4 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           <div className="lg:sticky lg:top-25 lg:self-start">
@@ -159,7 +159,7 @@ export default function HomeFeed() {
           {/* Main Feed */}
           <div className="lg:col-span-2 space-y-4">
             {/* Filter Bar */}
-            <div className="flex items-center justify-between bg-white/90 backdrop-blur-sm rounded-xl p-3 shadow-lg border border-blue-200">
+            <div className="flex items-center justify-between bg-white/90 backdrop-blur-sm rounded-xl p-3 shadow-lg border border-[#041049]/10">
               <div className="flex items-center space-x-1 md:space-x-4">
                 <div className="flex items-center space-x-1 sm:space-x-4 ">
                   {/* Home Button */}
@@ -167,10 +167,10 @@ export default function HomeFeed() {
                     variant={activeNav === "home" ? "default" : "ghost"}
                     size="sm"
                     onClick={() => setActiveNav("home")}
-                    className={`text-[15px] ${
+                    className={`text-[15px] transition-colors ${
                       activeNav === "home"
-                        ? " bg-gradient-to-r from-blue-500 to-cyan-500 text-white"
-                        : "hover:bg-cyan-100 text-gray-700"
+                        ? " bg-yellow-500 hover:bg-yellow-600 text-white"
+                        : "hover:bg-[#041049]/10 text-gray-700"
                     }`}
                   >
                     <Home className="w-4 h-4 mr-1" />
@@ -182,10 +182,10 @@ export default function HomeFeed() {
                     variant={activeNav === "peers" ? "default" : "ghost"}
                     size="sm"
                     onClick={() => setActiveNav("peers")}
-                    className={`text-[15px] ${
+                    className={`text-[15px] transition-colors ${
                       activeNav === "peers"
-                        ? "bg-gradient-to-r from-blue-500 to-cyan-500 text-white"
-                        : "hover:bg-cyan-100 text-gray-700"
+                        ? "bg-yellow-500 hover:bg-yellow-600 text-white"
+                        : "hover:bg-[#041049]/10 text-gray-700"
                     }`}
                   >
                     <Users className="w-4 h-4 mr-1" />
@@ -198,7 +198,7 @@ export default function HomeFeed() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="text-[15px] hover:bg-blue-50 text-gray-700"
+                        className="text-[15px] hover:bg-[#041049]/10 text-gray-700 transition-colors"
                       >
                         {getFilterLabel()}
                         <ChevronDown className="w-4 h-4 ml-1 sm:ml-2" />
@@ -208,10 +208,10 @@ export default function HomeFeed() {
                       <div className="flex flex-col space-y-1">
                         <Button
                           variant="ghost"
-                          className={`w-full justify-start text-sm ${
+                          className={`w-full justify-start text-sm transition-colors ${
                             activeFilter === "all"
-                              ? "bg-blue-50 text-blue-600"
-                              : ""
+                              ? " bg-yellow-500 hover:bg-yellow-500 text-white hover:text-white"
+                              : "hover:bg-[#041049]/10 text-gray-700"
                           }`}
                           onClick={() => {
                             setActiveFilter("all");
@@ -221,10 +221,10 @@ export default function HomeFeed() {
                         </Button>
                         <Button
                           variant="ghost"
-                          className={`w-full justify-start text-sm ${
+                          className={`w-full justify-start text-sm transition-colors ${
                             activeFilter === "COLLABORATION"
-                              ? "bg-blue-50 text-blue-600"
-                              : ""
+                              ? "bg-yellow-500 hover:bg-yellow-500 text-white hover:text-white"
+                              : "text-gray-700 hover:bg-[#041049]/10"
                           }`}
                           onClick={() => {
                             setActiveFilter("COLLABORATION");
@@ -234,10 +234,10 @@ export default function HomeFeed() {
                         </Button>
                         <Button
                           variant="ghost"
-                          className={`w-full justify-start text-sm ${
+                          className={`w-full justify-start text-sm transition-colors ${
                             activeFilter === "OPPORTUNITY"
-                              ? "bg-blue-50 text-blue-600"
-                              : ""
+                              ? "bg-yellow-500 hover:bg-yellow-500 text-white hover:text-white"
+                              : "text-gray-700 hover:bg-[#041049]/10"
                           }`}
                           onClick={() => {
                             setActiveFilter("OPPORTUNITY");
@@ -247,10 +247,10 @@ export default function HomeFeed() {
                         </Button>
                         <Button
                           variant="ghost"
-                          className={`w-full justify-start text-sm ${
+                          className={`w-full justify-start text-sm transition-colors ${
                             activeFilter === "SHOWCASE"
-                              ? "bg-blue-50 text-blue-600"
-                              : ""
+                              ? "bg-yellow-500 hover:bg-yellow-500 text-white hover:text-white"
+                              : "text-gray-700 hover:bg-[#041049]/10"
                           }`}
                           onClick={() => {
                             setActiveFilter("SHOWCASE");
@@ -260,10 +260,10 @@ export default function HomeFeed() {
                         </Button>
                         <Button
                           variant="ghost"
-                          className={`w-full justify-start text-sm ${
+                          className={`w-full justify-start text-sm transition-colors ${
                             activeFilter === "GENERAL"
-                              ? "bg-blue-50 text-blue-600"
-                              : ""
+                              ? "bg-yellow-500 hover:bg-yellow-500 text-white hover:text-white"
+                              : "text-gray-700 hover:bg-[#041049]/10"
                           }`}
                           onClick={() => {
                             setActiveFilter("GENERAL");
@@ -301,9 +301,9 @@ export default function HomeFeed() {
                 <div className="space-y-4">
                   {suggestions.map((suggestion, index) => (
                     <div key={index} className="flex items-start space-x-3">
-                      <Avatar className="w-10 h-10 border-2 border-blue-200">
+                      <Avatar className="w-10 h-10 border-2 border-[#hover:text-white]/50">
                         <AvatarImage src={suggestion.avatar} />
-                        <AvatarFallback className="bg-gradient-to-r from-blue-500 to-sky-600 text-white text-xs">
+                        <AvatarFallback className="bg-black text-white text-xs">
                           {suggestion.name
                             .split(" ")
                             .map((n) => n[0])
@@ -319,9 +319,9 @@ export default function HomeFeed() {
                             variant="secondary"
                             className={`text-xs ${
                               suggestion.tier === "Elite"
-                                ? "bg-gradient-to-r from-yellow-400 to-orange-500 text-white"
+                                ? "bg-[#F0AF1B] text-white"
                                 : suggestion.tier === "Pro"
-                                ? "bg-gradient-to-r from-blue-500 to-sky-600 text-white"
+                                ? "bg-red-500 text-white"
                                 : "bg-gradient-to-r from-emerald-400 to-teal-500 text-white"
                             }`}
                           >
@@ -336,7 +336,7 @@ export default function HomeFeed() {
                         </p>
                         <Button
                           size="sm"
-                          className="w-full bg-gradient-to-r from-blue-500 to-sky-600 hover:from-blue-600 hover:to-sky-700 text-white text-xs h-7"
+                          className="w-full bg-black text-white text-xs"
                         >
                           <UserPlus className="w-3 h-3 mr-1" />
                           Connect
@@ -359,10 +359,10 @@ export default function HomeFeed() {
                   {trendingTopics.map((topic, index) => (
                     <div
                       key={index}
-                      className="flex items-center justify-between hover:bg-blue-50 p-2 rounded-lg cursor-pointer"
+                      className="flex items-center justify-between hover:bg-[#041049]/10 p-2 rounded-lg cursor-pointer transition-colors"
                     >
                       <div>
-                        <div className="font-medium text-xs text-blue-600">
+                        <div className="font-medium text-xs text-[#041049]">
                           {topic.tag}
                         </div>
                         <div className="text-xs text-gray-500">
@@ -371,7 +371,7 @@ export default function HomeFeed() {
                       </div>
                       <div className="flex items-center space-x-1">
                         {topic.trend === "up" ? (
-                          <TrendingUp className="w-3 h-3 text-blue-500" />
+                          <TrendingUp className="w-3 h-3 text-[#041049]" />
                         ) : (
                           <div className="w-3 h-3" />
                         )}

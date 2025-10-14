@@ -43,7 +43,7 @@ export const CommentSection = ({ comments, postId }) => {
             >
               <Avatar className="w-8 h-8 flex-shrink-0 border-2 border-blue-200">
                 <AvatarImage src={c.user?.image} alt={c.user?.username} className="object-cover" />
-                <AvatarFallback className="bg-gradient-to-r from-blue-500 to-sky-600 text-white text-xs">
+                <AvatarFallback className="bg-yellow-500 text-white text-xs">
                   {c.user?.username?.[0]?.toUpperCase() || "U"}
                 </AvatarFallback>
               </Avatar>
@@ -99,7 +99,7 @@ export const CommentSection = ({ comments, postId }) => {
           value={comment}
           type="text"
           placeholder="Add a comment..."
-          className="flex-1 p-2 text-sm border border-gray-300 rounded-l-full focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all pl-4"
+          className="flex-1 p-2 text-sm border border-gray-300 rounded-l-full focus:outline-none focus:ring-1 focus:ring-yellow-500 focus:border-yellow-500 transition-all pl-4"
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               handleAddComment();
@@ -107,7 +107,7 @@ export const CommentSection = ({ comments, postId }) => {
           }}
         />
         <Button
-          className="rounded-r-full px-6 bg-blue-600 hover:bg-blue-700 transition-colors"
+          className="rounded-r-full px-6 bg-yellow-500 hover:bg-yellow-600 transition-colors"
           onClick={handleAddComment}
           disabled={!comment.trim()}
         >

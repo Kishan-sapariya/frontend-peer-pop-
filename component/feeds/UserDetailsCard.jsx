@@ -8,7 +8,15 @@ import {
   capitalizeInitials,
   getCompletionCateogryStyle,
 } from "@/utils/formatDate";
-import { Briefcase, MapPin, FileText, Users, Youtube, Instagram, User } from "lucide-react";
+import {
+  Briefcase,
+  MapPin,
+  FileText,
+  Users,
+  Youtube,
+  Instagram,
+  User,
+} from "lucide-react";
 import React, { useEffect } from "react";
 
 const UserDetailsCard = () => {
@@ -48,14 +56,18 @@ const UserDetailsCard = () => {
     }
   };
 
+  // Kept original badge colors for readability/differentiation, but applied theme principles where possible
   const getCreatorTypeColor = (type) => {
     switch (type) {
       case "YOUTUBER":
+        // Theme: Red text/light red bg for YouTube, but keeping the original color family
         return "bg-red-100 text-red-700 hover:bg-red-200";
       case "INFLUENCER":
+        // Theme: Pink text/light pink bg for Instagram, but keeping the original color family
         return "bg-pink-100 text-pink-700 hover:bg-pink-200";
       case "COMEDIAN":
-        return "bg-yellow-50 text-yellow-700 hover:bg-yellow-100";
+        // Theme: Yellow text/light yellow bg, closer to accent color
+        return "bg-yellow-50 text-[#F0AF1B] hover:bg-yellow-100";
       default:
         return "bg-gray-100 text-gray-700 hover:bg-gray-200";
     }
@@ -73,17 +85,20 @@ const UserDetailsCard = () => {
                 className="object-cover rounded-full"
                 src={userDetails.image}
               />
-              <AvatarFallback className="bg-gradient-to-br from-violet-600 to-purple-700 text-white font-bold text-4xl">
+              <AvatarFallback className="bg-black text-white font-bold text-4xl">
                 {userDetails.username?.[0]?.toUpperCase() || "U"}
               </AvatarFallback>
             </Avatar>
-            {userDetails?.role === "CREATOR" && userDetail?.completion?.category && (
-              <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2">
-                <Badge className={`${style?.className} font-semibold px-3 py-1 shadow-sm`}>
-                  {userDetail?.completion?.category}
-                </Badge>
-              </div>
-            )}
+            {userDetails?.role === "CREATOR" &&
+              userDetail?.completion?.category && (
+                <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2">
+                  <Badge
+                    className={`${style?.className} font-semibold px-3 py-1 shadow-sm`}
+                  >
+                    {userDetail?.completion?.category}
+                  </Badge>
+                </div>
+              )}
           </div>
 
           {/* Name */}
@@ -99,7 +114,7 @@ const UserDetailsCard = () => {
                   href={`https://youtube.com/@${userDetails.handleName}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-violet-600 hover:text-violet-700 font-medium transition-colors"
+                  className="inline-flex items-center gap-1.5 text-[#041049] hover:text-[#041049]/80 font-medium transition-colors"
                 >
                   @{userDetails.handleName}
                 </a>
@@ -108,7 +123,7 @@ const UserDetailsCard = () => {
                   href={`https://instagram.com/${userDetails.handleName}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-violet-600 hover:text-violet-700 font-medium transition-colors"
+                  className="inline-flex items-center gap-1.5 text-[#041049] hover:text-[#041049]/80 font-medium transition-colors"
                 >
                   @{userDetails.handleName}
                 </a>
@@ -120,16 +135,20 @@ const UserDetailsCard = () => {
             </div>
           )}
 
-          {/* Badges Row */}
           <div className="flex flex-wrap justify-center gap-2 mb-4">
             {userDetails?.creatorType && (
-              <Badge className={`${getCreatorTypeColor(userDetails.creatorType)} border-0 font-medium px-3 py-1.5 flex items-center gap-1.5`}>
+              <Badge
+                className={`${getCreatorTypeColor(
+                  userDetails.creatorType
+                )} border-0 font-medium px-3 py-1.5 flex items-center gap-1.5`}
+              >
                 {getCreatorTypeIcon(userDetails.creatorType)}
                 {capitalizeInitials(userDetails?.creatorType?.toLowerCase())}
               </Badge>
             )}
             {userDetails?.role === "BUSINESS" && (
-              <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-200 border-0 font-medium px-3 py-1.5 flex items-center gap-1.5">
+              <Badge className="bg-[#041049]/10 text-[#041049] hover:bg-[#041049]/20 border-0 font-medium px-3 py-1.5 flex items-center gap-1.5">
+                {" "}
                 <Briefcase className="w-3.5 h-3.5" />
                 Business Account
               </Badge>
@@ -140,7 +159,8 @@ const UserDetailsCard = () => {
           <div className="space-y-3">
             {userDetails?.state && (
               <div className="flex justify-center items-center gap-2 text-gray-600">
-                <MapPin className="w-4 h-4 text-violet-500 flex-shrink-0" />
+                <MapPin className="w-4 h-4 text-[#041049] flex-shrink-0" />{" "}
+                {/* THEME: Dark Blue icon color */}
                 <span className="text-sm">
                   {userDetails.state},{" "}
                   {userDetails.city === "Other"
@@ -155,13 +175,15 @@ const UserDetailsCard = () => {
               <div className="pt-3 border-t border-gray-100 space-y-2">
                 {businessDetails?.location && (
                   <div className="flex justify-center items-center gap-2 text-gray-600">
-                    <MapPin className="w-4 h-4 text-violet-500 flex-shrink-0" />
+                    <MapPin className="w-4 h-4 text-[#041049] flex-shrink-0" />{" "}
+                    {/* THEME: Dark Blue icon color */}
                     <span className="text-sm">{businessDetails.location}</span>
                   </div>
                 )}
                 {businessDetails?.industry && (
                   <div className="flex justify-center items-center gap-2 text-gray-600">
-                    <Briefcase className="w-4 h-4 text-orange-500 flex-shrink-0" />
+                    <Briefcase className="w-4 h-4 text-[#F0AF1B] flex-shrink-0" />{" "}
+                    {/* THEME: Yellow/Gold accent color */}
                     <span className="text-sm">
                       <span className="font-semibold">Industry:</span>{" "}
                       {businessDetails.industry}
@@ -175,22 +197,22 @@ const UserDetailsCard = () => {
       </Card>
 
       {/* Stats Card */}
-      <Card className="border-0 shadow-lg bg-white rounded-2xl hover:shadow-xl transition-all duration-300 overflow-hidden">
+      <Card className="border-0 shadow-lg rounded-2xl hover:shadow-xl transition-all duration-300 overflow-hidden">
         <CardContent className="p-0">
           <div className="grid grid-cols-2 divide-x divide-gray-100">
-            <div className="group hover:bg-gray-50 transition-colors p-6 text-center">
-              <div className="font-bold text-4xl bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent">
+            <div className="group transition-colors p-6 text-center">
+              <div className="font-bold text-4xl text-[#F0AF1B]">
                 {userDetails.postCount}
               </div>
-              <div className="text-gray-600 text-sm font-medium uppercase tracking-wider mt-1">
+              <div className="text-sm font-medium uppercase tracking-wider mt-1">
                 Posts
               </div>
             </div>
-            <div className="group hover:bg-gray-50 transition-colors p-6 text-center">
-              <div className="font-bold text-4xl bg-gradient-to-r from-orange-500 to-pink-500 bg-clip-text text-transparent">
+            <div className="group transition-colors p-6 text-center">
+              <div className="font-bold text-4xl text-[#F0AF1B]">
                 {userDetails.peersCount}
               </div>
-              <div className="text-gray-600 text-sm font-medium uppercase tracking-wider mt-1">
+              <div className="text-sm font-medium uppercase tracking-wider mt-1">
                 Peers
               </div>
             </div>

@@ -11,7 +11,6 @@ import {
   Theater,
   Users,
 } from "lucide-react";
-// Import shadcn/ui components
 import {
   Card,
   CardContent,

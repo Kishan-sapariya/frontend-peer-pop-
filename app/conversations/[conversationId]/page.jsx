@@ -11,7 +11,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/useAuthStore";
 import LoadingSpinner from "@/component/LoadingSpinner";
 import socket from "@/lib/socket";
-import { Link } from "lucide-react";
+import { ArrowLeft, Paperclip, Send, X, File } from "lucide-react";
 
 const MessagesArea = () => {
   const [messageInput, setMessageInput] = useState("");
@@ -21,7 +21,6 @@ const MessagesArea = () => {
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
   const router = useRouter();
-
   const { user: currentUser } = useAuthStore();
   const {
     sendMessage,
@@ -34,27 +33,22 @@ const MessagesArea = () => {
   } = useConversationStore();
   const { conversationId } = useParams();
 
-  // ✅ Get current conversation and other participant
   const currentConversation = conversations?.find(
     (c) => c.id === conversationId
   );
-
   const otherUser = currentConversation?.participants?.find(
     (p) => p.userId !== currentUser?.id
   )?.user;
 
-  // ✅ Fetch all conversations
   useEffect(() => {
     getAllConversation();
   }, [getAllConversation]);
 
-  // ✅ Reset + fetch messages when conversation changes
   useEffect(() => {
     setMessages([]);
     if (conversationId) getMessages(conversationId);
   }, [conversationId, getMessages, setMessages]);
 
-  // ✅ Listen for incoming socket messages
   useEffect(() => {
     socket.on("receiveMessage", (msg) => {
       setMessages((prev) => {
@@ -62,7 +56,6 @@ const MessagesArea = () => {
         return [...prev, msg];
       });
 
-      // also update lastMessage for conversation
       useConversationStore.setState((state) => ({
         conversations: state.conversations.map((c) =>
           c.id === msg.conversationId ? { ...c, lastMessage: msg } : c
@@ -77,7 +70,6 @@ const MessagesArea = () => {
     };
   }, [setMessages]);
 
-  // ✅ Auto scroll to bottom
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
@@ -115,7 +107,6 @@ const MessagesArea = () => {
   const isImageFile = (file) => file?.type?.startsWith("image/");
   const isVideoFile = (file) => file?.type?.startsWith("video/");
 
-  // ✅ Send message
   const handleSendMessage = async () => {
     if (!messageInput.trim() && !selectedFile) return;
 
@@ -179,40 +170,37 @@ const MessagesArea = () => {
 
   const groupedMessages = groupMessagesByDate(messages);
 
-  // ✅ Loading state
   if (!currentConversation || !otherUser) {
     return (
-      <div className="flex items-center justify-center h-screen">
+      <div className="flex items-center justify-center h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50">
         <LoadingSpinner />
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50 font-sans">
+    <div className="flex flex-col h-screen bg-white font-sans">
       {/* Header */}
-      <div className="fixed top-16 w-full z-10 bg-white border-b border-gray-200 p-3 sm:p-4">
+      <div className="fixed top-16 w-full z-10 bg-white shadow-sm p-3 sm:p-4">
         <div className="flex items-center gap-3">
           <Button
             variant="ghost"
-            size="sm"
+            size="icon"
             onClick={() => router.back()}
-            className="p-2 hover:bg-gray-100"
+            className="p-2 text-gray-600 hover:bg-gray-100"
           >
-            ←
+            <ArrowLeft className="w-5 h-5" />
           </Button>
-
           <Avatar className="h-10 w-10 sm:h-12 sm:w-12">
             <AvatarImage
               src={otherUser.image}
               alt={otherUser.username}
               className="object-cover"
             />
-            <AvatarFallback className="bg-gray-100 text-gray-600">
+            <AvatarFallback className="bg-yellow-500 text-white">
               {otherUser.username?.charAt(0).toUpperCase() || "?"}
             </AvatarFallback>
           </Avatar>
-
           <div className="flex-1 min-w-0">
             <h2 className="text-lg font-semibold text-gray-900 truncate">
               {otherUser.username}
@@ -222,16 +210,18 @@ const MessagesArea = () => {
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-3 sm:px-4 pt-24 pb-24 space-y-4">
+      <div className="flex-1 overflow-y-auto px-3 sm:px-4 pt-24 pb-28 space-y-4">
         {isLoading ? (
-          <LoadingSpinner />
+          <div className="flex items-center justify-center w-full">
+            <LoadingSpinner />
+          </div>
         ) : (
           Object.entries(groupedMessages).map(([date, dateMessages]) => (
             <div key={date}>
               <div className="flex items-center justify-center my-4">
                 <Badge
                   variant="secondary"
-                  className="bg-gray-200 text-gray-700"
+                  className="bg-white/80 backdrop-blur-sm text-gray-600 border-gray-200"
                 >
                   {date}
                 </Badge>
@@ -248,7 +238,7 @@ const MessagesArea = () => {
                       }`}
                     >
                       <div
-                        className={`flex items-end gap-2 max-w-[70%] ${
+                        className={`flex items-end gap-2 max-w-[75%] ${
                           isFromCurrentUser ? "flex-row-reverse" : "flex-row"
                         }`}
                       >
@@ -264,46 +254,47 @@ const MessagesArea = () => {
                             </AvatarFallback>
                           </Avatar>
                         )}
-
                         <div
                           className={`flex flex-col ${
                             isFromCurrentUser ? "items-end" : "items-start"
                           }`}
                         >
                           <Card
-                            className={`p-3 ${
-                              isFromCurrentUser
-                                ? "bg-blue-500 text-white"
-                                : "bg-white"
-                            }`}
+                            className={`
+                              p-3 rounded-2xl shadow-sm border-none
+                              ${
+                                isFromCurrentUser
+                                  ? "bg-gradient-to-r from-yellow-500 to-orange-300 text-white rounded-br-none"
+                                  : "bg-gray-100 shadow-md text-gray-900 rounded-bl-none"
+                              }
+                            `}
                           >
                             <CardContent className="p-0 space-y-2">
                               {msg.content && (
-                                <p
-                                  className={`text-sm whitespace-pre-wrap ${
-                                    isFromCurrentUser
-                                      ? "text-white"
-                                      : "text-gray-900"
-                                  }`}
-                                >
+                                <p className="text-sm whitespace-pre-wrap">
                                   {msg.content}
                                 </p>
                               )}
-
                               {msg.attachmentUrl && (
                                 <>
                                   {msg.attachmentType?.startsWith("image/") ? (
-                                    <img
-                                      src={msg.attachmentUrl}
-                                      alt="attachment"
-                                      className="max-w-xs rounded-lg"
-                                    />
+                                    <a
+                                      href={msg.attachmentUrl}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                    >
+                                      <img
+                                        src={msg.attachmentUrl}
+                                        alt="attachment"
+                                        className="max-w-xs rounded-lg shadow-md cursor-pointer"
+                                      />
+                                    </a>
                                   ) : msg.attachmentType?.startsWith(
                                       "video/"
                                     ) ? (
                                     <video
                                       controls
-                                      className="max-w-xs rounded-lg"
+                                      className="max-w-xs rounded-lg shadow-md"
                                       src={msg.attachmentUrl}
                                     />
                                   ) : (
@@ -311,16 +302,25 @@ const MessagesArea = () => {
                                       href={msg.attachmentUrl}
                                       target="_blank"
                                       rel="noopener noreferrer"
-                                      className="text-sm underline"
+                                      className={`
+                                        flex items-center gap-2 p-3 rounded-lg border
+                                        ${
+                                          isFromCurrentUser
+                                            ? "bg-yellow-600/30 text-white"
+                                            : "bg-gray-100 text-gray-800"
+                                        }
+                                      `}
                                     >
-                                      📎 Download file
+                                      <File className="w-5 h-5" />
+                                      <span className="text-sm font-medium">
+                                        Download File
+                                      </span>
                                     </a>
                                   )}
                                 </>
                               )}
                             </CardContent>
                           </Card>
-
                           <span className="text-xs text-gray-500 mt-1 px-1">
                             {formatTime(msg.createdAt)}
                           </span>
@@ -338,8 +338,8 @@ const MessagesArea = () => {
 
       {/* File preview */}
       {selectedFile && (
-        <div className="bg-white border-t border-gray-200 p-3">
-          <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+        <div className="bg-white/80 backdrop-blur-sm border-t border-gray-200 p-3 fixed w-full bottom-20">
+          <div className="flex items-center gap-3 p-3 bg-gray-100 rounded-xl shadow-inner">
             <div className="relative">
               {isImageFile(selectedFile) && filePreview ? (
                 <img
@@ -354,19 +354,17 @@ const MessagesArea = () => {
                   muted
                 />
               ) : (
-                <div className="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center">
-                  📎
+                <div className="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center text-gray-500">
+                  <File className="w-8 h-8" />
                 </div>
               )}
-
               <button
                 onClick={removeFilePreview}
-                className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-600"
+                className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-600 transition-colors"
               >
-                ×
+                <X className="w-4 h-4" />
               </button>
             </div>
-
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-gray-900 truncate">
                 {selectedFile.name}
@@ -384,14 +382,13 @@ const MessagesArea = () => {
         <div className="flex items-end gap-2">
           <Button
             variant="ghost"
-            size="sm"
+            size="icon"
             onClick={() => fileInputRef.current?.click()}
-            className="p-2 hover:bg-gray-100 flex-shrink-0"
+            className="p-2 text-gray-600 hover:bg-gray-100 flex-shrink-0"
             disabled={isSending}
           >
-            <Link />
+            <Paperclip className="w-5 h-5" />
           </Button>
-
           <div className="flex-1 min-w-0">
             <Input
               type="text"
@@ -400,19 +397,18 @@ const MessagesArea = () => {
               onChange={(e) => setMessageInput(e.target.value)}
               onKeyPress={handleKeyPress}
               disabled={isSending}
+              className="py-6 rounded-full"
             />
           </div>
-
           <Button
             onClick={handleSendMessage}
             disabled={(!messageInput.trim() && !selectedFile) || isSending}
-            size="sm"
-            className="px-4 flex-shrink-0"
+            size="icon"
+            className="w-12 h-12 flex justify-center items-center rounded-full bg-gradient-to-r from-yellow-500 to-orange-400 hover:from-yellow-600 hover:to-orange-500 flex-shrink-0"
           >
-            {isSending ? "Sending..." : "Send"}
+            <Send className="w-5 h-5" />
           </Button>
         </div>
-
         <input
           type="file"
           ref={fileInputRef}

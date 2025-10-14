@@ -9,6 +9,8 @@ import { Input } from "@/components/ui/input";
 import { useConversationStore } from "../../store/useConversationStore";
 import { useAuthStore } from "../../store/useAuthStore";
 import { useRouter } from "next/navigation";
+import { Search, MessageSquare, PlusCircle } from "lucide-react";
+import Link from "next/link";
 
 export default function ConversationsPage() {
   const { user } = useAuthStore();
@@ -22,7 +24,6 @@ export default function ConversationsPage() {
     getAllConversation();
   }, [getAllConversation]);
 
-  // Get the "other" user from participants
   const getOtherUser = (conversation, currentUserId) => {
     return conversation?.participants?.find((p) => p.userId !== currentUserId)
       ?.user;
@@ -77,17 +78,19 @@ export default function ConversationsPage() {
     return "";
   };
 
-  // Loading skeleton
   if (loading && (!conversations || conversations.length === 0)) {
     return (
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-4xl mx-auto p-3 sm:p-4">
-          <div className="animate-pulse space-y-2">
+          <div className="animate-pulse space-y-4 pt-16">
             {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="bg-white p-4 rounded-lg flex gap-3">
-                <div className="w-12 h-12 bg-gray-200 rounded-full"></div>
-                <div className="flex-1">
-                  <div className="h-4 bg-gray-200 rounded w-1/3 mb-2"></div>
+              <div
+                key={i}
+                className="bg-white p-4 rounded-xl shadow-md flex items-center gap-4 border border-gray-100"
+              >
+                <div className="w-14 h-14 bg-yellow-200 rounded-full"></div>
+                <div className="flex-1 space-y-2">
+                  <div className="h-4 bg-gray-200 rounded w-1/3"></div>
                   <div className="h-3 bg-gray-200 rounded w-2/3"></div>
                 </div>
               </div>
@@ -99,71 +102,60 @@ export default function ConversationsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 text-gray-900">
       <div className="max-w-4xl mx-auto p-3 sm:p-4">
-        {/* Header */}
-        <div className="mb-4">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">
+        <div className="mb-8 pt-8 text-center">
+          <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-yellow-500 to-orange-400 bg-clip-text text-transparent mb-2">
             Messages
           </h1>
-          <p className="text-gray-600 text-sm">
-            {conversations?.length || 0} conversation
-            {(conversations?.length || 0) !== 1 ? "s" : ""}
+          <p className="text-gray-500 text-sm sm:text-base">
+            You have {conversations?.length || 0} conversation
+            {(conversations?.length || 0) !== 1 ? "s" : ""}.
           </p>
         </div>
 
-        {/* Search */}
-        <div className="mb-4">
+        <div className="mb-6">
           <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
             <Input
               type="text"
-              placeholder="Search conversations..."
+              placeholder="Search conversations by name"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 bg-white border-gray-200 focus:border-blue-500"
+              className="pl-10 pr-4 py-6 rounded-xl shadow-md border-gray-200 focus:border-yellow-500 transition-colors bg-white text-gray-800"
             />
-            <svg
-              className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
           </div>
         </div>
 
-        {/* Error */}
         {error && (
-          <Card className="mb-4">
-            <CardContent className="p-4 text-red-600">{error}</CardContent>
+          <Card className="mb-4 bg-red-50 border-red-200 text-red-700 shadow-sm">
+            <CardContent className="p-4">{error}</CardContent>
           </Card>
         )}
 
-        {/* List */}
-        <div className="space-y-2">
+        <div className="space-y-4">
           {filteredConversations.length === 0 ? (
-            <Card>
-              <CardContent className="p-8 text-center">
-                <h3 className="text-lg font-medium text-gray-900 mb-1">
+            <Card className="rounded-2xl shadow-lg border border-gray-200 bg-white">
+              <CardContent className="p-6 sm:p-8 text-center">
+                <div className="w-14 h-14 mx-auto mb-4 bg-yellow-100 rounded-full flex items-center justify-center border-2 border-yellow-200">
+                  <MessageSquare className="w-7 h-7 text-yellow-500" />
+                </div>
+                <h3 className="text-xl font-medium text-gray-900 mb-2">
                   {searchTerm
                     ? "No conversations found"
                     : "No conversations yet"}
                 </h3>
                 <p className="text-gray-500 text-sm mb-4">
                   {searchTerm
-                    ? `No conversations match "${searchTerm}"`
-                    : "Start a conversation to see it here"}
+                    ? `No conversations match your search.`
+                    : "Start a new conversation to see it here."}
                 </p>
                 {!searchTerm && (
-                  <Button onClick={() => router.push("/connections")}>
-                    Browse Connections
-                  </Button>
+                  <Link href="/connections">
+                    <Button className="bg-yellow-500 text-gray-900 hover:bg-yellow-600 shadow-lg transition-all font-semibold">
+                      <PlusCircle className="w-4 h-4 mr-2" /> Start a New Chat
+                    </Button>
+                  </Link>
                 )}
               </CardContent>
             </Card>
@@ -171,80 +163,85 @@ export default function ConversationsPage() {
             filteredConversations.map((c) => {
               const otherUser = getOtherUser(c, user?.id);
               const isUnread = c.unreadCount > 0;
-              const isLastMessageFromOther =
-                c.lastMessage?.senderId !== user?.id;
 
               if (!otherUser) return null;
+
+              const isLastMessageFromOther =
+                c.lastMessage?.senderId !== user?.id;
+              const userType = otherUser?.type;
+              const profileLink =
+                userType === "BUSINESS"
+                  ? `/profile/business/${otherUser?.username}`
+                  : `/profile/${
+                      otherUser?.username
+                    }/${otherUser?.creatorType?.toLowerCase()}`;
 
               return (
                 <Card
                   key={c.id}
-                  className={`cursor-pointer hover:shadow-sm py-1 px-3 ${
-                    isUnread ? "bg-blue-50" : "bg-white hover:bg-gray-50"
+                  className={` py-1 cursor-pointer rounded-xl transition-shadow hover:shadow-lg ${
+                    isUnread
+                      ? "bg-yellow-50 shadow-md border"
+                      : "bg-white shadow-sm border border-gray-100"
                   }`}
                   onClick={() => handleConversationClick(c.id)}
                 >
-                  <CardContent className="p-3 sm:p-4 flex items-center gap-3">
-                    {/* Avatar */}
-                    <div className="relative">
-                      <Avatar className="h-12 w-12 sm:h-14 sm:w-14">
-                        <AvatarImage
-                          className="object-cover"
-                          src={otherUser.image}
-                          alt={otherUser.username}
-                        />
-                        <AvatarFallback>
-                          {otherUser.username?.[0]?.toUpperCase() || "?"}
-                        </AvatarFallback>
-                      </Avatar>
-                      {otherUser?.isOnline && (
-                        <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full"></div>
-                      )}
-                    </div>
+                  <CardContent className="p-4 flex items-center gap-4">
+                    <Link
+                      href={profileLink}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <div className="relative">
+                        <Avatar className="h-14 w-14">
+                          <AvatarImage
+                            className="object-cover"
+                            src={otherUser.image}
+                            alt={otherUser.username}
+                          />
+                          <AvatarFallback className="bg-yellow-400 text-white text-xl font-semibold">
+                            {otherUser.username?.[0]?.toUpperCase() || "?"}
+                          </AvatarFallback>
+                        </Avatar>
+                      </div>
+                    </Link>
 
-                    {/* Info */}
                     <div className="flex-1 min-w-0">
                       <div className="flex justify-between items-center mb-1">
                         <h3
-                          className={`truncate ${
+                          className={`truncate text-lg ${
                             isUnread
-                              ? "font-semibold text-gray-900"
-                              : "font-medium text-gray-900"
+                              ? "font-bold text-gray-900"
+                              : "font-semibold text-gray-800"
                           }`}
                         >
                           {otherUser.username}
                         </h3>
-                        <div className="flex items-center gap-2">
-                          {c.lastMessage && (
-                            <span className="text-xs text-gray-500">
-                              {formatTime(c.lastMessage.createdAt)}
-                            </span>
-                          )}
-                          {isUnread && (
-                            <Badge className="bg-blue-500 text-white text-xs">
-                              {c.unreadCount}
-                            </Badge>
-                          )}
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        {c.lastMessage && isLastMessageFromOther && (
-                          <span className="text-xs text-gray-500">
-                            {otherUser.username}:
+                        {c.lastMessage && (
+                          <span className="text-xs text-gray-500 whitespace-nowrap">
+                            {formatTime(c.lastMessage.createdAt)}
                           </span>
                         )}
-                        {c.lastMessage && !isLastMessageFromOther && (
-                          <span className="text-xs text-gray-500">You:</span>
-                        )}
+                      </div>
+                      <div className="flex items-center gap-2">
                         <p
-                          className={`truncate text-xs sm:text-sm ${
-                            isUnread && isLastMessageFromOther
-                              ? "text-gray-900 font-medium"
+                          className={`truncate text-sm ${
+                            isUnread
+                              ? "text-gray-800 font-medium"
                               : "text-gray-500"
                           }`}
                         >
+                          {isLastMessageFromOther && c.lastMessage?.content
+                            ? `${otherUser.username}: `
+                            : !isLastMessageFromOther && c.lastMessage?.content
+                            ? "You: "
+                            : ""}
                           {getLastMessagePreview(c.lastMessage)}
                         </p>
+                        {isUnread && (
+                          <Badge className="bg-yellow-500 text-gray-900 text-xs px-2 py-0.5 rounded-full font-bold">
+                            {c.unreadCount}
+                          </Badge>
+                        )}
                       </div>
                     </div>
                   </CardContent>

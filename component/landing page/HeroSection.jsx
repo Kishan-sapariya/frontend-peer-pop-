@@ -33,14 +33,12 @@ const HeroSection = () => {
   const [hasMounted, setHasMounted] = useState(false);
 
   useEffect(() => {
-    // Set state after mount to reduce initial render blocking
     setHasMounted(true);
   }, []);
 
   return (
     <section className="relative flex items-center justify-center min-h-[92vh] px-4 py-16 md:py-0 overflow-hidden bg-black">
       <div className="absolute inset-0 w-full h-full">
-        {/* For better performance, consider using Next.js <Image> component */}
         <img
           src="https://res.cloudinary.com/dvzqfb2z3/image/upload/w_1920,f_auto,q_auto/v1760167314/2_p2juhp.png"
           alt="Abstract geometric background (Large)"
@@ -64,11 +62,7 @@ const HeroSection = () => {
         className="relative z-10 text-center max-w-4xl mx-auto p-4"
         variants={containerVariants}
         initial="hidden"
-        // Use hasMounted to only animate once the component is ready
         animate={hasMounted ? "visible" : "hidden"}
-        // Alternative: Use 'whileInView' to delay animation until it enters the viewport
-        // whileInView="visible"
-        // viewport={{ once: true, amount: 0.8 }}
       >
         <motion.h1
           className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-white mb-6 leading-tight tracking-tight"

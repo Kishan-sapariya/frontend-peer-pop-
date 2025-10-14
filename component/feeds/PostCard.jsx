@@ -58,13 +58,13 @@ const PostCard = ({ post }) => {
             passHref
             className="flex items-center space-x-3 md:space-x-4 cursor-pointer"
           >
-            <Avatar className="w-12 h-12 md:w-14 md:h-14 border-[2px] p-0.5 border-blue-400">
+            <Avatar className="w-12 h-12 md:w-14 md:h-14 p-0.5">
               <AvatarImage
                 src={post.user?.image}
                 alt={post.user?.username}
                 className="object-cover rounded-full"
               />
-              <AvatarFallback className="bg-gradient-to-r from-blue-500 to-sky-600 text-white font-semibold text-xl">
+              <AvatarFallback className="bg-yellow-500 text-white font-semibold text-xl">
                 {post.user?.username?.[0]?.toUpperCase() || "U"}
               </AvatarFallback>
             </Avatar>
@@ -73,7 +73,7 @@ const PostCard = ({ post }) => {
                 {post.user?.username || "Unknown User"}
               </h3>
               <div className="flex items-center space-x-1 text-xs text-gray-500 font-medium mt-1">
-                <Clock className="w-3 h-3 text-blue-500" />
+                <Clock className="w-3 h-3 text-blue-800" />
                 <span>{formatTimeAgo(post.createdAt)}</span>
               </div>
             </div>
@@ -140,7 +140,7 @@ const PostCard = ({ post }) => {
               <Badge
                 key={idx}
                 variant="outline"
-                className="text-xs md:text-sm font-medium border-blue-300 text-blue-600 bg-blue-50 hover:bg-blue-100 cursor-pointer"
+                className="text-xs md:text-sm font-medium border-black-300 text-yellow-600 bg-yellow-50 hover:bg-yellow-100 cursor-pointer"
               >
                 {tag}
               </Badge>
@@ -167,10 +167,10 @@ const PostCard = ({ post }) => {
             <Button
               variant="ghost"
               size="sm"
-              className="rounded-full px-2 py-1.5 hover:bg-blue-50 text-gray-600 hover:text-blue-600 transition-colors"
+              className="rounded-full px-2 py-1.5 hover:bg-pink-50 text-gray-600 hover:text-pink-600 transition-colors"
               onClick={toggleComments}
             >
-              <MessageCircle className="w-4 h-4 mr-1" />
+              <MessageCircle className="w-4 h-4 mr-1 text-gray-500" />
               <span className="text-xs font-semibold">
                 {post.comments?.length || 0}
               </span>

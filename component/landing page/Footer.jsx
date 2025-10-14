@@ -4,8 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { Sparkles, Instagram, Facebook, Twitter, Linkedin } from "lucide-react";
 
-// Define a dark color for better contrast against yellow
-const DARK_TEXT = "text-[#041049]"; // A deep, nearly black blue
+const DARK_TEXT = "text-[#041049]"; 
 
 const Footer = () => {
   return (
@@ -15,14 +14,12 @@ const Footer = () => {
           {/* Logo & Description */}
           <div>
             <div className="flex items-center space-x-2 mb-4">
-              {/* Logo icon kept white for high contrast */}
               <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-[#041049] shadow-lg">
                 <Sparkles className="w-5 h-5 text-white" />
               </div>
-              {/* Logo text uses the dark color */}
               <h3 className={`text-xl font-bold ${DARK_TEXT}`}>Peerpop</h3>
             </div>
-            {/* Description text uses a slightly lighter dark shade for readability */}
+           
             <p className="text-gray-800">
               The creative professional network where collaboration meets
               opportunity.
@@ -36,7 +33,6 @@ const Footer = () => {
               <li>
                 <Link
                   href="/feed"
-                  // Link color is dark, hover is even darker for feedback
                   className={`transition-colors text-gray-800 hover:${DARK_TEXT}`}
                 >
                   Explore
@@ -100,11 +96,9 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Social Links */}
           <div>
             <h4 className={`font-bold mb-4 ${DARK_TEXT}`}>Follow Us</h4>
             <div className="flex space-x-4">
-              {/* Social icons now use the DARK_TEXT color, maintaining original hover accents */}
               <a
                 href="#"
                 className={`text-[#041049] hover:text-pink-600 transition-colors`}
@@ -137,7 +131,6 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Bottom Copyright */}
         <div className="border-t mt-8 pt-8 text-center border-yellow-700 text-gray-800">
           <p>&copy; 2025 Peerpop. All rights reserved.</p>
         </div>

@@ -13,6 +13,9 @@ import {
   Trash,
   CheckCircle,
   XCircle,
+  UserPlus,
+  UserCheck,
+  UserX,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -21,6 +24,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 const notificationTypes = [
   { key: "ALL", label: "All" },
@@ -29,7 +33,7 @@ const notificationTypes = [
   { key: "CONNECTION_REJECTED", label: "Rejected Connections" },
   { key: "BUSINESS_VERIFICATION", label: "Business Verified" },
   { key: "BUSINESS_UNVERIFICATION", label: "Business Unverified" },
-  { key: "CUSTOM", label: "Custom Messages" }, // ✅ Custom notifications
+  { key: "CUSTOM", label: "Custom Messages" },
 ];
 
 export default function NotificationList() {
@@ -47,9 +51,28 @@ export default function NotificationList() {
   useEffect(() => {
     if (typeof window !== "undefined") {
       initSocket();
-      fetchNotifications(); // Fetch latest notifications
+      fetchNotifications();
     }
   }, [initSocket, fetchNotifications]);
+
+  const getNotificationIcon = (type) => {
+    switch (type) {
+      case "CONNECTION_REQUEST":
+        return <UserPlus className="h-5 w-5 text-yellow-600" />;
+      case "CONNECTION_ACCEPTED":
+        return <UserCheck className="h-5 w-5 text-green-500" />;
+      case "CONNECTION_REJECTED":
+        return <UserX className="h-5 w-5 text-red-500" />;
+      case "BUSINESS_VERIFICATION":
+        return <CheckCircle className="h-5 w-5 text-green-500" />;
+      case "BUSINESS_UNVERIFICATION":
+        return <XCircle className="h-5 w-5 text-red-500" />;
+      case "CUSTOM":
+        return <Bell className="h-5 w-5 text-yellow-500" />;
+      default:
+        return null;
+    }
+  };
 
   const formatTime = (isoString) => {
     const date = new Date(isoString);
@@ -75,32 +98,30 @@ export default function NotificationList() {
   const readCount = notifications.length - unreadCount;
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 py-10 px-6 font-sans">
+    <div className="min-h-screen bg-gray-50 py-10 px-4 sm:px-6 font-sans">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 max-w-7xl mx-auto">
         {/* Sidebar */}
-        <Card className="md:col-span-1 shadow-md border border-gray-200 dark:border-gray-800 h-fit rounded-xl p-4 md:p-6">
-          <CardHeader className="p-0 border-b pb-4 mb-4 border-gray-200 dark:border-gray-800">
-            <CardTitle className="flex items-center justify-between text-xl font-bold text-gray-900 dark:text-gray-100">
+        <Card className="md:col-span-1 shadow-xl border-2 bg-white h-fit rounded-xl p-4 md:p-6">
+          <CardHeader className="p-0 border-b pb-4 mb-4 border-gray-200">
+            <CardTitle className="flex items-center justify-between text-2xl font-bold text-gray-900">
               Notifications
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0 flex flex-col gap-3">
-            {/* Read/unread counts */}
             <div className="flex justify-between items-center mb-2">
-              <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                Unread
-              </span>
-              <span className="px-2 py-1 text-xs rounded-full bg-blue-50 text-blue-700 dark:bg-blue-900 dark:text-blue-200 font-semibold">
+              <span className="text-sm font-medium text-gray-600">Unread</span>
+              <Badge className="bg-yellow-500 text-gray-900 font-semibold hover:bg-yellow-600">
                 {unreadCount}
-              </span>
+              </Badge>
             </div>
             <div className="flex justify-between items-center mb-4">
-              <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                Read
-              </span>
-              <span className="px-2 py-1 text-xs rounded-full bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-200 font-semibold">
+              <span className="text-sm font-medium text-gray-600">Read</span>
+              <Badge
+                variant="secondary"
+                className="bg-gray-200 text-gray-700 font-semibold"
+              >
                 {readCount}
-              </span>
+              </Badge>
             </div>
 
             <DropdownMenu>
@@ -108,21 +129,21 @@ export default function NotificationList() {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="w-full justify-start text-left dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700 dark:hover:text-gray-50 transition-colors"
+                  className="w-full justify-start text-left bg-white text-gray-800 hover:bg-yellow-50 border-gray-300 transition-colors rounded-lg shadow-sm"
                 >
-                  <Filter className="h-4 w-4 mr-2 text-gray-500 dark:text-gray-400" />
+                  <Filter className="h-4 w-4 mr-2 text-gray-500" />
                   {notificationTypes.find((t) => t.key === activeFilter)?.label}
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent
                 align="start"
-                className="w-[200px] dark:bg-gray-800"
+                className="w-[220px] rounded-lg"
               >
                 {notificationTypes.map((t) => (
                   <DropdownMenuItem
                     key={t.key}
                     onClick={() => setActiveFilter(t.key)}
-                    className="cursor-pointer dark:hover:bg-gray-700"
+                    className="cursor-pointer rounded-md"
                   >
                     {t.label}
                   </DropdownMenuItem>
@@ -137,7 +158,7 @@ export default function NotificationList() {
                 onClick={() =>
                   notifications.forEach((n) => deleteNotification(n.id))
                 }
-                className="w-full justify-start text-sm text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
+                className="w-full justify-start text-sm text-red-500 hover:text-red-600 hover:bg-red-50 rounded-lg"
               >
                 <Trash className="h-4 w-4 mr-2" />
                 Delete All
@@ -149,18 +170,17 @@ export default function NotificationList() {
         {/* Notifications list */}
         <div className="md:col-span-3">
           {loading ? (
-            <div className="flex justify-center items-center h-[600px] border border-gray-200 dark:border-gray-800 rounded-xl bg-white dark:bg-gray-900">
-              <Loader2 className="animate-spin text-gray-400 h-8 w-8" />
+            <div className="flex justify-center items-center h-[600px] border border-gray-200 rounded-xl bg-white shadow-xl">
+              <Loader2 className="animate-spin text-yellow-500 h-8 w-8" />
             </div>
           ) : filteredNotifications.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-[600px] p-6 text-center border border-gray-200 dark:border-gray-800 rounded-xl bg-white dark:bg-gray-900">
-              <Bell className="h-16 w-16 text-gray-300 dark:text-gray-700 mb-4" />
-              <h3 className="text-xl font-semibold text-gray-600 dark:text-gray-400">
-                No notifications found
+            <div className="flex flex-col items-center justify-center h-[600px] p-6 text-center border-2 border-yellow-100 rounded-xl bg-white shadow-xl">
+              <Bell className="h-20 w-20 text-gray-300 mb-4" />
+              <h3 className="text-2xl font-semibold text-gray-600">
+                You're all caught up!
               </h3>
-              <p className="mt-2 text-sm text-gray-500 dark:text-gray-400 max-w-xs">
-                You're all caught up. We'll let you know when something new
-                arrives.
+              <p className="mt-2 text-sm text-gray-500 max-w-xs">
+                No new notifications. We'll let you know when something arrives.
               </p>
             </div>
           ) : (
@@ -174,52 +194,49 @@ export default function NotificationList() {
                         markAsRead(n.id);
                       }
                     }}
-                    className={`flex items-center gap-4 p-4 rounded-xl border shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer ${
-                      n.isRead
-                        ? "bg-white border-gray-200 dark:bg-gray-900 dark:border-gray-800"
-                        : "bg-blue-50 border-blue-200 dark:bg-blue-950 dark:border-blue-700"
-                    }`}
+                    className={`
+                      flex items-center gap-4 p-4 rounded-xl shadow-md transition-all duration-200 cursor-pointer border
+                      ${
+                        n.isRead
+                          ? "bg-white border-gray-200 hover:bg-gray-50"
+                          : "bg-yellow-50 border-yellow-300 hover:shadow-lg"
+                      }
+                    `}
                   >
-                    <Avatar className="h-12 w-12">
-                      <AvatarImage
-                        src={n.sender?.image}
-                        className="object-cover"
-                      />
-                      <AvatarFallback className="bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300">
-                        {n.sender?.username?.[0]?.toUpperCase() || "U"}
-                      </AvatarFallback>
-                    </Avatar>
+                    <div className="relative">
+                      <Avatar className="h-14 w-14 border-2 border-yellow-500">
+                        <AvatarImage
+                          src={n.sender?.image}
+                          className="object-cover"
+                        />
+                        <AvatarFallback className="bg-yellow-500 text-white text-lg font-semibold">
+                          {n.sender?.username?.[0]?.toUpperCase() || "U"}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="absolute -bottom-1 -right-1 p-1 bg-white rounded-full shadow-md border border-gray-200">
+                        {getNotificationIcon(n.type)}
+                      </div>
+                    </div>
 
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-900 dark:text-gray-50 leading-tight">
+                      <p className="text-base font-medium text-gray-900 leading-tight">
                         {n.message}
                       </p>
-                      <span className="text-xs text-gray-500 dark:text-gray-400 block mt-1">
+                      <span className="text-xs text-gray-500 block mt-1">
                         {formatTime(n.createdAt)}
                       </span>
                     </div>
 
-                    {/* Status icon for notification type */}
-                    {n.type === "BUSINESS_VERIFICATION" && (
-                      <CheckCircle className="h-5 w-5 text-green-500" />
-                    )}
-                    {n.type === "BUSINESS_UNVERIFICATION" && (
-                      <XCircle className="h-5 w-5 text-red-500" />
-                    )}
-                    {n.type === "CUSTOM" && (
-                      <Bell className="h-5 w-5 text-yellow-500" />
-                    )}
-
                     <Button
                       size="icon"
                       variant="ghost"
-                      className="flex-shrink-0 ml-auto text-gray-400 hover:text-red-500 dark:text-gray-500 dark:hover:text-red-400"
+                      className="flex-shrink-0 ml-auto text-gray-400 hover:text-red-500 rounded-full"
                       onClick={(e) => {
                         e.stopPropagation();
                         deleteNotification(n.id);
                       }}
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <Trash2 className="h-5 w-5" />
                     </Button>
                   </div>
                 ))}

@@ -27,7 +27,7 @@ const VerifyOtpPage = () => {
 
   if (!signedUpEmail) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-cyan-50 via-blue-50 to-white">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <LoadingSpinner size={40} text="Preparing verification..." />
       </div>
     );
@@ -86,25 +86,23 @@ const VerifyOtpPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-blue-50 to-white flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-cyan-100 p-8">
+        <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 p-8">
           <div className="text-center mb-8">
             <Link href="/" className="inline-flex items-center space-x-2 mb-6">
-              <div className="bg-gradient-to-r from-cyan-500 to-blue-500 p-2 rounded-lg">
-                <Heart className="h-6 w-6 text-white" />
+              <div className="bg-yellow-500 p-2 rounded-lg">
+                <Heart className="h-6 w-6 text-black" />
               </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent">
-                Peer Pop
-              </span>
+              <span className="text-xl font-bold text-gray-900">Peer Pop</span>
             </Link>
-            <h2 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-cyan-700 bg-clip-text text-transparent mb-2">
+            <h2 className="text-3xl font-bold text-gray-900 mb-2">
               Verify OTP
             </h2>
-            <p className="text-gray-600 mb-2 text-sm">
+            <p className="text-gray-700 mb-2 text-sm">
               Enter the 6-digit OTP sent to{" "}
               {signedUpEmail ? (
-                <span className="font-semibold text-cyan-700">
+                <span className="font-semibold text-yellow-600">
                   {signedUpEmail}
                 </span>
               ) : (
@@ -128,7 +126,7 @@ const VerifyOtpPage = () => {
             />
 
             {errors.general && (
-              <p className="text-red-500 text-sm mt-1 text-center">
+              <p className="text-red-600 text-sm mt-1 text-center font-medium">
                 {errors.general}
               </p>
             )}
@@ -136,20 +134,20 @@ const VerifyOtpPage = () => {
             <Button
               type="submit"
               disabled={isLoading}
-              className="w-full py-6 bg-gradient-to-r from-cyan-500 via-blue-500 to-cyan-600 hover:from-cyan-600 hover:via-blue-600 hover:to-cyan-700 text-white font-bold text-lg rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+              className="w-full py-6 bg-yellow-500 hover:bg-yellow-600 text-black font-bold text-lg rounded-xl shadow-lg hover:shadow-xl transform hover:scale-[1.01] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
             >
               {isLoading ? (
                 <div className="flex items-center justify-center space-x-2">
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin" />
                   <span>Verifying...</span>
                 </div>
               ) : (
                 "Verify OTP"
               )}
             </Button>
-            <p className="text-gray-600 text-center text-sm mt-4">
+            <p className="text-gray-700 text-center text-sm mt-4">
               Didn't receive OTP?{" "}
-              <span className="text-cyan-600 hover:text-cyan-700 font-semibold cursor-pointer transition-colors duration-200">
+              <span className="text-yellow-600 hover:text-yellow-700 font-semibold cursor-pointer transition-colors duration-200">
                 Resend
               </span>
             </p>
@@ -174,7 +172,7 @@ const InputGroup = ({
   error,
 }) => (
   <div>
-    <Label htmlFor={id} className="text-gray-700 font-medium">
+    <Label htmlFor={id} className="text-gray-900 font-medium">
       {label}
     </Label>
     <div className="relative mt-1">
@@ -188,11 +186,11 @@ const InputGroup = ({
         value={value}
         onChange={onChange}
         placeholder={placeholder}
-        className={`pl-10 py-6 pr-10 border-gray-300 rounded-lg focus:border-cyan-500 focus:ring-cyan-500 focus:outline-none transition-all duration-200 ${
-          error ? "border-red-500 ring-red-500" : ""
+        className={`pl-10 py-6 pr-10 border-gray-300 rounded-lg focus:border-yellow-500 focus:ring-yellow-500 focus:outline-none transition-all duration-200 text-gray-900 ${
+          error ? "border-red-600 ring-red-600" : ""
         }`}
       />
     </div>
-    {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+    {error && <p className="text-red-600 text-sm mt-1 font-medium">{error}</p>}
   </div>
 );

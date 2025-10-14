@@ -61,7 +61,6 @@ const features = [
 ];
 
 const WhyChooseUs = () => {
-  // Framer Motion Variants
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -112,19 +111,17 @@ const WhyChooseUs = () => {
           </motion.p>
         </div>
 
-        {/* Feature Grid - Animated Container */}
         <motion.div
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto"
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.3 }} // Animation triggers when 30% of the container is visible
+          viewport={{ once: true, amount: 0.3 }} 
         >
           {features.map((feature, index) => (
             <motion.div
               key={index}
               variants={itemVariants}
-              // Use a standard div for motion, wrap the content in Card
               className={feature.className}
             >
               <Card

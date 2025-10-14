@@ -29,14 +29,10 @@ import {
 } from "@/components/ui/popover";
 import NotificationBell from "./notifications/NotificationBell";
 import { NavbarSearch } from "./NavbarSearch";
-// Assuming these utils exist or using mock functions
-const capitalizeInitials = (s) =>
-  s ? s.charAt(0).toUpperCase() + s.slice(1) : "";
-const getInitialLetter = (s) => (s ? s.charAt(0).toUpperCase() : "");
-
 import { useConnectionStore } from "@/store/useConnectionStore";
 import { Badge } from "@/components/ui/badge";
 import { useConversationStore } from "@/store/useConversationStore";
+import { capitalizeInitials, getInitialLetter } from "@/utils/formatDate";
 
 const Navbar = () => {
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
@@ -67,16 +63,12 @@ const Navbar = () => {
     }
   };
 
-  // --- Utility Components with Inlined Tailwind Classes ---
-
   const NavItem = ({ href, children, badgeCount, icon: Icon, isMessage }) => (
     <Link href={href}>
       <Button
         variant="ghost"
-        // Black Navbar: White text, subtle white BG on hover, yellow text on hover
         className="relative text-white hover:bg-white/10 hover:text-[#F0AF1B]"
       >
-        {/* Icon color is white by default, gets yellow on hover */}
         <Icon className="h-5 w-5 mr-1 text-white group-hover:text-[#F0AF1B]" />
         <span className="hidden lg:inline">{children}</span>
         {badgeCount > 0 && (
@@ -106,8 +98,7 @@ const Navbar = () => {
           setIsPopoverOpen(false);
           onClick();
         }}
-        // White Popover: Gray/Black text, light yellow BG on hover
-        className="w-full justify-start text-gray-700 hover:bg-yellow-50/50 text-black hover:text-black"
+        className="w-full justify-start text-gray-700 hover:text-black"
       >
         <Icon className="mr-2 h-4 w-4" /> {children}
         {badgeCount > 0 && (
@@ -119,36 +110,26 @@ const Navbar = () => {
     </Link>
   );
 
-  // --- Main Component Render ---
-
   return (
     <header className="bg-black text-white sticky top-0 z-50 shadow-lg border-b border-white/10">
       <div className="max-w-6xl mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center space-x-2">
-            <div
-              // Yellow Background for Sparkle icon
-              className="w-8 h-8 bg-[#F0AF1B] rounded-lg flex items-center justify-center shadow-lg"
-            >
+            <div className="w-8 h-8 bg-[#F0AF1B] rounded-lg flex items-center justify-center shadow-lg">
               <Sparkle className="text-white" />
             </div>
             <Link href="/">
-              <h1
-                // Yellow Text for brand name
-                className="text-2xl font-bold text-[#F0AF1B] hidden sm:block"
-              >
+              <h1 className="text-2xl font-bold text-[#F0AF1B] hidden sm:block">
                 Peerpop
               </h1>
             </Link>
             {user && <NavbarSearch />}
           </div>
 
-          {/* Nav & Auth Buttons */}
           <div className="flex items-center gap-3">
             {isAuthenticated ? (
               <>
-                {/* Desktop Nav Links (Uses NavItem) */}
                 <div className="hidden md:flex items-center space-x-2">
                   <NavItem href="/feed" icon={HomeIcon}>
                     Home
@@ -170,13 +151,11 @@ const Navbar = () => {
                   </NavItem>
                 </div>
 
-                {/* Notifications & User Menu */}
                 <NotificationBell />
                 <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
                   <PopoverTrigger asChild>
                     <Button
                       variant="ghost"
-                      // Subtle white BG on hover for the avatar button
                       className="h-10 rounded-full p-1 flex items-center justify-center text-white hover:bg-white/10 transition-colors cursor-pointer"
                     >
                       <Avatar className="h-9 w-9">
@@ -187,10 +166,7 @@ const Navbar = () => {
                             alt={user.username || "User Avatar"}
                           />
                         )}
-                        <AvatarFallback
-                          // Yellow BG for Avatar Fallback, White Text
-                          className="font-semibold text-white bg-[#F0AF1B]"
-                        >
+                        <AvatarFallback className="font-semibold text-white bg-[#F0AF1B]">
                           {getInitialLetter(user.username)}
                         </AvatarFallback>
                       </Avatar>
@@ -208,16 +184,12 @@ const Navbar = () => {
                   </PopoverTrigger>
                   <PopoverContent
                     align="end"
-                    // White Popover Content
                     className="w-56 rounded-md border border-gray-100 bg-white shadow-xl p-2"
                   >
                     <div className="flex flex-col space-y-1">
                       {/* User Info */}
                       <div className="py-2 px-2">
-                        <p
-                          // Black Text
-                          className="text-sm font-medium leading-none truncate text-black"
-                        >
+                        <p className="text-sm font-medium leading-none truncate text-black">
                           {user.username}
                         </p>
                         <p className="text-xs leading-none truncate text-gray-500">
@@ -225,7 +197,6 @@ const Navbar = () => {
                         </p>
                       </div>
 
-                      {/* Mobile Nav Links (Uses PopoverLinkItem) */}
                       <div className="md:hidden border-t border-gray-100 pt-1">
                         <PopoverLinkItem href="/feed" icon={HomeIcon}>
                           Home
@@ -247,7 +218,6 @@ const Navbar = () => {
                         <div className="border-t border-gray-100"></div>
                       </div>
 
-                      {/* Profile Link (Uses PopoverLinkItem) */}
                       <PopoverLinkItem
                         href={
                           user.role === "BUSINESS"
@@ -261,25 +231,21 @@ const Navbar = () => {
                         Profile
                       </PopoverLinkItem>
 
-                      {/* Admin Link (Uses PopoverLinkItem) */}
                       {user?.isAdmin && (
                         <PopoverLinkItem href="/admin" icon={User2}>
                           Admin
                         </PopoverLinkItem>
                       )}
 
-                      {/* Onboarding Link (Uses PopoverLinkItem) */}
                       {!user.creatorType && user.role !== "BUSINESS" && (
                         <PopoverLinkItem href="/onboarding" icon={Settings}>
                           Onboarding
                         </PopoverLinkItem>
                       )}
 
-                      {/* Logout Button */}
                       <div className="border-t border-gray-100 pt-1"></div>
                       <Button
                         onClick={handleLogout}
-                        // Red button for logout
                         className="w-full justify-start bg-red-50 hover:bg-red-100 text-red-500 hover:text-red-600 transition-colors"
                       >
                         <LogOut className="mr-2 h-4 w-4" /> Logout
@@ -289,13 +255,11 @@ const Navbar = () => {
                 </Popover>
               </>
             ) : (
-              // Not Authenticated
               <>
                 <div className="hidden md:flex items-center space-x-4">
                   <Link href="/feed">
                     <Button
                       variant="ghost"
-                      // White text, yellow text on hover
                       className="text-white hover:text-[#F0AF1B]"
                     >
                       Explore
@@ -304,7 +268,6 @@ const Navbar = () => {
                   <Link href="/login/business">
                     <Button
                       variant="outline"
-                      // Yellow button, black text
                       className="bg-[#F0AF1B] text-black hover:bg-[#F0AF1B]/90 border-transparent hover:border-white"
                     >
                       <Building2 className="h-4 w-4 mr-2" />
@@ -312,7 +275,6 @@ const Navbar = () => {
                     </Button>
                   </Link>
                   <Link href="/signup">
-                    {/* White button, black text */}
                     <Button className="bg-white text-black hover:bg-gray-100 shadow-lg">
                       <Users className="h-4 w-4 mr-2" />
                       Join as Creator
@@ -320,10 +282,8 @@ const Navbar = () => {
                   </Link>
                 </div>
 
-                {/* Mobile Menu for logged-out users */}
                 <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
                   <PopoverTrigger asChild>
-                    {/* Menu Icon - Yellow text, subtle white BG on hover */}
                     <Button
                       variant="ghost"
                       className="md:hidden text-[#F0AF1B] hover:bg-white/10"
@@ -333,7 +293,6 @@ const Navbar = () => {
                   </PopoverTrigger>
                   <PopoverContent
                     align="end"
-                    // White Popover Content
                     className="w-56 rounded-md border border-gray-100 bg-white shadow-xl p-2"
                   >
                     <div className="flex flex-col space-y-1">
