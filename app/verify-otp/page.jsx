@@ -73,6 +73,11 @@ const VerifyOtpPage = () => {
               : "/onboarding/business"
           }`
         );
+        window.location.href = `${
+          result.user.role === "CREATOR"
+            ? "/onboarding"
+            : "/onboarding/business"
+        }`;
       } else {
         console.log(
           result.message || "OTP verification failed. Please try again."

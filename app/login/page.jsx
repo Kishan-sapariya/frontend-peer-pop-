@@ -54,6 +54,7 @@ const LoginPage = () => {
 
       if (result.success) {
         router.push("/feed");
+        window.location.href="/feed"
       } else {
         setErrors({ general: result.message || "Login failed" });
       }

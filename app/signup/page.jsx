@@ -86,6 +86,7 @@ const SignupPage = () => {
       });
       if (result.success) {
         router.push("/verify-otp");
+        window.location.href = "/verify-otp";
       }
     } catch (error) {
       console.error(error.message || "Signup failed. Please try again.");
