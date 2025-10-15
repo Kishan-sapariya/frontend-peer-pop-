@@ -85,7 +85,6 @@ const SignupPage = () => {
         role: "CREATOR",
       });
       if (result.success) {
-        router.push("/verify-otp");
         window.location.href = "/verify-otp";
       }
     } catch (error) {

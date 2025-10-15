@@ -9,7 +9,10 @@ axios.defaults.withCredentials = true;
 export const useAuthStore = create((set, get) => ({
   isAuthenticated: false,
   user: null,
-  signedUpEmail: "",
+  signedUpEmail:
+    typeof window !== "undefined"
+      ? sessionStorage.getItem("signedUpEmail") || ""
+      : "",
   results: [],
   loading: false,
   hasMore: true,
@@ -37,6 +40,10 @@ export const useAuthStore = create((set, get) => ({
       const parsedRes = res.data;
       if (parsedRes?.success) {
         toast.success(parsedRes.message);
+        // Persist email to sessionStorage
+        if (typeof window !== "undefined") {
+          sessionStorage.setItem("signedUpEmail", user.email);
+        }
       } else {
         toast.error(parsedRes.message);
       }
@@ -129,6 +136,10 @@ export const useAuthStore = create((set, get) => ({
       if (parsedRes.success) {
         await get().getCurrentUser();
         set({ signedUpEmail: "" });
+        // Clear from sessionStorage
+        if (typeof window !== "undefined") {
+          sessionStorage.removeItem("signedUpEmail");
+        }
 
         toast.success(parsedRes.message);
       } else {
@@ -154,6 +165,10 @@ export const useAuthStore = create((set, get) => ({
       );
       const parsedRes = res.data;
       set({ isAuthenticated: false, user: null, signedUpEmail: "" });
+      // Clear from sessionStorage
+      if (typeof window !== "undefined") {
+        sessionStorage.removeItem("signedUpEmail");
+      }
 
       socket.disconnect();
 
