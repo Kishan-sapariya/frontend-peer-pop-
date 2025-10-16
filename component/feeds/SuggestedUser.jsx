@@ -110,8 +110,8 @@ const SuggestedUsers = () => {
                   {user.image ? (
                     <AvatarImage src={user.image} alt={user.username} />
                   ) : (
-                    <AvatarFallback className="bg-black text-white font-bold text-lg">
-                      {user.username ? user.username[0] : ""}
+                    <AvatarFallback className="bg-yellow-500 text-white font-bold text-lg">
+                      {user.username ? user.username[0].toUpperCase() : ""}
                     </AvatarFallback>
                   )}
                 </Avatar>

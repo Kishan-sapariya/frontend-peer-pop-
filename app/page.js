@@ -9,6 +9,7 @@ import HeroSection from "@/component/landing page/HeroSection";
 import { useAuthStore } from "@/store/useAuthStore";
 import WhyChooseUs from "@/component/landing page/WhyChooseUs";
 import VideoAnimations from "@/component/landing page/VideoAnimations";
+import CompanyMarquee from "@/component/landing page/CompanyMarquee";
 
 const LandingPage = () => {
   const { isAuthenticated, getCurrentUser } = useAuthStore();
@@ -29,9 +30,10 @@ const LandingPage = () => {
       </Head>
       <div className="min-h-screen bg-white">
         <HeroSection />
-        <FeaturesSection />
-        <VideoAnimations/>
         <WhyChooseUs />
+        <CompanyMarquee />
+        <FeaturesSection />
+        <VideoAnimations />
         <CTASection />
         <Footer />
       </div>
