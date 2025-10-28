@@ -125,9 +125,7 @@ const RightPanelUI = () => (
             </div>
           </div>
 
-          {/* Right Column Stats - takes 1/3 of space on medium screens */}
           <div className="md:col-span-0 w-33 space-y-5">
-            {/* 30-Day Growth */}
             <div className="bg-[#20232A] p-4 rounded-xl shadow-inner">
               <h4 className="text-base font-semibold text-white mb-3 border-b border-gray-700/50 pb-2">
                 30-Day Growth
@@ -195,19 +193,17 @@ const HeroSection = () => {
   const [hasMounted, setHasMounted] = useState(false);
 
   useEffect(() => {
-    // Set a slight delay to allow CSS transitions to work for a fade-in effect
     const timer = setTimeout(() => {
       setHasMounted(true);
     }, 50);
     return () => clearTimeout(timer);
   }, []);
 
-  // Using Tailwind's transition classes for motion effects
-  const contentClassName = `relative z-10 flex flex-col lg:flex-row items-center lg:items-start justify-between max-w-7xl mx-auto w-full gap-12 py-16 transition-all duration-1000 ease-out ${
+  const contentClassName = `relative z-10 flex flex-col lg:flex-row items-center lg:items-start justify-between max-w-7xl mx-auto w-full gap-12 py-6 md:py-16 transition-all duration-1000 ease-out ${
     hasMounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
   }`;
 
-  const textContentClassName = `lg:w-1/2 text-center lg:text-left px-4 pt-10 lg:pt-10 transition-all duration-1000 ease-out ${
+  const textContentClassName = `lg:w-1/2 text-center lg:text-left px-4 pt-0 lg:pt-10 transition-all duration-1000 ease-out ${
     hasMounted ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-10"
   }`;
 
@@ -217,13 +213,11 @@ const HeroSection = () => {
 
   return (
     <section className="relative flex items-center justify-center min-h-[92vh] px-4 py-16 md:py-0 overflow-hidden bg-black font-['Inter']">
-      {/* Load Inter font via Google Fonts (for a modern look) */}
       <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap"
         rel="stylesheet"
       />
 
-      {/* Tailwind CSS custom scrollbar utility */}
       <style>{`
         .custom-scrollbar::-webkit-scrollbar {
           display: none; /* For Chrome, Safari, and Opera */
@@ -234,16 +228,14 @@ const HeroSection = () => {
         }
       `}</style>
 
-      <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-900 opacity-90"></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-orange-500 via-yellow-500 to-yellow-500 opacity-90"></div>
 
       <div className={contentClassName}>
         <div className={textContentClassName}>
           <h1 className="text-5xl md:text-6xl lg:text-6xl font-extrabold text-white mb-6 leading-tight tracking-tight">
             Where Creators, Mentors
             <br />
-            <span className="bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">
-              & Brand Connect
-            </span>
+            <span className=" text-black ">& Brand Connect</span>
           </h1>
 
           <p className="text-lg md:text-xl font-medium text-white/90 mb-10 max-w-2xl lg:max-w-none mx-auto leading-relaxed">
@@ -257,7 +249,7 @@ const HeroSection = () => {
             <div>
               <a
                 href="#signup"
-                className="inline-flex items-center justify-center px-6 py-3 text-base font-semibold rounded-xl bg-gradient-to-r from-yellow-400 to-yellow-500 text-black transition-all duration-200 min-w-[200px] hover:shadow-lg hover:shadow-[#F9D423]/30"
+                className="inline-flex items-center justify-center px-6 py-3 text-base font-semibold rounded-xl bg-black text-white transition-all duration-200 min-w-[200px] hover:shadow-lg"
               >
                 <Sparkles className="w-5 h-5 mr-2" />
                 Get started for free
@@ -269,7 +261,7 @@ const HeroSection = () => {
             <div>
               <a
                 href="#business-login"
-                className="inline-flex items-center justify-center px-6 py-3 text-base font-semibold rounded-xl border-2 border-[#F0AF1B] bg-transparent text-[#F0AF1B] transition-all duration-200 min-w-[200px] hover:bg-[#F0AF1B] hover:text-black"
+                className="inline-flex items-center justify-center px-6 py-3 text-base font-semibold rounded-xl border-2 border-black bg-transparent text-black transition-all duration-200 min-w-[200px] hover:bg-black hover:text-white"
               >
                 <Building2 className="w-5 h-5 mr-2" />
                 I'm a Business

@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import {
   Target,
@@ -8,8 +10,24 @@ import {
   Zap,
   CheckCircle,
 } from "lucide-react";
+import { motion } from "framer-motion";
 import CTASection from "@/component/landing page/cta";
 import Footer from "@/component/landing page/Footer";
+
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const item = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 100 } },
+};
 
 const values = [
   {
@@ -41,13 +59,16 @@ const values = [
 const ValueCard = ({ value }) => {
   const Icon = value.icon;
   return (
-    <div className="p-6 bg-gray-900 border border-gray-700 rounded-xl flex flex-col items-center text-center h-full transition-all duration-300 hover:border-yellow-500 hover:shadow-lg">
+    <motion.div
+      variants={item}
+      className="p-6 **bg-black/30 backdrop-blur-sm** border border-yellow-500/30 rounded-xl flex flex-col items-center text-center h-full transition-all duration-300 hover:border-yellow-500 hover:shadow-lg"
+    >
       <div className="p-3 rounded-full bg-yellow-500/10 border border-yellow-500 mb-4">
         <Icon className="w-6 h-6 text-yellow-500" />
       </div>
       <h3 className="text-xl font-bold text-white mb-2">{value.title}</h3>
       <p className="text-gray-400 text-sm">{value.description}</p>
-    </div>
+    </motion.div>
   );
 };
 
@@ -56,25 +77,47 @@ const AboutUs = () => {
     <>
       <div className="bg-black text-white font-sans p-4 sm:p-8 md:p-12">
         <div className="max-w-7xl mx-auto">
-          {/* === Header and Main Mission === */}
-          <header className="text-center mb-16 mt-8">
-            <p className="text-yellow-500 font-semibold text-sm uppercase tracking-widest mb-2">
+          <motion.header
+            className="text-center mb-16 mt-8"
+            variants={container}
+            initial="hidden"
+            animate="show"
+          >
+            <motion.p
+              className="text-yellow-500 font-semibold text-sm uppercase tracking-widest mb-2"
+              variants={item}
+            >
               About PeerPop
-            </p>
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight">
+            </motion.p>
+            <motion.h1
+              className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight"
+              variants={item}
+            >
               Building the future of{" "}
               <span className="text-yellow-500">creative collaboration</span>
-            </h1>
-            <p className="mt-4 text-xl text-gray-400 max-w-4xl mx-auto">
+            </motion.h1>
+            <motion.p
+              className="mt-4 text-xl text-gray-400 max-w-4xl mx-auto"
+              variants={item}
+            >
               PeerPop was founded on the belief that authentic connections drive
               the best creative work. We're here to make those connections
               happen.
-            </p>
-          </header>
+            </motion.p>
+          </motion.header>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-20">
+          <motion.div
+            className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-20"
+            variants={container}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.2 }}
+          >
             {/* Our Mission */}
-            <div className="p-8 bg-gray-900 rounded-xl shadow-lg border border-yellow-500/50 lg:col-span-1 transition-all duration-300 hover:shadow-yellow-500/20">
+            <motion.div
+              variants={item}
+              className="p-8 **bg-black/30 backdrop-blur-sm** rounded-xl shadow-lg border border-yellow-500/50 lg:col-span-1 transition-all duration-300 hover:shadow-yellow-500/20"
+            >
               <Target className="w-8 h-8 text-yellow-500 mb-3" />
               <h2 className="text-2xl font-bold text-white mb-3">
                 Our Mission
@@ -84,11 +127,14 @@ const AboutUs = () => {
                 relationships that drive authentic collaboration and sustainable
                 creative careers.
               </p>
-            </div>
+            </motion.div>
 
             {/* Core Beliefs */}
             <div className="lg:col-span-2 space-y-4">
-              <div className="p-6 bg-gray-900 rounded-xl border border-gray-700 transition-all duration-300 hover:border-yellow-500/50">
+              <motion.div
+                variants={item}
+                className="p-6 **bg-black/30 backdrop-blur-sm** rounded-xl border border-yellow-500/30 transition-all duration-300 hover:border-yellow-500/50"
+              >
                 <h3 className="flex items-center text-xl font-bold text-yellow-500 mb-2">
                   <Heart className="w-5 h-5 mr-2" /> Authenticity First
                 </h3>
@@ -97,8 +143,11 @@ const AboutUs = () => {
                   connections, not just transactions. Every feature we build
                   prioritizes real relationships.
                 </p>
-              </div>
-              <div className="p-6 bg-gray-900 rounded-xl border border-gray-700 transition-all duration-300 hover:border-yellow-500/50">
+              </motion.div>
+              <motion.div
+                variants={item}
+                className="p-6 **bg-black/30 backdrop-blur-sm** rounded-xl border border-yellow-500/30 transition-all duration-300 hover:border-yellow-500/50"
+              >
                 <h3 className="flex items-center text-xl font-bold text-yellow-500 mb-2">
                   <Aperture className="w-5 h-5 mr-2" /> Community Driven
                 </h3>
@@ -107,19 +156,27 @@ const AboutUs = () => {
                   brands. We're building this together with the people who use
                   it every day.
                 </p>
-              </div>
+              </motion.div>
             </div>
-          </div>
+          </motion.div>
 
-          {/* === Our Story Section === */}
-          <section className="my-20 p-8 md:p-12 bg-gray-900 rounded-xl border border-gray-700 transition-all duration-300 hover:border-yellow-500/50">
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-yellow-500 mb-4">
+          <motion.section
+            className="my-20 p-8 md:p-12 **bg-black/30 backdrop-blur-sm** rounded-xl border border-yellow-500/30 w-full transition-all duration-300 hover:border-yellow-500/50"
+            variants={container}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.2 }}
+          >
+            <motion.h2
+              className="text-3xl sm:text-4xl font-extrabold text-yellow-500 mb-4"
+              variants={item}
+            >
               Our Story
-            </h2>
+            </motion.h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-gray-300">
-              <div>
+              <motion.div variants={item}>
                 <p className="mb-4">
-                  PeerPop started in 2023 when our founders, both former
+                  PeerPop started in 2025 when our founders, both former
                   creators themselves, recognized a gap in the market. While
                   there were plenty of platforms for finding brand deals or
                   networking, none truly focused on building the authentic
@@ -131,12 +188,12 @@ const AboutUs = () => {
                   struggled to find creators who genuinely aligned with their
                   values, not just their follower counts.
                 </p>
-              </div>
-              <div>
+              </motion.div>
+              <motion.div variants={item}>
                 <p className="mb-4">
                   So they built PeerPop—a platform designed from the ground up
-                  to prioritize quality connections over quantity. A place
-                  where creators could find mentors who've walked their path,
+                  to prioritize quality connections over quantity. A place where
+                  creators could find mentors who've walked their path,
                   collaborate with peers who share their vision, and partner
                   with brands that truly get them.
                 </p>
@@ -146,30 +203,37 @@ const AboutUs = () => {
                   facilitated millions in brand deals and countless mentorship
                   relationships that have changed careers.
                 </p>
-              </div>
+              </motion.div>
             </div>
-          </section>
+          </motion.section>
 
-          {/* === Our Values Section === */}
-          <section className="mt-20">
-            <div className="text-center mb-12">
+          <motion.section
+            className="mt-20"
+            variants={container}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.2 }}
+          >
+            <motion.div variants={item} className="text-center mb-12">
               <h2 className="text-3xl sm:text-4xl font-extrabold text-white">
                 Our <span className="text-yellow-500">Values</span>
               </h2>
               <p className="mt-2 text-lg text-gray-400">
                 The principles that guide everything we do.
               </p>
-            </div>
+            </motion.div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <motion.div
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+              variants={container}
+            >
               {values.map((value) => (
                 <ValueCard key={value.title} value={value} />
               ))}
-            </div>
-          </section>
+            </motion.div>
+          </motion.section>
         </div>
       </div>
-      <CTASection />
       <Footer />
     </>
   );

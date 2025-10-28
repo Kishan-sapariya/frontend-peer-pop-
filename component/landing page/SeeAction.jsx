@@ -59,10 +59,9 @@ const SeeAction = () => {
 
   return (
     <div className="py-20 px-6 md:px-16 bg-black w-full flex flex-col justify-center items-center">
-      {/* --- Section Header --- */}
       <div className="space-y-3 text-center max-w-3xl mb-16">
-        <h1 className="text-yellow-500 font-extrabold text-4xl md:text-5xl">
-          See Peer Pop in Action
+        <h1 className="text-white font-extrabold text-4xl md:text-5xl">
+          See Peer Pop in <span className="text-yellow-500">Action</span>
         </h1>
         <p className="text-gray-400 text-lg md:text-xl">
           A powerful platform designed to make networking effortless and
@@ -70,7 +69,6 @@ const SeeAction = () => {
         </p>
       </div>
 
-      {/* --- Content Blocks --- */}
       <div className="space-y-24 w-full max-w-7xl">
         {content.map((c, index) => {
           const isReversed = index % 2 === 1;
@@ -84,7 +82,6 @@ const SeeAction = () => {
                 isReversed ? "md:flex-row-reverse" : ""
               } items-center justify-between gap-12`}
             >
-              {/* Text Section */}
               <motion.div
                 initial={{ x: textDirection, opacity: 0 }}
                 whileInView={{ x: 0, opacity: 1 }}
@@ -92,7 +89,6 @@ const SeeAction = () => {
                 viewport={{ once: true, amount: 0.2 }}
                 className="w-full md:w-1/2 space-y-4 text-center md:text-left px-4 md:px-8"
               >
-                {/* Replaced 'Badge' with a styled div for general compatibility, assuming Badge isn't custom */}
                 <div className="uppercase tracking-wide bg-yellow-500 text-black inline-block px-3 py-1 rounded-full text-xs font-semibold">
                   {c.tag}
                 </div>
@@ -107,7 +103,6 @@ const SeeAction = () => {
                 </ul>
               </motion.div>
 
-              {/* Image/Mockup Section */}
               <motion.div
                 initial={{ x: imageDirection, opacity: 0 }}
                 whileInView={{ x: 0, opacity: 1 }}
@@ -119,7 +114,6 @@ const SeeAction = () => {
                 viewport={{ once: true, amount: 0.2 }}
                 className="w-full md:w-1/2 flex justify-center"
               >
-                {/* Render the component or the image based on content */}
                 <div className="w-full max-w-[500px]">{renderMedia(c)}</div>
               </motion.div>
             </div>

@@ -96,7 +96,7 @@ const ForUsers = () => {
         {/* Header Section */}
         <header className="text-center mb-12 mt-8">
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight">
-            Built for <span className="text-yellow-500">every creative</span>
+            Built for every<span className="text-yellow-500"> creative</span>
           </h1>
           <p className="mt-3 text-lg text-gray-400 max-w-2xl mx-auto">
             Whether you're just starting out or already established, PeerPop has

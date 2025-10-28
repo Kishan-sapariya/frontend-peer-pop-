@@ -4,257 +4,166 @@ import { Search, MoreVertical, Paperclip, Smile, Send } from "lucide-react";
 
 export function MessagingMockup() {
   return (
-    <div className="w-full overflow-hidden rounded-lg border border-gray-800 bg-black shadow-2xl">
-      <div className="flex h-[400px]">
-        {/* Conversations List */}
-        <div className="w-64 border-r border-gray-800 bg-gray-950">
-          {/* Header */}
-          <div className="border-b border-gray-800 p-3">
-            <h3 className="text-base font-semibold text-white">Messages</h3>
-            <div className="mt-2 flex items-center gap-2 rounded-md bg-gray-900 border border-gray-800 px-3 py-1.5">
-              <Search className="h-3.5 w-3.5 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search conversations..."
-                className="flex-1 bg-transparent text-xs outline-none placeholder:text-gray-500 text-white"
-                disabled
-              />
-            </div>
-          </div>
-
-          {/* Conversation Items */}
-          <div className="overflow-y-auto">
-            {/* Active Conversation */}
-            <div className="border-l-2 border-primary bg-gray-900 p-3 hover:bg-gray-800">
-              <div className="flex items-start gap-2">
-                <Avatar className="h-8 w-8">
-                  <AvatarImage src="/professional-female-brand-manager.jpg" />
-                  <AvatarFallback>SM</AvatarFallback>
-                </Avatar>
-                <div className="flex-1 overflow-hidden">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-xs font-semibold text-white">
-                        Sarah Martinez
-                      </span>
-                      <Badge
-                        variant="secondary"
-                        className="h-3.5 px-1 text-[9px] bg-yellow-500/10 text-yellow-400 border border-yellow-500/30"
-                      >
-                        Brand
-                      </Badge>
-                    </div>
-                    <span className="text-[10px] text-gray-400">2m</span>
-                  </div>
-                  <p className="truncate text-[10px] text-gray-300">
-                    That sounds perfect! When can we...
-                  </p>
-                </div>
-              </div>
+    <div className="w-full overflow-hidden rounded-xl border border-gray-800 bg-black shadow-2xl">
+      <div className="flex h-[500px]">
+        {/* Compact Avatar List (Maximized Space Utilization) */}
+        <div className="**w-20** border-r border-gray-800 bg-gray-950 flex flex-col items-center flex-shrink-0 pt-4">
+          <h3 className="**text-xs** font-bold text-yellow-500 mb-4">CHATS</h3>{" "}
+          {/* Minimal label */}
+          {/* Conversation Items Container */}
+          <div className="overflow-y-auto flex-1 w-full space-y-3">
+            {/* Active Conversation (Avatar Only) */}
+            <div className="relative flex justify-center py-2 cursor-pointer bg-gray-900 before:absolute before:inset-y-0 before:left-0 before:w-1 before:bg-yellow-500">
+              <Avatar className="h-10 w-10 border-2 border-yellow-500 ring-2 ring-yellow-500/50 transition-all">
+                <AvatarImage src="/professional-female-brand-manager.jpg" />
+                <AvatarFallback>SM</AvatarFallback>
+              </Avatar>
             </div>
 
-            {/* Other Conversations */}
-            <div className="p-4 hover:bg-gray-900">
-              <div className="flex items-start gap-3">
-                <Avatar className="h-8 w-8">
-                  <AvatarFallback>JC</AvatarFallback>
+            {/* Other Conversations (Avatar Only) */}
+            {[
+              { fallback: "JC", role: "Mentor" },
+              { fallback: "EP", role: "Creator" },
+              { fallback: "MK", role: "Staff" },
+            ].map((conv, index) => (
+              <div
+                key={index}
+                className="flex justify-center py-2 hover:bg-gray-800 cursor-pointer transition-colors"
+              >
+                <Avatar className="h-10 w-10 opacity-80 hover:opacity-100 transition-opacity">
+                  <AvatarFallback>{conv.fallback}</AvatarFallback>
                 </Avatar>
-                <div className="flex-1 overflow-hidden">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-semibold text-white">
-                        James Chen
-                      </span>
-                      <Badge
-                        variant="secondary"
-                        className="h-4 px-1 text-[10px] bg-yellow-500/10 text-yellow-400 border border-yellow-500/30"
-                      >
-                        Mentor
-                      </Badge>
-                    </div>
-                    <span className="text-xs text-gray-400">1h</span>
-                  </div>
-                  <p className="truncate text-xs text-gray-500">
-                    Thanks for the advice on the portfolio!
-                  </p>
-                </div>
               </div>
-            </div>
-
-            <div className="p-4 hover:bg-gray-900">
-              <div className="flex items-start gap-3">
-                <Avatar className="h-8 w-8">
-                  <AvatarFallback>EP</AvatarFallback>
-                </Avatar>
-                <div className="flex-1 overflow-hidden">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-semibold text-white">
-                        Emma Parker
-                      </span>
-                      <Badge
-                        variant="secondary"
-                        className="h-4 px-1 text-[10px] bg-yellow-500/10 text-yellow-400 border border-yellow-500/30"
-                      >
-                        Creator
-                      </Badge>
-                    </div>
-                    <span className="text-xs text-gray-400">3h</span>
-                  </div>
-                  <p className="truncate text-xs text-gray-500">
-                    Would love to collaborate on this!
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="p-4 hover:bg-gray-900">
-              <div className="flex items-start gap-3">
-                <Avatar className="h-8 w-8">
-                  <AvatarFallback>MK</AvatarFallback>
-                </Avatar>
-                <div className="flex-1 overflow-hidden">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-semibold text-white">
-                      Marcus Kim
-                    </span>
-                    <span className="text-xs text-gray-400">1d</span>
-                  </div>
-                  <p className="truncate text-xs text-gray-500">
-                    Let me know if you need any help
-                  </p>
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
 
-        {/* Chat Area */}
-        <div className="flex flex-2 flex-col bg-black">
+        {/* Chat Area (Expanded to utilize extra space) */}
+        <div className="flex **flex-1** flex-col bg-gray-900">
           {/* Chat Header */}
-          <div className="flex items-center justify-between border-b border-gray-800 p-3">
-            <div className="flex items-center gap-2">
-              <Avatar className="h-8 w-8">
+          <div className="flex items-center justify-between border-b border-gray-800 p-4 flex-shrink-0 bg-black/30">
+            <div className="flex items-center gap-3">
+              <Avatar className="h-10 w-10">
                 <AvatarFallback>SM</AvatarFallback>
               </Avatar>
               <div>
-                <div className="flex items-center gap-1.5">
-                  <span className="text-xs font-semibold text-white">
-                    Sarah Martinez
+                <div className="flex items-center gap-2">
+                  <span className="text-base font-bold text-white">
+                    Sarah Martinez (TechStyle Co.)
                   </span>
                   <Badge
                     variant="secondary"
-                    className="h-3.5 px-1 text-[9px] bg-yellow-500/10 text-yellow-400 border border-yellow-500/30"
+                    className="h-4 px-1.5 text-[10px] bg-yellow-500/10 text-yellow-400 border-yellow-500/30 font-medium"
                   >
                     Brand
                   </Badge>
                 </div>
-                <p className="text-[10px] text-gray-400">Active now</p>
+                <p className="text-xs text-green-400">Active now</p>
               </div>
             </div>
-            <button className="rounded-md p-1.5 hover:bg-gray-900">
-              <MoreVertical className="h-4 w-4 text-gray-400" />
+            <button className="rounded-full p-2 hover:bg-gray-800 transition-colors">
+              <MoreVertical className="h-5 w-5 text-gray-400" />
             </button>
           </div>
 
           {/* Messages */}
-          <div className="flex-1 space-y-3 overflow-y-auto p-3">
-            {/* Received Message */}
-            <div className="flex items-start gap-2">
-              <Avatar className="h-6 w-6">
+          <div className="flex-1 space-y-4 overflow-y-auto p-4 custom-scrollbar bg-black/50">
+            {/* Received Message 1 */}
+            <div className="flex items-start gap-3">
+              <Avatar className="h-8 w-8">
                 <AvatarFallback>SM</AvatarFallback>
               </Avatar>
-              <div className="flex-1">
-                <div className="rounded-lg rounded-tl-none bg-gray-900 p-2">
-                  <p className="text-xs text-gray-100">
+              <div className="max-w-[70%]">
+                <div className="rounded-xl rounded-tl-sm bg-gray-800 p-3">
+                  <p className="text-sm text-gray-100 leading-relaxed">
                     Hi! I'm reaching out from TechStyle Co. We love your content
                     and would like to discuss a potential partnership for our
                     spring campaign.
                   </p>
                 </div>
-                <span className="mt-1 text-[10px] text-gray-500">10:32 AM</span>
+                <span className="mt-1 ml-1 text-[11px] text-gray-500">
+                  10:32 AM
+                </span>
               </div>
             </div>
 
-            {/* Sent Message */}
-            <div className="flex items-start gap-2 justify-end">
-              <div className="flex-1 text-right">
-                <div className="inline-block rounded-lg rounded-tr-none bg-primary p-2 text-left text-primary-foreground">
-                  <p className="text-xs">
+            {/* Sent Message 1 */}
+            <div className="flex items-start gap-3 justify-end">
+              <div className="max-w-[70%] text-right">
+                <div className="inline-block rounded-xl rounded-tr-sm bg-yellow-500 p-3 text-left text-black">
+                  <p className="text-sm leading-relaxed">
                     Thanks for reaching out! I'd love to hear more about the
                     campaign. What kind of collaboration did you have in mind?
                   </p>
                 </div>
-                <div className="mt-1">
-                  <span className="text-[10px] text-gray-500">10:35 AM</span>
+                <div className="mt-1 mr-1">
+                  <span className="text-[11px] text-gray-500">10:35 AM</span>
                 </div>
               </div>
             </div>
 
-            {/* Received Message */}
-            <div className="flex items-start gap-2">
-              <Avatar className="h-6 w-6">
+            {/* Received Message 2 */}
+            <div className="flex items-start gap-3">
+              <Avatar className="h-8 w-8">
                 <AvatarFallback>SM</AvatarFallback>
               </Avatar>
-              <div className="flex-1">
-                <div className="rounded-lg rounded-tl-none bg-gray-900 p-2">
-                  <p className="text-xs text-gray-100">
+              <div className="max-w-[70%]">
+                <div className="rounded-xl rounded-tl-sm bg-gray-800 p-3">
+                  <p className="text-sm text-gray-100 leading-relaxed">
                     We're looking for 3-4 Instagram posts and 2 TikTok videos
-                    featuring our new sustainable fashion line. Budget is $5,000
-                    for the full package.
+                    featuring our new sustainable fashion line. Budget is
+                    **$5,000** for the full package.
                   </p>
                 </div>
-                <span className="mt-1 text-[10px] text-gray-500">10:38 AM</span>
+                <span className="mt-1 ml-1 text-[11px] text-gray-500">
+                  10:38 AM
+                </span>
               </div>
             </div>
 
-            {/* Sent Message */}
-            <div className="flex items-start gap-2 justify-end">
-              <div className="flex-1 text-right">
-                <div className="inline-block rounded-lg rounded-tr-none bg-primary p-2 text-left text-primary-foreground">
-                  <p className="text-xs">
+            {/* Sent Message 2 */}
+            <div className="flex items-start gap-3 justify-end">
+              <div className="max-w-[70%] text-right">
+                <div className="inline-block rounded-xl rounded-tr-sm bg-yellow-500 p-3 text-left text-black">
+                  <p className="text-sm leading-relaxed">
                     That sounds perfect! When can we schedule a call to discuss
                     the details?
                   </p>
                 </div>
-                <div className="mt-1">
-                  <span className="text-[10px] text-gray-500">10:40 AM</span>
+                <div className="mt-1 mr-1">
+                  <span className="text-[11px] text-gray-500">10:40 AM</span>
                 </div>
               </div>
             </div>
 
             {/* Typing Indicator */}
-            <div className="flex items-start gap-2">
-              <Avatar className="h-6 w-6">
+            <div className="flex items-start gap-3">
+              <Avatar className="h-8 w-8">
                 <AvatarFallback>SM</AvatarFallback>
               </Avatar>
-              <div className="rounded-lg rounded-tl-none bg-gray-900 p-2">
-                <div className="flex gap-1">
-                  <div className="h-2 w-2 animate-bounce rounded-full bg-gray-500 [animation-delay:-0.3s]"></div>
-                  <div className="h-2 w-2 animate-bounce rounded-full bg-gray-500 [animation-delay:-0.15s]"></div>
-                  <div className="h-2 w-2 animate-bounce rounded-full bg-gray-500"></div>
-                </div>
+              <div className="rounded-xl rounded-tl-sm bg-gray-800 px-3 py-2 animate-pulse">
+                <div className="h-2 w-8 bg-gray-500 rounded-full"></div>
               </div>
             </div>
           </div>
 
           {/* Message Input */}
-          <div className="border-t border-gray-800 p-3">
-            <div className="flex items-center gap-2 rounded-lg border border-gray-800 bg-gray-950 px-2 py-1.5">
-              <button className="rounded-md p-0.5 hover:bg-gray-900">
-                <Paperclip className="h-4 w-4 text-gray-400" />
+          <div className="border-t border-gray-800 p-4 flex-shrink-0 bg-gray-900">
+            <div className="flex items-center gap-3 rounded-xl border border-gray-800 bg-gray-950 px-3 py-2">
+              <button className="rounded-full p-1.5 hover:bg-gray-800 transition-colors">
+                <Paperclip className="h-5 w-5 text-gray-500" />
               </button>
               <input
                 type="text"
                 placeholder="Type a message..."
-                className="flex-1 bg-transparent text-xs outline-none placeholder:text-gray-500 text-white"
+                className="flex-1 bg-transparent text-sm outline-none placeholder:text-gray-600 text-white"
                 disabled
               />
-              <button className="rounded-md p-0.5 hover:bg-gray-900">
-                <Smile className="h-4 w-4 text-gray-400" />
+              <button className="rounded-full p-1.5 hover:bg-gray-800 transition-colors">
+                <Smile className="h-5 w-5 text-gray-500" />
               </button>
-              <button className="rounded-md bg-primary p-1.5 text-primary-foreground hover:bg-primary/90">
-                <Send className="h-3.5 w-3.5" />
+              <button className="rounded-full bg-yellow-500 p-2 text-black hover:bg-yellow-600 transition-colors">
+                <Send className="h-4 w-4" />
               </button>
             </div>
           </div>

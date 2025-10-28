@@ -116,12 +116,10 @@ const Navbar = () => {
     </Link>
   );
 
-  // Helper component for non-authenticated links to reduce repetition
   const PublicNavItem = ({ href, children, icon: Icon }) => (
     <Link href={href}>
       <Button
-        variant="ghost"
-        className="text-white hover:text-[#F0AF1B] hidden md:flex"
+        className="bg-black text-white hover:text-[#F0AF1B] hidden md:flex"
       >
         <span className="hidden lg:inline">{children}</span>
         <Icon className="h-5 w-5 mr-1 text-white group-hover:text-[#F0AF1B] lg:hidden" />
@@ -294,7 +292,7 @@ const Navbar = () => {
                   <Link href="/login/business" className="hidden md:block">
                     <Button
                       variant="outline"
-                      className="bg-[#F0AF1B] text-black hover:bg-[#F0AF1B]/90 border-transparent hover:border-white"
+                      className="bg-[#F0AF1B] text-black hover:bg-[#F0AF1B]/90 border-transparent"
                     >
                       <Building2 className="h-4 w-4 mr-2" />
                       Business Login

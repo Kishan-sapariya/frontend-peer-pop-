@@ -159,8 +159,6 @@ const CreativeFieldsSection = () => {
 
   return (
     <section className="py-20 px-4 bg-black overflow-hidden relative">
-      <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-900 opacity-90"></div>
-
       <div className="container mx-auto relative z-10">
         <div className="text-center mb-16">
           <motion.h2
@@ -170,7 +168,8 @@ const CreativeFieldsSection = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            Every Creative Field Represented
+            Every Creative Field{" "}
+            <span className="text-yellow-500">Represented</span>
           </motion.h2>
           <motion.p
             className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto"

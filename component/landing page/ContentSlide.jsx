@@ -69,7 +69,7 @@ const FeatureCard = ({ feature }) => {
 
   return (
     <motion.div
-      className="p-6 py-10 bg-black/80 backdrop-blur-2xl border border-gray-800 rounded-xl shadow-xl  transition-all duration-300 ease-in-out cursor-pointer h-full flex flex-col"
+      className="p-6 py-10 bg-black/80 backdrop-blur-2xl border border-yellow-500/30 hover:border-yellow-500/60 rounded-xl shadow-xl  transition-all duration-300 ease-in-out cursor-pointer h-full flex flex-col"
       variants={cardVariants}
       initial="hidden"
       whileInView="visible"
@@ -96,8 +96,8 @@ const ContentSlide = () => {
       <div className="max-w-7xl mx-auto">
         {/* Header Section */}
         <header className="text-center mb-12 mt-8">
-          <h1 className="text-yellow-500 font-extrabold text-4xl md:text-5xl tracking-tight">
-            Everything you need to Grow
+          <h1 className="text-white font-extrabold text-4xl md:text-5xl tracking-tight">
+            Everything you need to <span className="text-yellow-500">Grow</span>
           </h1>
           <p className="text-gray-400 text-lg md:text-xl mx-auto">
             PeerPop brings together the tools, connections, and opportunities to

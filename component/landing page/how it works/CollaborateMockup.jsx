@@ -5,9 +5,8 @@ export function CollaborationMockup() {
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-lg font-semibold text-white">
-              Nike Sneaker Campaign
+              Sneaker Campaign
             </h3>
-            <p className="text-sm text-gray-400">With Nike Brand Team</p>
           </div>
           <div className="rounded-full bg-yellow-500/10 px-3 py-1 text-xs font-medium text-yellow-400 border border-yellow-500/30">
             In Progress
@@ -24,7 +23,7 @@ export function CollaborationMockup() {
             <div className="text-xs text-gray-400">Completed</div>
           </div>
           <div className="rounded-lg border border-gray-800 bg-gray-950 p-4">
-            <div className="text-2xl font-bold text-white">$5,000</div>
+            <div className="text-2xl font-bold text-white">5,000</div>
             <div className="text-xs text-gray-400">Project Value</div>
           </div>
         </div>
@@ -78,21 +77,11 @@ export function CollaborationMockup() {
                 <div className="text-xs text-gray-400">Due Feb 25</div>
               </div>
             </div>
-
-            <div className="flex items-center gap-3 rounded-lg border border-gray-800 bg-gray-950 p-3">
-              <div className="h-5 w-5 rounded-full border-2 border-gray-700" />
-              <div className="flex-1">
-                <div className="text-sm font-medium text-white">
-                  Instagram Post #3
-                </div>
-                <div className="text-xs text-gray-400">Due Feb 28</div>
-              </div>
-            </div>
           </div>
         </div>
 
         <div className="flex gap-3">
-          <div className="flex-1 rounded-md bg-primary px-4 py-2 text-center text-sm font-medium text-primary-foreground">
+          <div className="flex-1 rounded-md bg-yellow-500 text-black px-4 py-2 text-center text-sm font-medium">
             Upload Deliverable
           </div>
           <div className="rounded-md border border-gray-800 px-4 py-2 text-sm font-medium text-white">

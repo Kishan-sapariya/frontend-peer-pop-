@@ -67,8 +67,9 @@ export default function CompanyMarquee() {
     <section className="w-full py-20 bg-black overflow-hidden relative">
       {/* Centered Content */}
       <div className="max-w-7xl mx-auto px-6 text-center mb-12 relative z-10">
-        <h2 className="text-yellow-500 font-extrabold text-4xl md:text-5xl mb-3">
-          Trusted by Top Creators & Brands
+        <h2 className="text-white font-extrabold text-4xl md:text-5xl mb-3">
+          Trusted by Top Creators{" "}
+          <span className="text-yellow-500">& Brands</span>
         </h2>
         <p className="text-gray-400 text-lg md:text-xl mx-auto">
           We partner with leading companies empowering creators worldwide.
