@@ -17,6 +17,9 @@ import {
   Telescope,
   User2,
   HomeIcon,
+  HelpCircle, // New icon for 'How It Works'
+  Briefcase, // New icon for 'Opportunities'
+  Info, // New icon for 'About'
 } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useRouter } from "next/navigation";
@@ -48,9 +51,12 @@ const Navbar = () => {
   );
 
   useEffect(() => {
-    getConnections();
-    listenForSocketEvents();
-  }, [getConnections, listenForSocketEvents]);
+    // Only fetch connections and listen for socket events if authenticated
+    if (isAuthenticated) {
+      getConnections();
+      listenForSocketEvents();
+    }
+  }, [isAuthenticated, getConnections, listenForSocketEvents]);
 
   const handleLogout = async () => {
     try {
@@ -106,6 +112,19 @@ const Navbar = () => {
             {badgeCount}
           </Badge>
         )}
+      </Button>
+    </Link>
+  );
+
+  // Helper component for non-authenticated links to reduce repetition
+  const PublicNavItem = ({ href, children, icon: Icon }) => (
+    <Link href={href}>
+      <Button
+        variant="ghost"
+        className="text-white hover:text-[#F0AF1B] hidden md:flex"
+      >
+        <span className="hidden lg:inline">{children}</span>
+        <Icon className="h-5 w-5 mr-1 text-white group-hover:text-[#F0AF1B] lg:hidden" />
       </Button>
     </Link>
   );
@@ -256,16 +275,23 @@ const Navbar = () => {
               </>
             ) : (
               <>
-                <div className="hidden md:flex items-center space-x-4">
-                  <Link href="/feed">
-                    <Button
-                      variant="ghost"
-                      className="text-white hover:text-[#F0AF1B]"
-                    >
-                      Explore
-                    </Button>
-                  </Link>
-                  <Link href="/login/business">
+                <div className="hidden md:flex items-center space-x-2">
+                  <PublicNavItem href="/about" icon={Info}>
+                    About
+                  </PublicNavItem>
+                  <PublicNavItem href="/how-it-works" icon={HelpCircle}>
+                    How It Works
+                  </PublicNavItem>
+                  <PublicNavItem href="/opportunities" icon={Briefcase}>
+                    Opportunities
+                  </PublicNavItem>
+                  <PublicNavItem href="/mentors&peers" icon={Briefcase}>
+                    Mentors & Peers
+                  </PublicNavItem>
+                </div>
+
+                <div className="flex items-center space-x-4">
+                  <Link href="/login/business" className="hidden md:block">
                     <Button
                       variant="outline"
                       className="bg-[#F0AF1B] text-black hover:bg-[#F0AF1B]/90 border-transparent hover:border-white"
@@ -274,7 +300,7 @@ const Navbar = () => {
                       Business Login
                     </Button>
                   </Link>
-                  <Link href="/signup">
+                  <Link href="/signup" className="hidden md:block">
                     <Button className="bg-white text-black hover:bg-gray-100 shadow-lg">
                       <Users className="h-4 w-4 mr-2" />
                       Join as Creator
@@ -299,6 +325,16 @@ const Navbar = () => {
                       <PopoverLinkItem href="/feed" icon={Telescope}>
                         Explore
                       </PopoverLinkItem>
+                      <PopoverLinkItem href="/how-it-works" icon={HelpCircle}>
+                        How It Works
+                      </PopoverLinkItem>
+                      <PopoverLinkItem href="/opportunities" icon={Briefcase}>
+                        Opportunities
+                      </PopoverLinkItem>
+                      <PopoverLinkItem href="/about" icon={Info}>
+                        About
+                      </PopoverLinkItem>
+                      <div className="border-t border-gray-100 pt-1"></div>
                       <PopoverLinkItem href="/login/business" icon={Building2}>
                         Business Login
                       </PopoverLinkItem>

@@ -164,7 +164,7 @@ const CreativeFieldsSection = () => {
       <div className="container mx-auto relative z-10">
         <div className="text-center mb-16">
           <motion.h2
-            className="text-3xl md:text-4xl font-bold mb-4 text-white"
+            className="text-4xl sm:text-5xl font-extrabold text-white mb-4"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -173,7 +173,7 @@ const CreativeFieldsSection = () => {
             Every Creative Field Represented
           </motion.h2>
           <motion.p
-            className="text-lg md:text-xl text-yellow-400 max-w-2xl mx-auto"
+            className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}

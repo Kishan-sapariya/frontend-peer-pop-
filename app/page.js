@@ -4,12 +4,13 @@ import React, { useEffect } from "react";
 import Head from "next/head";
 import Footer from "@/component/landing page/Footer";
 import CTASection from "@/component/landing page/cta";
-import FeaturesSection from "@/component/landing page/featuresSection";
 import HeroSection from "@/component/landing page/HeroSection";
 import { useAuthStore } from "@/store/useAuthStore";
-import WhyChooseUs from "@/component/landing page/WhyChooseUs";
-import VideoAnimations from "@/component/landing page/VideoAnimations";
 import CompanyMarquee from "@/component/landing page/CompanyMarquee";
+import Stats from "@/component/landing page/Stats";
+import SeeAction from "@/component/landing page/SeeAction";
+import ContentSlide from "@/component/landing page/ContentSlide";
+import ForUsers from "@/component/landing page/ForUsers";
 
 const LandingPage = () => {
   const { isAuthenticated, getCurrentUser } = useAuthStore();
@@ -30,10 +31,11 @@ const LandingPage = () => {
       </Head>
       <div className="min-h-screen bg-white">
         <HeroSection />
-        <WhyChooseUs />
+        <Stats />
+        <SeeAction />
         <CompanyMarquee />
-        <FeaturesSection />
-        <VideoAnimations />
+        <ContentSlide />
+        <ForUsers />
         <CTASection />
         <Footer />
       </div>
