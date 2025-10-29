@@ -39,7 +39,7 @@ const creativeFields = [
     icon: Laugh,
     accentColor: "from-yellow-400 to-orange-500",
     videoUrl:
-      "https://res.cloudinary.com/dvzqfb2z3/video/upload/f_webm,q_auto:best,w_720/comedian_video_ytkn8e.mp4",
+      "https://res.cloudinary.com/dvzqfb2z3/video/upload/v1761726546/Untitled_video_-_Made_with_Clipchamp_1_ycmwiv.mp4",
   },
   {
     id: 3,

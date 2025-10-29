@@ -3,8 +3,9 @@
 import React from "react";
 import Link from "next/link";
 import { Sparkles, Instagram, Facebook, Twitter, Linkedin } from "lucide-react";
+import Image from "next/image";
 
-const DARK_TEXT = "text-[#041049]"; 
+const DARK_TEXT = "text-[#041049]";
 
 const Footer = () => {
   return (
@@ -14,12 +15,18 @@ const Footer = () => {
           {/* Logo & Description */}
           <div>
             <div className="flex items-center space-x-2 mb-4">
-              <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-[#041049] shadow-lg">
-                <Sparkles className="w-5 h-5 text-white" />
+              <div className="rounded-lg flex items-center justify-center bg-black shadow-lg">
+                <Image
+                  src="/logo.png"
+                  alt="Peerpop Logo"
+                  width={50}
+                  height={50}
+                  className="ml-0"
+                />
               </div>
               <h3 className={`text-xl font-bold ${DARK_TEXT}`}>Peerpop</h3>
             </div>
-           
+
             <p className="text-gray-800">
               The creative professional network where collaboration meets
               opportunity.

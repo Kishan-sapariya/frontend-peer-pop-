@@ -12,7 +12,7 @@ export function ChatMockup() {
   return (
     <div className="w-full rounded-2xl border border-yellow-500/20 bg-black shadow-2xl overflow-hidden">
       <div className="flex h-[460px]">
-        <div className="w-16 border-r border-yellow-500/10 bg-gray-950 flex flex-col items-center flex-shrink-0">
+        <div className="hidden sm:flex w-16 border-r border-yellow-500/10 bg-gray-950  flex-col items-center flex-shrink-0">
           <div className="border-b border-yellow-500/10 **h-[65px] flex items-center justify-center flex-shrink-0">
             <h3 className="font-bold text-yellow-500 text-base">C</h3>
           </div>

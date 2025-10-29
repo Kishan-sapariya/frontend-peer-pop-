@@ -36,6 +36,7 @@ import { useConnectionStore } from "@/store/useConnectionStore";
 import { Badge } from "@/components/ui/badge";
 import { useConversationStore } from "@/store/useConversationStore";
 import { capitalizeInitials, getInitialLetter } from "@/utils/formatDate";
+import Image from "next/image";
 
 const Navbar = () => {
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
@@ -118,9 +119,7 @@ const Navbar = () => {
 
   const PublicNavItem = ({ href, children, icon: Icon }) => (
     <Link href={href}>
-      <Button
-        className="bg-black text-white hover:text-[#F0AF1B] hidden md:flex"
-      >
+      <Button className="bg-black text-white hover:text-[#F0AF1B] hidden md:flex">
         <span className="hidden lg:inline">{children}</span>
         <Icon className="h-5 w-5 mr-1 text-white group-hover:text-[#F0AF1B] lg:hidden" />
       </Button>
@@ -132,17 +131,21 @@ const Navbar = () => {
       <div className="max-w-6xl mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-[#F0AF1B] rounded-lg flex items-center justify-center shadow-lg">
-              <Sparkle className="text-white" />
-            </div>
-            <Link href="/">
-              <h1 className="text-2xl font-bold text-[#F0AF1B] hidden sm:block">
+          <Link href="/">
+            <div className="flex items-center">
+              <Image
+                src="/logo.png"
+                alt="Peerpop Logo"
+                width={55}
+                height={55}
+                className="ml-0"
+              />
+              <h1 className="text-2xl font-bold text-[#F0AF1B] hidden sm:block mr-2">
                 Peerpop
               </h1>
-            </Link>
-            {user && <NavbarSearch />}
-          </div>
+              {user && <NavbarSearch />}
+            </div>
+          </Link>
 
           <div className="flex items-center gap-3">
             {isAuthenticated ? (

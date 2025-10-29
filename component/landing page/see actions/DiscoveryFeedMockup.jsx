@@ -2,21 +2,23 @@ export function DiscoveryFeedMockup() {
   return (
     <div className="w-full overflow-hidden rounded-lg border border-gray-800 bg-black shadow-2xl">
       {/* Header */}
-      <div className="border-b border-gray-800 bg-gray-950 px-6 py-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl font-bold text-white">Discover Creators</h2>
-          <div className="flex items-center gap-3">
-            <button className="rounded-lg bg-yellow-500 px-4 py-2 text-sm font-semibold text-black hover:bg-yellow-400">
+      <div className="border-b border-gray-800 bg-gray-950 px-4 py-3 sm:px-6 sm:py-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <h2 className="text-lg sm:text-xl font-bold text-white">
+            Discover Creators
+          </h2>
+          <div className="flex items-center gap-2 sm:gap-3">
+            <button className="rounded-lg bg-yellow-500 px-3 py-1.5 text-xs sm:px-4 sm:py-2 sm:text-sm font-semibold text-black hover:bg-yellow-400 transition">
               Filters
             </button>
           </div>
         </div>
 
         {/* Search Bar */}
-        <div className="mt-4">
-          <div className="flex items-center gap-2 rounded-lg border border-gray-700 bg-gray-900 px-4 py-2.5">
+        <div className="mt-3 sm:mt-4">
+          <div className="flex items-center gap-2 rounded-lg border border-gray-700 bg-gray-900 px-3 py-2 sm:px-4 sm:py-2.5">
             <svg
-              className="h-5 w-5 text-gray-400"
+              className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 flex-shrink-0"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -31,7 +33,7 @@ export function DiscoveryFeedMockup() {
             <input
               type="text"
               placeholder="Search by name, niche, or location..."
-              className="flex-1 bg-transparent text-sm text-white placeholder-gray-500 outline-none"
+              className="flex-1 bg-transparent text-xs sm:text-sm text-white placeholder-gray-500 outline-none"
               disabled
             />
           </div>
@@ -39,85 +41,74 @@ export function DiscoveryFeedMockup() {
       </div>
 
       {/* Creator Cards */}
-      <div className="space-y-4 p-6">
-        {/* Creator 1 */}
-        <div className="rounded-lg border border-gray-800 bg-gray-950 p-4 transition-all hover:border-yellow-500/50">
-          <div className="flex items-start gap-4">
-            <img
-              src="https://res.cloudinary.com/dvzqfb2z3/image/upload/c_fill,w_80,h_80,f_auto,q_auto/v1761552110/profile_pic_lady_zcqryf.jpg"
-              alt="Priya Sharma"
-              className="h-16 w-16 flex-shrink-0 rounded-full object-cover"
-            />
-            <div className="flex-1">
-              <div className="flex items-center gap-2">
-                <h3 className="text-lg font-bold text-white">Priya Sharma</h3>
-                <div className="rounded-full bg-yellow-500 px-2 py-0.5 text-xs font-semibold text-black">
-                  ✓ Verified
+      <div className="space-y-3 sm:space-y-4 p-4 sm:p-6">
+        {[
+          // DRY — reuse card data
+          {
+            name: "Priya Sharma",
+            role: "Fashion & Lifestyle Creator",
+            location: "Mumbai, India",
+            followers: "850K",
+            rating: "4.9",
+            tags: ["Fashion", "Beauty", "Lifestyle"],
+            img: "https://res.cloudinary.com/dvzqfb2z3/image/upload/c_fill,w_80,h_80,f_auto,q_auto/v1761552110/profile_pic_lady_zcqryf.jpg",
+          },
+          {
+            name: "Arjun Kumar",
+            role: "Tech Reviewer & YouTuber",
+            location: "Bangalore, India",
+            followers: "1.2M",
+            rating: "5.0",
+            tags: ["Technology", "Reviews"],
+            img: "https://res.cloudinary.com/dvzqfb2z3/image/upload/c_fill,w_80,h_80,f_auto,q_auto/v1761552110/profile_pic_men_ho2yca.jpg",
+          },
+        ].map((creator, i) => (
+          <div
+            key={i}
+            className="rounded-lg border border-gray-800 bg-gray-950 p-3 sm:p-4 transition-all hover:border-yellow-500/50"
+          >
+            <div className="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4">
+              <img
+                src={creator.img}
+                alt={creator.name}
+                className="h-14 w-14 sm:h-16 sm:w-16 flex-shrink-0 rounded-full object-cover mx-auto sm:mx-0"
+              />
+              <div className="flex-1 text-center sm:text-left">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2 justify-center sm:justify-start">
+                  <h3 className="text-base sm:text-lg font-bold text-white">
+                    {creator.name}
+                  </h3>
+                  <div className="mt-1 sm:mt-0 rounded-full bg-yellow-500 px-1.5 sm:px-2 py-0.5 text-[10px] sm:text-xs font-semibold text-black inline-block">
+                    ✓ Verified
+                  </div>
+                </div>
+                <p className="mt-1 text-xs sm:text-sm text-gray-400">
+                  {creator.role}
+                </p>
+                <div className="mt-2 flex flex-wrap justify-center sm:justify-start gap-x-3 gap-y-1 text-[11px] sm:text-xs text-gray-500">
+                  <span>📍 {creator.location}</span>
+                  <span>👥 {creator.followers} followers</span>
+                  <span>⭐ {creator.rating} rating</span>
+                </div>
+                <div className="mt-3 flex flex-wrap justify-center sm:justify-start gap-2">
+                  {creator.tags.map((tag, j) => (
+                    <span
+                      key={j}
+                      className="rounded-full bg-gray-800 px-2.5 py-0.5 text-[11px] sm:px-3 sm:py-1 sm:text-xs text-gray-300"
+                    >
+                      {tag}
+                    </span>
+                  ))}
                 </div>
               </div>
-              <p className="mt-1 text-sm text-gray-400">
-                Fashion & Lifestyle Creator
-              </p>
-              <div className="mt-2 flex items-center gap-4 text-xs text-gray-500">
-                <span>📍 Mumbai, India</span>
-                <span>👥 850K followers</span>
-                <span>⭐ 4.9 rating</span>
-              </div>
-              <div className="mt-3 flex gap-2">
-                <span className="rounded-full bg-gray-800 px-3 py-1 text-xs text-gray-300">
-                  Fashion
-                </span>
-                <span className="rounded-full bg-gray-800 px-3 py-1 text-xs text-gray-300">
-                  Beauty
-                </span>
-                <span className="rounded-full bg-gray-800 px-3 py-1 text-xs text-gray-300">
-                  Lifestyle
-                </span>
+              <div className="flex justify-center sm:justify-end mt-3 sm:mt-0">
+                <button className="rounded-lg border border-yellow-500 bg-yellow-500/10 px-3 py-1.5 text-xs sm:px-4 sm:py-2 sm:text-sm font-semibold text-yellow-500 hover:bg-yellow-500 hover:text-black transition-colors">
+                  Connect
+                </button>
               </div>
             </div>
-            <button className="rounded-lg border border-yellow-500 bg-yellow-500/10 px-4 py-2 text-sm font-semibold text-yellow-500 hover:bg-yellow-500 hover:text-black transition-colors">
-              Connect
-            </button>
           </div>
-        </div>
-
-        {/* Creator 2 */}
-        <div className="rounded-lg border border-gray-800 bg-gray-950 p-4 transition-all hover:border-yellow-500/50">
-          <div className="flex items-start gap-4">
-            <img
-              src="https://res.cloudinary.com/dvzqfb2z3/image/upload/c_fill,w_80,h_80,f_auto,q_auto/v1761552110/profile_pic_men_ho2yca.jpg"
-              alt="Arjun Kumar"
-              className="h-16 w-16 flex-shrink-0 rounded-full object-cover"
-            />
-            <div className="flex-1">
-              <div className="flex items-center gap-2">
-                <h3 className="text-lg font-bold text-white">Arjun Kumar</h3>
-                <div className="rounded-full bg-yellow-500 px-2 py-0.5 text-xs font-semibold text-black">
-                  ✓ Verified
-                </div>
-              </div>
-              <p className="mt-1 text-sm text-gray-400">
-                Tech Reviewer & YouTuber
-              </p>
-              <div className="mt-2 flex items-center gap-4 text-xs text-gray-500">
-                <span>📍 Bangalore, India</span>
-                <span>👥 1.2M followers</span>
-                <span>⭐ 5.0 rating</span>
-              </div>
-              <div className="mt-3 flex gap-2">
-                <span className="rounded-full bg-gray-800 px-3 py-1 text-xs text-gray-300">
-                  Technology
-                </span>
-                <span className="rounded-full bg-gray-800 px-3 py-1 text-xs text-gray-300">
-                  Reviews
-                </span>
-              </div>
-            </div>
-            <button className="rounded-lg border border-yellow-500 bg-yellow-500/10 px-4 py-2 text-sm font-semibold text-yellow-500 hover:bg-yellow-500 hover:text-black transition-colors">
-              Connect
-            </button>
-          </div>
-        </div>
+        ))}
       </div>
     </div>
   );
