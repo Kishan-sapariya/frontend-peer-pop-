@@ -2,20 +2,25 @@ import React from "react";
 import { motion } from "framer-motion";
 
 const Stats = () => {
-  // Animation variants
-  const variants = {
-    hidden: (direction) => ({
-      opacity: 0,
-      x: direction === "left" ? -50 : direction === "right" ? 50 : 0,
-      y: direction === "center" ? 50 : 0,
-      scale: 0.9,
-    }),
+  const container = {
+    hidden: {},
+    visible: {
+      transition: {
+        delayChildren: 0.2,
+        staggerChildren: 0.2,
+      },
+    },
+  };
+  const fadeUp = {
+    hidden: { opacity: 0, y: 30 },
     visible: {
       opacity: 1,
-      x: 0,
       y: 0,
-      scale: 1,
-      transition: { duration: 0.6, ease: "easeOut" },
+      transition: {
+        type: "spring",
+        damping: 20,
+        stiffness: 120,
+      },
     },
   };
 
@@ -26,28 +31,35 @@ const Stats = () => {
   ];
 
   return (
-    <section className="w-full bg-black border-t border-gray-800 border-b py-12 md:py-16">
-      <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12 px-6">
+    <section className="w-full bg-black border-t border-gray-900 border-b py-12 md:py-16">
+      <motion.div
+        variants={container}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.3 }}
+        className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12 px-6"
+      >
         {stats.map((stat, i) => (
           <motion.div
             key={i}
-            custom={stat.direction}
-            variants={variants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ delay: i * 0.2 }}
+            variants={fadeUp}
             className="flex flex-col items-center text-center space-y-2"
           >
-            <h1 className="text-4xl md:text-5xl font-extrabold text-yellow-500">
+            <motion.h1
+              variants={fadeUp}
+              className="text-4xl md:text-5xl font-extrabold text-yellow-500"
+            >
               {stat.value}
-            </h1>
-            <p className="text-gray-300 text-base md:text-lg font-medium">
+            </motion.h1>
+            <motion.p
+              variants={fadeUp}
+              className="text-gray-300 text-base md:text-lg font-medium"
+            >
               {stat.label}
-            </p>
+            </motion.p>
           </motion.div>
         ))}
-      </div>
+      </motion.div>
     </section>
   );
 };

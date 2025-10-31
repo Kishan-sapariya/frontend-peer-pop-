@@ -3,6 +3,7 @@
 import React from "react";
 import { Marquee } from "@/components/ui/marquee";
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 
 import {
   Youtube,
@@ -62,19 +63,53 @@ const CompanyLogo = ({ name, Icon, color }) => (
   </div>
 );
 
+const container = {
+  hidden: {},
+  visible: {
+    transition: {
+      delayChildren: 0.2,
+      staggerChildren: 0.2,
+    },
+  },
+};
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 30 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: "spring",
+      stiffness: 80,
+    },
+  },
+};
+
 export default function CompanyMarquee() {
   return (
     <section className="w-full py-20 bg-black overflow-hidden relative">
       {/* Centered Content */}
-      <div className="max-w-7xl mx-auto px-6 text-center mb-12 relative z-10">
-        <h2 className="text-white font-extrabold text-4xl md:text-5xl mb-3">
+      <motion.div
+        variants={container}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        className="max-w-7xl mx-auto px-6 text-center mb-12 relative z-10"
+      >
+        <motion.h2
+          variants={fadeUp}
+          className="text-white font-extrabold text-4xl md:text-5xl mb-3"
+        >
           Trusted by Top Creators{" "}
           <span className="text-yellow-500">& Brands</span>
-        </h2>
-        <p className="text-gray-400 text-lg md:text-xl mx-auto">
+        </motion.h2>
+        <motion.p
+          variants={fadeUp}
+          className="text-gray-400 text-lg md:text-xl mx-auto"
+        >
           We partner with leading companies empowering creators worldwide.
-        </p>
-      </div>
+        </motion.p>
+      </motion.div>
 
       {/* Marquee Rows Container */}
       <div className="space-y-6">
@@ -92,7 +127,7 @@ export default function CompanyMarquee() {
           })}
         </Marquee>
 
-        <Marquee pauseOnHover reverse className="[--duration:40s] [--gap:3rem]">
+        <Marquee pauseOnHover reverse className="[--duration:40s] [--gap:1rem]">
           {row2.map((company, index) => {
             const Icon = company.icon;
             return (

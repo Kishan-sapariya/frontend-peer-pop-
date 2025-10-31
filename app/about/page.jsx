@@ -11,7 +11,6 @@ import {
   CheckCircle,
 } from "lucide-react";
 import { motion } from "framer-motion";
-import CTASection from "@/component/landing page/cta";
 import Footer from "@/component/landing page/Footer";
 
 const container = {
@@ -61,7 +60,7 @@ const ValueCard = ({ value }) => {
   return (
     <motion.div
       variants={item}
-      className="p-6 **bg-black/30 backdrop-blur-sm** border border-yellow-500/30 rounded-xl flex flex-col items-center text-center h-full transition-all duration-300 hover:border-yellow-500 hover:shadow-lg"
+      className="p-6 bg-white/5 backdrop-blur-sm border border-yellow-500/50 rounded-xl flex flex-col items-center text-center h-full transition-all duration-300 hover:border-yellow-500 hover:shadow-lg"
     >
       <div className="p-3 rounded-full bg-yellow-500/10 border border-yellow-500 mb-4">
         <Icon className="w-6 h-6 text-yellow-500" />
@@ -116,7 +115,7 @@ const AboutUs = () => {
             {/* Our Mission */}
             <motion.div
               variants={item}
-              className="p-8 **bg-black/30 backdrop-blur-sm** rounded-xl shadow-lg border border-yellow-500/50 lg:col-span-1 transition-all duration-300 hover:shadow-yellow-500/20"
+              className="p-8 bg-white/5 backdrop-blur-sm rounded-xl shadow-lg border border-yellow-500/50 lg:col-span-1 transition-all duration-300 hover:border-yellow-500/70"
             >
               <Target className="w-8 h-8 text-yellow-500 mb-3" />
               <h2 className="text-2xl font-bold text-white mb-3">
@@ -133,7 +132,7 @@ const AboutUs = () => {
             <div className="lg:col-span-2 space-y-4">
               <motion.div
                 variants={item}
-                className="p-6 **bg-black/30 backdrop-blur-sm** rounded-xl border border-yellow-500/30 transition-all duration-300 hover:border-yellow-500/50"
+                className="p-6 bg-white/5 backdrop-blur-sm rounded-xl border border-yellow-500/50 transition-all duration-300 hover:border-yellow-500/70"
               >
                 <h3 className="flex items-center text-xl font-bold text-yellow-500 mb-2">
                   <Heart className="w-5 h-5 mr-2" /> Authenticity First
@@ -146,7 +145,7 @@ const AboutUs = () => {
               </motion.div>
               <motion.div
                 variants={item}
-                className="p-6 **bg-black/30 backdrop-blur-sm** rounded-xl border border-yellow-500/30 transition-all duration-300 hover:border-yellow-500/50"
+                className="p-6 bg-white/5 backdrop-blur-sm rounded-xl border border-yellow-500/50 transition-all duration-300 hover:border-yellow-500/70"
               >
                 <h3 className="flex items-center text-xl font-bold text-yellow-500 mb-2">
                   <Aperture className="w-5 h-5 mr-2" /> Community Driven
@@ -161,7 +160,7 @@ const AboutUs = () => {
           </motion.div>
 
           <motion.section
-            className="my-20 p-8 md:p-12 **bg-black/30 backdrop-blur-sm** rounded-xl border border-yellow-500/30 w-full transition-all duration-300 hover:border-yellow-500/50"
+            className="my-20 p-8 md:p-12 bg-white/5 backdrop-blur-sm rounded-xl border border-yellow-500/50 w-full transition-all duration-300 hover:border-yellow-500/70"
             variants={container}
             initial="hidden"
             whileInView="show"

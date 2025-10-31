@@ -27,7 +27,6 @@ const LandingPage = () => {
           content="Join the premier network for creative professionals. Find collaborators, discover opportunities, and grow your creative career."
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className="min-h-screen bg-white">
         <HeroSection />

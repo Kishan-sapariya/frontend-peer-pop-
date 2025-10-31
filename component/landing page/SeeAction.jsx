@@ -43,6 +43,28 @@ const SeeAction = () => {
     },
   ];
 
+  const container = {
+    hidden: {},
+    visible: {
+      transition: {
+        delayChildren: 0.2,
+        staggerChildren: 0.2,
+      },
+    },
+  };
+
+  const fadeUp = {
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        type: "spring",
+        stiffness: 80,
+      },
+    },
+  };
+
   const renderMedia = (item) => {
     if (item.component) {
       const MockupComponent = item.component;
@@ -59,21 +81,31 @@ const SeeAction = () => {
 
   return (
     <div className="py-20 px-6 md:px-16 bg-black w-full flex flex-col justify-center items-center">
-      <div className="space-y-3 text-center max-w-3xl mb-16">
-        <h1 className="text-white font-extrabold text-4xl md:text-5xl">
+      <motion.div
+        variants={container}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        className="space-y-3 text-center max-w-3xl mb-16"
+      >
+        <motion.h1
+          variants={fadeUp}
+          className="text-white font-extrabold text-4xl md:text-5xl"
+        >
           See Peer Pop in <span className="text-yellow-500">Action</span>
-        </h1>
-        <p className="text-gray-400 text-lg md:text-xl">
+        </motion.h1>
+        <motion.p
+          variants={fadeUp}
+          className="text-gray-400 text-lg md:text-xl"
+        >
           A powerful platform designed to make networking effortless and
           authentic.
-        </p>
-      </div>
+        </motion.p>
+      </motion.div>
 
       <div className="space-y-24 w-full max-w-7xl">
         {content.map((c, index) => {
           const isReversed = index % 2 === 1;
-          const textDirection = isReversed ? 100 : -100;
-          const imageDirection = isReversed ? -100 : 100;
 
           return (
             <div
@@ -83,39 +115,50 @@ const SeeAction = () => {
               } items-center justify-between gap-12`}
             >
               <motion.div
-                initial={{ x: textDirection, opacity: 0 }}
-                whileInView={{ x: 0, opacity: 1 }}
-                transition={{ duration: 0.6, ease: "easeOut" }}
-                viewport={{ once: true, amount: 0.2 }}
+                variants={container}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
                 className="w-full md:w-1/2 space-y-4 text-center md:text-left px-4 md:px-8"
               >
-                <div className="uppercase tracking-wide bg-yellow-500 text-black inline-block px-3 py-1 rounded-full text-xs font-semibold">
+                <motion.div
+                  variants={fadeUp}
+                  className="uppercase tracking-wide bg-yellow-500 text-black inline-block px-3 py-1 rounded-full text-xs font-semibold"
+                >
                   {c.tag}
-                </div>
-                <h2 className="text-3xl md:text-4xl font-bold text-yellow-500">
+                </motion.div>
+                <motion.h2
+                  variants={fadeUp}
+                  className="text-3xl md:text-4xl font-bold text-yellow-500"
+                >
                   {c.title}
-                </h2>
-                <p className="text-gray-300 leading-relaxed">{c.desc}</p>
-                <ul className="text-gray-400 list-disc pl-5 space-y-2">
+                </motion.h2>
+                <motion.p
+                  variants={fadeUp}
+                  className="text-gray-300 leading-relaxed"
+                >
+                  {c.desc}
+                </motion.p>
+                <motion.ul
+                  variants={fadeUp}
+                  className="text-gray-400 list-disc pl-5 space-y-2"
+                >
                   {c.points.split(",").map((p, i) => (
                     <li key={i}>{p}</li>
                   ))}
-                </ul>
+                </motion.ul>
               </motion.div>
 
-              <motion.div
-                initial={{ x: imageDirection, opacity: 0 }}
-                whileInView={{ x: 0, opacity: 1 }}
-                transition={{
-                  duration: 0.6,
-                  ease: "easeOut",
-                  delay: 0.2,
-                }}
-                viewport={{ once: true, amount: 0.2 }}
-                className="w-full md:w-1/2 flex justify-center"
-              >
-                <div className="w-full max-w-[500px]">{renderMedia(c)}</div>
-              </motion.div>
+              <div className="w-full md:w-1/2 flex justify-center">
+                <motion.div
+                  variants={fadeUp}
+                  initial="hidden"
+                  whileInView="visible"
+                  className="w-full max-w-[500px]"
+                >
+                  {renderMedia(c)}
+                </motion.div>
+              </div>
             </div>
           );
         })}

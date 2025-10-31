@@ -13,7 +13,6 @@ export function MessagingMockup() {
             {/* Active chat */}
             <div className="relative flex justify-center py-2 cursor-pointer bg-gray-900 before:absolute before:inset-y-0 before:left-0 before:w-1 before:bg-yellow-500">
               <Avatar className="h-10 w-10 border-2 border-yellow-500 ring-2 ring-yellow-500/50 transition-all">
-                <AvatarImage src="/professional-female-brand-manager.jpg" />
                 <AvatarFallback>SM</AvatarFallback>
               </Avatar>
             </div>

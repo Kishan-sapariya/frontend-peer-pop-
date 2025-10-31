@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-// Since we are creating a self-contained environment, we will use simple divs instead of Link/Next.js specific components.
-// We keep the icon imports from the original request.
+import React from "react";
+import { motion } from "framer-motion";
 import {
   Sparkles,
   ArrowRight,
@@ -11,13 +10,12 @@ import {
   Check,
 } from "lucide-react";
 
-// Mock data for the profile card
 const mockProfileData = {
   name: "Sarah Johnson",
   handle: "@sarahjohnson",
   bio: "Tech & Lifestyle Creator | Sharing my journey in content creation",
   profilePic:
-    "https://images.unsplash.com/photo-1580489944761-15a19d654956?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHw1fHxhZnJpY2FuJTIwZmVtYWxlJTIwcHJvZmVzc2lvbmFsfGVufDB8fHx8MTY5OTk2Nzg0NHww&ixlib=rb-4.0.3&q=80&w=1080", // Using a placeholder image for a professional female
+    "https://images.unsplash.com/photo-1580489944761-15a19d654956?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
   stats: [
     { label: "Subscribers", value: "2.4M" },
     { label: "Videos", value: "156" },
@@ -54,16 +52,13 @@ const mockProfileData = {
 
 const RightPanelUI = () => (
   <div
-    className="relative w-full lg:w-[600px] h-[550px] md:h-[600px] flex items-center justify-center p-4 lg:p-0 transition-all duration-700 ease-out"
+    className="relative w-full lg:w-[600px] h-[550px] md:h-[600px] flex items-center justify-center p-4 lg:p-0"
     style={{ perspective: "1000px" }}
   >
-    {/* Profile Card Container */}
     <div className="w-full h-full max-w-sm md:max-w-md bg-[#181A20] rounded-3xl shadow-2xl overflow-hidden border border-gray-700/50 transform transition-transform duration-500 hover:scale-[1.02] hover:rotate-1">
-      {/* Header Banner */}
       <div className="h-24 bg-gradient-to-r from-yellow-500 to-orange-500"></div>
 
       <div className="px-5 -mt-10">
-        {/* Profile Picture */}
         <div className="w-20 h-20 rounded-full overflow-hidden border-4 border-[#181A20] shadow-xl">
           <img
             src={mockProfileData.profilePic}
@@ -72,7 +67,6 @@ const RightPanelUI = () => (
           />
         </div>
 
-        {/* Name and Handle */}
         <h2 className="text-xl font-bold text-white mt-3 flex items-center">
           {mockProfileData.name}{" "}
           <Check className="w-4 h-4 ml-2 text-green-400" />
@@ -81,7 +75,6 @@ const RightPanelUI = () => (
         <p className="text-sm text-gray-300 mt-1 mb-4">{mockProfileData.bio}</p>
       </div>
 
-      {/* Stats Bar */}
       <div className="grid grid-cols-4 gap-2 bg-[#20232A] py-3 px-5 border-t border-b border-gray-700/50">
         {mockProfileData.stats.map((stat, index) => (
           <div key={index} className="text-center">
@@ -91,10 +84,8 @@ const RightPanelUI = () => (
         ))}
       </div>
 
-      {/* Main Content Area - hide scrollbar */}
       <div className="p-5 overflow-y-auto h-[calc(100%-250px)] custom-scrollbar">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          {/* Recent Videos - takes 2/3 of space on medium screens */}
           <div className="md:col-span-2">
             <h3 className="text-base font-semibold text-white mb-3">
               Recent Videos
@@ -105,7 +96,6 @@ const RightPanelUI = () => (
                   key={index}
                   className="flex items-start p-2 bg-[#20232A] rounded-xl cursor-pointer hover:bg-[#282B32] transition"
                 >
-                  {/* Placeholder for Video Thumbnail/Play Icon */}
                   <div className="w-16 h-12 bg-yellow-500 flex items-center justify-center rounded-lg flex-shrink-0 shadow-md">
                     <Telescope className="w-5 h-5 text-black" />
                   </div>
@@ -163,7 +153,6 @@ const RightPanelUI = () => (
               </div>
             </div>
 
-            {/* Top Locations */}
             <div className="bg-[#20232A] p-4 rounded-xl shadow-inner">
               <h4 className="text-base font-semibold text-white mb-3 border-b border-gray-700/50 pb-2">
                 Top Locations
@@ -189,28 +178,33 @@ const RightPanelUI = () => (
   </div>
 );
 
+const container = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.2,
+      delayChildren: 0.2,
+    },
+  },
+};
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 40 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      opacity: { duration: 0.1 },
+      y: {
+        type: "spring",
+        stiffness: 120,
+        damping: 20,
+      },
+    },
+  },
+};
+
 const HeroSection = () => {
-  const [hasMounted, setHasMounted] = useState(false);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setHasMounted(true);
-    }, 50);
-    return () => clearTimeout(timer);
-  }, []);
-
-  const contentClassName = `relative z-10 flex flex-col lg:flex-row items-center lg:items-start justify-between max-w-7xl mx-auto w-full gap-12 py-6 md:py-16 transition-all duration-1000 ease-out ${
-    hasMounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-  }`;
-
-  const textContentClassName = `lg:w-1/2 text-center lg:text-left px-4 pt-0 lg:pt-10 transition-all duration-1000 ease-out ${
-    hasMounted ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-10"
-  }`;
-
-  const imagePanelClassName = `lg:w-1/2 flex justify-center lg:justify-end px-4 mt-12 lg:mt-0 transition-all duration-1000 ease-out ${
-    hasMounted ? "opacity-100 translate-x-0" : "opacity-0 translate-x-10"
-  }`;
-
   return (
     <section className="relative flex items-center justify-center min-h-[92vh] px-4 py-16 md:py-0 overflow-hidden bg-black font-['Inter']">
       <link
@@ -230,46 +224,60 @@ const HeroSection = () => {
 
       <div className="absolute inset-0 bg-gradient-to-br from-orange-500 via-yellow-500 to-yellow-500 opacity-90"></div>
 
-      <div className={contentClassName}>
-        <div className={textContentClassName}>
-          <h1 className="text-5xl md:text-6xl lg:text-6xl font-extrabold text-white mb-6 leading-tight tracking-tight">
+      <motion.div
+        initial="hidden"
+        whileInView="visible"
+        variants={container}
+        viewport={{ once: true }}
+        className="relative z-10 flex flex-col lg:flex-row items-center lg:items-start justify-between max-w-7xl mx-auto w-full gap-12 py-6 md:py-16"
+      >
+        <motion.div
+          variants={container}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          className="lg:w-1/2 text-center lg:text-left px-4 pt-0 lg:pt-10"
+        >
+          <motion.h1
+            variants={fadeUp}
+            className="text-5xl md:text-6xl lg:text-6xl font-extrabold text-white mb-6 leading-tight tracking-tight"
+          >
             Where Creators, Mentors
             <br />
             <span className=" text-black ">& Brand Connect</span>
-          </h1>
-
-          <p className="text-lg md:text-xl font-medium text-white/90 mb-10 max-w-2xl lg:max-w-none mx-auto leading-relaxed">
+          </motion.h1>
+          <motion.p
+            variants={fadeUp}
+            className="text-lg md:text-xl font-medium text-white/90 mb-10 max-w-2xl lg:max-w-none mx-auto leading-relaxed"
+          >
             Build real connections. Find authentic collaborations. Grow your
             creative career with the platform designed for meaningful
             partnerships.
-          </p>
-
+          </motion.p>
           <div className="flex flex-col sm:flex-row flex-wrap lg:justify-start justify-center gap-4 mb-12">
-            {/* CTA Button 1 */}
-            <div>
-              <a
-                href="#signup"
-                className="inline-flex items-center justify-center px-6 py-3 text-base font-semibold rounded-xl bg-black text-white transition-all duration-200 min-w-[200px] hover:shadow-lg"
-              >
-                <Sparkles className="w-5 h-5 mr-2" />
-                Get started for free
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </a>
-            </div>
+            <motion.a
+              variants={fadeUp}
+              href="#signup"
+              className="inline-flex items-center justify-center px-6 py-3 text-base font-semibold rounded-xl bg-black text-white transition-all duration-200 min-w-[200px] hover:shadow-lg"
+            >
+              <Sparkles className="w-5 h-5 mr-2" />
+              Get started for free
+              <ArrowRight className="w-4 h-4 ml-2" />
+            </motion.a>
 
-            {/* CTA Button 2 */}
-            <div>
-              <a
-                href="#business-login"
-                className="inline-flex items-center justify-center px-6 py-3 text-base font-semibold rounded-xl border-2 border-black bg-transparent text-black transition-all duration-200 min-w-[200px] hover:bg-black hover:text-white"
-              >
-                <Building2 className="w-5 h-5 mr-2" />
-                I'm a Business
-              </a>
-            </div>
+            <motion.a
+              variants={fadeUp}
+              href="#business-login"
+              className="inline-flex items-center justify-center px-6 py-3 text-base font-semibold rounded-xl border-2 border-black bg-transparent text-black transition-all duration-200 min-w-[200px] hover:bg-black hover:text-white"
+            >
+              <Building2 className="w-5 h-5 mr-2" />
+              I'm a Business
+            </motion.a>
           </div>
-
-          <div className="flex flex-wrap lg:justify-start justify-center items-center gap-4 text-black font-semibold text-sm mt-8">
+          <motion.div
+            variants={fadeUp}
+            className="flex flex-wrap lg:justify-start justify-center items-center gap-4 text-black font-semibold text-sm mt-8"
+          >
             {[
               { color: "bg-green-400", text: "Free to join" },
               { color: "bg-blue-400", text: "Verified creators" },
@@ -282,14 +290,16 @@ const HeroSection = () => {
                 </div>
               </div>
             ))}
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
-        {/* Right Image/UI Panel */}
-        <div className={imagePanelClassName}>
+        <motion.div
+          variants={fadeUp}
+          className="lg:w-1/2 flex justify-center lg:justify-end px-4 mt-12 lg:mt-0"
+        >
           <RightPanelUI />
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </section>
   );
 };
