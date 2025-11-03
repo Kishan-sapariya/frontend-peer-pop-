@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,18 +14,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useBusinessStore } from "@/store/useBusinessStore";
 import { Loader2 } from "lucide-react";
+import { useBusinessStore } from "@/store/useBusinessStore";
 import { useAuthStore } from "@/store/useAuthStore";
+import { LocationSelector } from "@/component/LocationSelector";
+import toast from "react-hot-toast";
 
 export default function BusinessOnboardingForm() {
   const { getCurrentUser } = useAuthStore();
   const { postBusinessDetails } = useBusinessStore();
-  const [loading, setLoading] = useState(false);
 
+  const [loading, setLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const totalSteps = 4;
-  const progress = (currentStep / totalSteps) * 100;
 
   const [formData, setFormData] = useState({
     about: "",
@@ -32,50 +34,81 @@ export default function BusinessOnboardingForm() {
     phone: "",
     email: "",
     businessType: "",
-    headquarters: "",
-    subBranches: [""],
     foundingDate: "",
+    state: "",
+    city: "",
+    customCity: "",
     facebook: "",
-    facebookFollowers: null,
+    facebookFollowers: "",
     twitter: "",
-    twitterFollowers: null,
+    twitterFollowers: "",
     linkedin: "",
-    linkedinFollowers: null,
+    linkedinFollowers: "",
     instagram: "",
-    instagramFollowers: null,
-
+    instagramFollowers: "",
     gstNumber: "",
     panNumber: "",
     gstFile: null,
     panFile: null,
   });
 
+  const validateStep = (step) => {
+    switch (step) {
+      case 1:
+        if (!formData.about || !formData.website) {
+          toast.error("Please fill out all required company details.");
+          return false;
+        }
+        break;
+
+      case 2:
+        if (
+          !formData.businessType ||
+          !formData.state ||
+          (!formData.city && !formData.customCity)
+        ) {
+          toast.error(
+            "Please complete your business info and headquarters location."
+          );
+          return false;
+        }
+        break;
+
+      case 4:
+        if (
+          !formData.gstNumber ||
+          !formData.gstFile ||
+          !formData.panNumber ||
+          !formData.panFile
+        ) {
+          toast.error("GST and PAN details are required to continue.");
+          return false;
+        }
+        break;
+
+      default:
+        break;
+    }
+    return true;
+  };
+
+  const progress = (currentStep / totalSteps) * 100;
+
+  const handleChange = (field, value) =>
+    setFormData((prev) => ({ ...prev, [field]: value }));
+
   const handleNext = () => {
-    if (currentStep < totalSteps) setCurrentStep((prev) => prev + 1);
+    if (validateStep(currentStep)) {
+      if (currentStep < totalSteps) setCurrentStep((prev) => prev + 1);
+    }
   };
 
   const handlePrevious = () => {
     if (currentStep > 1) setCurrentStep((prev) => prev - 1);
   };
 
-  const handleChange = (field, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
-
-  const handleBranchChange = (index, value) => {
-    const newBranches = [...formData.subBranches];
-    newBranches[index] = value;
-    handleChange("subBranches", newBranches);
-  };
-
-  const addBranch = () => {
-    handleChange("subBranches", [...formData.subBranches, ""]);
-  };
-
   const handleSubmit = async () => {
+    if (!validateStep(currentStep)) return;
     const payload = {
       basicInfo: {
         about: formData.about,
@@ -88,8 +121,9 @@ export default function BusinessOnboardingForm() {
         supportEmail: formData.email,
       },
       location: {
-        headquarters: formData.headquarters,
-        subBranches: formData.subBranches.filter((b) => b.trim() !== ""),
+        headquarters: `${formData.customCity || formData.city}, ${
+          formData.state
+        }`,
       },
       socials: {
         linkedinUrl: formData.linkedin,
@@ -105,7 +139,6 @@ export default function BusinessOnboardingForm() {
 
     try {
       setLoading(true);
-
       await postBusinessDetails(
         payload.basicInfo,
         payload.contact,
@@ -116,7 +149,6 @@ export default function BusinessOnboardingForm() {
         formData.gstFile,
         formData.panFile
       );
-
       await getCurrentUser();
       window.location.href = "/feed";
     } catch (err) {
@@ -135,27 +167,35 @@ export default function BusinessOnboardingForm() {
               Company Details 📝
             </h2>
             <p className="text-sm text-gray-500">
-              Let's start with the basics. Please provide your company's core
-              information.
+              Provide your company’s basic information.
             </p>
+
             <div>
-              <Label htmlFor="about">About Your Company</Label>
+              <Label htmlFor="about">
+                About Your Company <span className="text-red-500">*</span>
+              </Label>
               <Textarea
                 id="about"
-                placeholder="Tell us about your company, its mission, and what you do..."
+                required
+                placeholder="Describe your company and mission..."
                 value={formData.about}
                 onChange={(e) => handleChange("about", e.target.value)}
               />
             </div>
+
             <div>
-              <Label htmlFor="website">Company Website</Label>
+              <Label htmlFor="website">
+                Company Website <span className="text-red-500">*</span>
+              </Label>
               <Input
                 id="website"
+                required
                 placeholder="https://www.yourcompany.com"
                 value={formData.website}
                 onChange={(e) => handleChange("website", e.target.value)}
               />
             </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="phone">Phone Number</Label>
@@ -167,6 +207,7 @@ export default function BusinessOnboardingForm() {
                   onChange={(e) => handleChange("phone", e.target.value)}
                 />
               </div>
+
               <div>
                 <Label htmlFor="email">Support Email</Label>
                 <Input
@@ -188,52 +229,50 @@ export default function BusinessOnboardingForm() {
               Business Profile 📈
             </h2>
             <p className="text-sm text-gray-500">
-              Help us understand your business structure and industry.
+              Tell us about your business structure and industry.
             </p>
+
             <div>
-              <Label htmlFor="businessType">Type of Business</Label>
+              <Label>
+                Type of Business <span className="text-red-500">*</span>
+              </Label>
               <Select
                 value={formData.businessType}
-                onValueChange={(value) => handleChange("businessType", value)}
+                onValueChange={(v) => handleChange("businessType", v)}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select a business type" />
+                  <SelectValue placeholder="Select business type" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="soleProprietorship">
                     Sole Proprietorship
                   </SelectItem>
-                  <SelectItem value="llc">
-                    LLC (Limited Liability Company)
-                  </SelectItem>
+                  <SelectItem value="llc">LLC</SelectItem>
                   <SelectItem value="corporation">Corporation</SelectItem>
                   <SelectItem value="partnership">Partnership</SelectItem>
-                  <SelectItem value="nonprofit">
-                    Non-Profit Organization
-                  </SelectItem>
+                  <SelectItem value="nonprofit">Non-Profit</SelectItem>
                 </SelectContent>
               </Select>
             </div>
-            <div className="w-[30%]">
+
+            <div className="grid grid-cols-1 gap-4">
               <div>
-                <Label htmlFor="foundingDate">Founding Date</Label>
+                <Label>Founding Date</Label>
                 <Input
-                  id="foundingDate"
                   type="date"
                   value={formData.foundingDate}
                   onChange={(e) => handleChange("foundingDate", e.target.value)}
                 />
               </div>
-            </div>
-            <div className="w-[30%]">
+
               <div>
-                <Label htmlFor="headquater">Headquater</Label>
-                <Input
-                  id="headquater"
-                  type="text"
-                  placeholder="mumbai,etc"
-                  value={formData.headquarters}
-                  onChange={(e) => handleChange("headquarters", e.target.value)}
+                <LocationSelector
+                  selectedState={formData.state}
+                  city={formData.city}
+                  customCity={formData.customCity}
+                  onLocationChange={(updates) =>
+                    setFormData((prev) => ({ ...prev, ...updates }))
+                  }
                 />
               </div>
             </div>
@@ -247,107 +286,42 @@ export default function BusinessOnboardingForm() {
               Social Presence 📱
             </h2>
             <p className="text-sm text-gray-500">
-              Share your social media links and audience size to help people
-              find you.
+              Add your company’s social media handles (optional).
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="facebook">Facebook Profile URL</Label>
-                <Input
-                  id="facebook"
-                  placeholder="https://facebook.com/your-page"
-                  value={formData.facebook}
-                  onChange={(e) => handleChange("facebook", e.target.value)}
-                />
-              </div>
-              <div>
-                <Label htmlFor="facebookFollowers">Followers</Label>
-                <Input
-                  id="facebookFollowers"
-                  type="number"
-                  placeholder="e.g., 5000"
-                  value={formData.facebookFollowers}
-                  onChange={(e) =>
-                    handleChange(
-                      "facebookFollowers",
-                      parseInt(e.target.value, 10) || null
-                    )
-                  }
-                />
-              </div>
-              <div>
-                <Label htmlFor="twitter">Twitter Profile URL</Label>
-                <Input
-                  id="twitter"
-                  placeholder="https://twitter.com/your-handle"
-                  value={formData.twitter}
-                  onChange={(e) => handleChange("twitter", e.target.value)}
-                />
-              </div>
-              <div>
-                <Label htmlFor="twitterFollowers">Followers</Label>
-                <Input
-                  id="twitterFollowers"
-                  type="number"
-                  placeholder="e.g., 10000"
-                  value={formData.twitterFollowers}
-                  onChange={(e) =>
-                    handleChange(
-                      "twitterFollowers",
-                      parseInt(e.target.value, 10) || null
-                    )
-                  }
-                />
-              </div>
-              <div>
-                <Label htmlFor="linkedin">LinkedIn Profile URL</Label>
-                <Input
-                  id="linkedin"
-                  placeholder="https://linkedin.com/company/your-company"
-                  value={formData.linkedin}
-                  onChange={(e) => handleChange("linkedin", e.target.value)}
-                />
-              </div>
-              <div>
-                <Label htmlFor="linkedinFollowers">Followers</Label>
-                <Input
-                  id="linkedinFollowers"
-                  type="number"
-                  placeholder="e.g., 2500"
-                  value={formData.linkedinFollowers}
-                  onChange={(e) =>
-                    handleChange(
-                      "linkedinFollowers",
-                      parseInt(e.target.value, 10) || null
-                    )
-                  }
-                />
-              </div>
-              <div>
-                <Label htmlFor="instagram">Instagram Profile URL</Label>
-                <Input
-                  id="instagram"
-                  placeholder="https://instagram.com/your-profile"
-                  value={formData.instagram}
-                  onChange={(e) => handleChange("instagram", e.target.value)}
-                />
-              </div>
-              <div>
-                <Label htmlFor="instagramFollowers">Followers</Label>
-                <Input
-                  id="instagramFollowers"
-                  type="number"
-                  placeholder="e.g., 7500"
-                  value={formData.instagramFollowers}
-                  onChange={(e) =>
-                    handleChange(
-                      "instagramFollowers",
-                      parseInt(e.target.value, 10) || null
-                    )
-                  }
-                />
-              </div>
-            </div>
+
+            {["facebook", "twitter", "linkedin", "instagram"].map(
+              (platform) => (
+                <div
+                  key={platform}
+                  className="grid grid-cols-1 md:grid-cols-2 gap-4"
+                >
+                  <div>
+                    <Label>
+                      {platform.charAt(0).toUpperCase() + platform.slice(1)} URL
+                    </Label>
+                    <Input
+                      placeholder={`https://${platform}.com/your-page`}
+                      value={formData[platform]}
+                      onChange={(e) => handleChange(platform, e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <Label>Followers</Label>
+                    <Input
+                      type="number"
+                      placeholder="e.g., 5000"
+                      value={formData[`${platform}Followers`]}
+                      onChange={(e) =>
+                        handleChange(
+                          `${platform}Followers`,
+                          parseInt(e.target.value, 10) || ""
+                        )
+                      }
+                    />
+                  </div>
+                </div>
+              )
+            )}
           </div>
         );
 
@@ -358,41 +332,53 @@ export default function BusinessOnboardingForm() {
               Tax Information 🧾
             </h2>
             <p className="text-sm text-gray-500">
-              Please provide your tax and identification documents.
+              Provide your tax registration details.
             </p>
+
             <div>
-              <Label htmlFor="gstNumber">GST Number</Label>
+              <Label>
+                GST Number <span className="text-red-500">*</span>
+              </Label>
               <Input
-                id="gstNumber"
                 placeholder="Enter GST number"
+                required
                 value={formData.gstNumber}
                 onChange={(e) => handleChange("gstNumber", e.target.value)}
               />
             </div>
+
             <div>
-              <Label htmlFor="gstFile">Upload GST Certificate</Label>
+              <Label>
+                Upload GST Certificate <span className="text-red-500">*</span>
+              </Label>
               <Input
-                id="gstFile"
                 type="file"
                 accept=".pdf,.jpg,.jpeg,.png"
+                required
                 onChange={(e) => handleChange("gstFile", e.target.files[0])}
               />
             </div>
+
             <div>
-              <Label htmlFor="panNumber">PAN Number</Label>
+              <Label>
+                PAN Number <span className="text-red-500">*</span>
+              </Label>
               <Input
-                id="panNumber"
                 placeholder="Enter PAN number"
+                required
                 value={formData.panNumber}
                 onChange={(e) => handleChange("panNumber", e.target.value)}
               />
             </div>
+
             <div>
-              <Label htmlFor="panFile">Upload PAN Document</Label>
+              <Label>
+                Upload PAN Document <span className="text-red-500">*</span>
+              </Label>
               <Input
-                id="panFile"
                 type="file"
                 accept=".pdf,.jpg,.jpeg,.png"
+                required
                 onChange={(e) => handleChange("panFile", e.target.files[0])}
               />
             </div>
@@ -434,16 +420,15 @@ export default function BusinessOnboardingForm() {
               </Button>
               <Button
                 onClick={currentStep === totalSteps ? handleSubmit : handleNext}
+                disabled={loading}
               >
-                {currentStep === totalSteps ? (
-                  loading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      uploading docs & creating profile
-                    </>
-                  ) : (
-                    "Create Profile"
-                  )
+                {loading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Uploading...
+                  </>
+                ) : currentStep === totalSteps ? (
+                  "Create Profile"
                 ) : (
                   "Next"
                 )}

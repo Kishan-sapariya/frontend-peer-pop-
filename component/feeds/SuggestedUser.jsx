@@ -108,7 +108,11 @@ const SuggestedUsers = () => {
               <div className="flex items-start gap-3">
                 <Avatar className="w-12 h-12 shrink-0">
                   {user.image ? (
-                    <AvatarImage src={user.image} alt={user.username} />
+                    <AvatarImage
+                      src={user.image}
+                      alt={user.username}
+                      className="object-cover"
+                    />
                   ) : (
                     <AvatarFallback className="bg-yellow-500 text-white font-bold text-lg">
                       {user.username ? user.username[0].toUpperCase() : ""}

@@ -29,7 +29,11 @@ import { useBusinessStore } from "@/store/useBusinessStore";
 import MyPostsSection from "@/component/feeds/MyPostsSection";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useParams } from "next/navigation";
-import { capitalizeInitials, formatDate, formatNumber } from "@/utils/formatDate";
+import {
+  capitalizeInitials,
+  formatDate,
+  formatNumber,
+} from "@/utils/formatDate";
 import UploadImageModal from "@/component/profile/UploadImageModal";
 import ProfileActionsMenu from "@/component/profile/ProfileActionMenu";
 import ConnectBtn from "@/component/Connection/ConnectBtn";
@@ -182,8 +186,12 @@ export default function BusinessProfilePage() {
                           business.companyName || "Business Name"
                         )}
                       </h1>
-                      {business.isVerified && (
+                      {business.isVerified ? (
                         <Badge className="bg-red-500">Business Verified</Badge>
+                      ) : (
+                        <Badge className="bg-gray-500">
+                          Business Unverified
+                        </Badge>
                       )}
                     </div>
                     <p className="text-xl text-gray-600 mb-1">

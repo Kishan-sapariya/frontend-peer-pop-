@@ -81,9 +81,13 @@ export default function ProfileActionsMenu() {
         {user?.role === "BUSINESS" && <ReuploadDocumentsDialog />}
         <Button className="w-full justify-start bg-gray-50 hover:bg-gray-100 text-black">
           <Link
-            href={`/profile/${
-              user?.username
-            }/${(user?.creatorType)?.toLowerCase()}/updateprofile`}
+            href={
+              user?.role === "BUSINESS"
+                ? `/profile/${user?.username}/business/updateprofile`
+                : `/profile/${
+                    user?.username
+                  }/${user?.creatorType?.toLowerCase()}/updateprofile`
+            }
             className="flex items-center"
           >
             <Pencil className="mr-4 h-4 w-4" /> Update profile
