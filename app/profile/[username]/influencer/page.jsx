@@ -191,18 +191,32 @@ export default function InfluencerProfile() {
   const isOwnProfile = profile?.userProfile?.id === user?.id;
   const accountRestricted = profile?.restricted;
   const style = getCompletionCateogryStyle(profile?.completion?.category);
+  const [hasError, setHasError] = useState(false);
 
+  const imageSrc = isOwnProfile
+    ? user?.coverImage
+    : profile?.userProfile?.coverImage;
+
+  useEffect(() => {
+    setHasError(false);
+  }, [imageSrc]);
+  useEffect(() => {
+    if (!imageSrc) {
+      setHasError(true);
+    }
+  }, [imageSrc]);
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Cover Image */}
-      <div className="relative h-64">
-        <img
-          src={
-            isOwnProfile ? user?.coverImage : profile?.userProfile?.coverImage
-          }
-          alt="Cover"
-          className="w-full h-full object-cover"
-        />
+      <div className="relative h-64 bg-black">
+        {imageSrc && !hasError && (
+          <img
+            src={imageSrc}
+            alt="Cover"
+            className="w-full h-full object-cover"
+            onError={() => setHasError(true)}
+          />
+        )}
       </div>
       <div className="max-w-7xl mx-auto px-4 -mt-20 relative z-10">
         {/* Profile Header */}

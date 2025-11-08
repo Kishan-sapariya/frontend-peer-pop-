@@ -187,9 +187,9 @@ export default function BusinessProfilePage() {
                         )}
                       </h1>
                       {business.isVerified ? (
-                        <Badge className="bg-red-500">Business Verified</Badge>
+                        <Badge className="bg-green-500">Business Verified</Badge>
                       ) : (
-                        <Badge className="bg-gray-500">
+                        <Badge className="bg-red-500">
                           Business Unverified
                         </Badge>
                       )}

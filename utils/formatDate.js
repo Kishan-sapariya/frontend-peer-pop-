@@ -91,11 +91,11 @@ export const getCompletionCateogryStyle = (category) => {
   switch (category) {
     case "Elite":
       return {
-        className: "bg-[#F0AF1B] text-white",
+        className: "bg-gradient-to-r from-blue-400 to-sky-400 text-white",
       };
     case "Rising":
       return {
-        className: "bg-gradient-to-r from-blue-400 to-sky-400 text-white",
+        className: "bg-red-500 text-white",
       };
     case "Pro":
       return {
