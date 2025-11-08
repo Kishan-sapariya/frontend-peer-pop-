@@ -1,7 +1,5 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
-
 const WarningIcon = ({ className }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -20,9 +18,6 @@ const WarningIcon = ({ className }) => (
 );
 
 export default function NoChannelPage() {
-  const params = useSearchParams();
-  const reason = params.get("reason") || "no_channel";
-
   const BASE = process.env.NEXT_PUBLIC_BASE_API_URL;
 
   const tryAnotherAccount = () => {
