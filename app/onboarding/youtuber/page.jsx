@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -343,14 +344,13 @@ export default function YouTuberOnboarding() {
 
   useEffect(() => {
     if (!user?.id) return;
-    if (stats) return; // already fetched once
+    if (stats) return; 
 
     getYoutubeStats(user.id)
       .then((data) => {
         if (!data) return;
 
-        // FIX: properly extract stats object
-        const s = data.stats || data; // support both shapes
+        const s = data.stats || data; 
 
         setFormData((prev) => ({
           ...prev,
@@ -373,7 +373,9 @@ export default function YouTuberOnboarding() {
       case 1:
         return (
           <div className="space-y-6">
-            <YouTubeConnectToast />
+            <Suspense fallback={null}>
+              <YouTubeConnectToast />
+            </Suspense>
             <div className="text-center">
               <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Play className="w-8 h-8 text-red-600" />
