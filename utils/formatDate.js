@@ -103,3 +103,16 @@ export const getCompletionCateogryStyle = (category) => {
       };
   }
 };
+
+export function monthsToRange(months) {
+  if (months == null) return "";
+  const m = typeof months === "string" ? parseInt(months, 10) : months;
+  if (Number.isNaN(m)) return "";
+  if (m < 0) return "";
+
+  if (m <= 6) return "0-6months";
+  if (m <= 12) return "6months-1year";
+  if (m <= 24) return "1-2years";
+  if (m <= 60) return "2-5years";
+  return "5+years";
+}

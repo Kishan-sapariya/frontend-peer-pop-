@@ -243,7 +243,6 @@ export default function YouTuberProfile() {
     ? user?.coverImage
     : profile?.userProfile?.coverImage;
 
-  
   useEffect(() => {
     setHasError(false);
   }, [imageSrc]);
@@ -309,13 +308,37 @@ export default function YouTuberProfile() {
                         <Badge className="bg-red-500">YouTube Verified</Badge>
                       )}
                     </div>
-                    <p className="text-xl text-gray-600 mb-1">
-                      {creator.title}
-                    </p>
-                    {creator.channel && (
-                      <p className="text-lg text-red-600 font-medium mb-3">
-                        {creator.channel}
+                    <div className="flex flex-col sm:flex-row sm:items-center text-xl text-gray-600 mb-1 flex-wrap">
+                      {/* Creator Title */}
+                      <p className="mr-2 mb-1 sm:mb-0 whitespace-nowrap">
+                        {creator.title} -
                       </p>
+
+                      {creator.contentCategories.length > 0 && (
+                        <div className="flex flex-wrap gap-2">
+                          {creator.contentCategories.map((category, index) => (
+                            <Badge
+                              key={index}
+                              variant="secondary"
+                              className="py-1 px-3 text-[14px]"
+                            >
+                              {category.name}
+                            </Badge>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    {creator.channel && (
+                      <a
+                        href={`https://youtube.com/${
+                          creator.channel.startsWith("@") ? "" : "@"
+                        }${creator.channel}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-lg text-red-600 font-medium mb-3 hover:underline"
+                      >
+                        {creator.channel}
+                      </a>
                     )}
 
                     <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 mb-4">
@@ -600,30 +623,6 @@ export default function YouTuberProfile() {
                   </div>
                 </CardContent>
               </Card>
-
-              {creator.contentCategories.length > 0 && (
-                <Card>
-                  <CardHeader>
-                    <div className="flex gap-2 items-center">
-                      <Boxes className="text-gray-700" />
-                      <CardTitle>Content Category</CardTitle>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      {creator.contentCategories.map((category, index) => (
-                        <div key={index}>
-                          <div className="flex justify-between items-center mb-2">
-                            <span className="text-sm font-medium">
-                              {category.name}
-                            </span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
 
               {/* Availability & Rates */}
               <Card>

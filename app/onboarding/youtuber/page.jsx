@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -31,6 +31,8 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { useYoutubeStore } from "@/store/useYoutubeStore";
 import { LocationSelector } from "@/component/LocationSelector";
+import toast from "react-hot-toast";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export default function YouTuberOnboarding() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -51,6 +53,28 @@ export default function YouTuberOnboarding() {
   const handleConnectYouTube = () => {
     window.location.href = `${process.env.NEXT_PUBLIC_BASE_API_URL}/youtube/auth`;
   };
+
+  function YouTubeConnectToast() {
+    const params = useSearchParams();
+    const router = useRouter();
+
+    useEffect(() => {
+      const connected = params.get("connected");
+      if (connected === "1") {
+        toast.success("YouTube account connected successfully.");
+
+        // remove ?connected=1 from URL
+        const sp = new URLSearchParams(params.toString());
+        sp.delete("connected");
+        const qs = sp.toString();
+        router.replace(`${window.location.pathname}${qs ? `?${qs}` : ""}`, {
+          scroll: false,
+        });
+      }
+    }, [params, router]);
+
+    return null;
+  }
 
   const [formData, setFormData] = useState({
     // Basic Info
@@ -313,11 +337,43 @@ export default function YouTuberOnboarding() {
     }
   };
 
+  const user = useAuthStore((s) => s.user);
+  const stats = useYoutubeStore((s) => s.stats);
+  const getYoutubeStats = useYoutubeStore((s) => s.getYoutubeStats);
+
+  useEffect(() => {
+    if (!user?.id) return;
+    if (stats) return; // already fetched once
+
+    getYoutubeStats(user.id)
+      .then((data) => {
+        if (!data) return;
+
+        // FIX: properly extract stats object
+        const s = data.stats || data; // support both shapes
+
+        setFormData((prev) => ({
+          ...prev,
+          subscriberCount: s.subscriberCount || prev.subscriberCount,
+          totalViews: s.totalViews || prev.totalViews,
+          videoCount: s.videoCount || prev.videoCount,
+          channelAge: s.channelAge
+            ? convertToRange(s.channelAge)
+            : prev.channelAge,
+        }));
+        console.log("Fetched Stats:", data);
+
+        toast.success("YouTube stats imported successfully.");
+      })
+      .catch(() => {});
+  }, [user, stats, getYoutubeStats, setFormData]);
+
   const renderStep = () => {
     switch (currentStep) {
       case 1:
         return (
           <div className="space-y-6">
+            <YouTubeConnectToast />
             <div className="text-center">
               <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Play className="w-8 h-8 text-red-600" />
@@ -444,6 +500,17 @@ export default function YouTuberOnboarding() {
                 Help peers understand your channel's reach and performance
               </p>
             </div>
+            {stats ? (
+              <div className="rounded-md border border-green-200 bg-green-50 p-3 text-sm text-green-700">
+                We imported your YouTube stats automatically. You can edit them,
+                and these values will be used as fallback if syncing fails.
+              </div>
+            ) : (
+              <div className="rounded-md border border-yellow-200 bg-yellow-50 p-3 text-sm text-yellow-700">
+                You haven't connected YouTube. Please fill your channel
+                statistics manually.
+              </div>
+            )}
 
             {/* Manual Form Fields */}
             <div className="grid grid-cols-2 gap-4">
