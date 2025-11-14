@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
+import { useRef } from "react";
 import {
   Upload,
   Plus,
@@ -34,6 +35,7 @@ import { useYoutubeStore } from "@/store/useYoutubeStore";
 import { LocationSelector } from "@/component/LocationSelector";
 import toast from "react-hot-toast";
 import { useAuthStore } from "@/store/useAuthStore";
+import YouTubeConnectToast from "@/component/youtube profile/YoutubeConnectToast";
 
 export default function YouTuberOnboarding() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -41,6 +43,7 @@ export default function YouTuberOnboarding() {
   const [language, setLanguage] = useState("");
   const [level, setLevel] = useState("");
   const [languages, setLanguages] = useState([]);
+  const { getYoutubeStats, stats } = useYoutubeStore();
 
   const handleAddLanguage = () => {
     if (!language.trim() || !level) return;
@@ -54,29 +57,6 @@ export default function YouTuberOnboarding() {
   const handleConnectYouTube = () => {
     window.location.href = `${process.env.NEXT_PUBLIC_BASE_API_URL}/youtube/auth`;
   };
-
-  function YouTubeConnectToast() {
-    const params = useSearchParams();
-    const router = useRouter();
-
-    useEffect(() => {
-      const connected = params.get("connected");
-      if (connected === "1") {
-        toast.success("YouTube account connected successfully.");
-
-        // remove ?connected=1 from URL
-        const sp = new URLSearchParams(params.toString());
-        sp.delete("connected");
-        const qs = sp.toString();
-        router.replace(`${window.location.pathname}${qs ? `?${qs}` : ""}`, {
-          scroll: false,
-        });
-      }
-    }, [params, router]);
-
-    return null;
-  }
-
   const [formData, setFormData] = useState({
     // Basic Info
     firstName: "",
@@ -338,44 +318,45 @@ export default function YouTuberOnboarding() {
     }
   };
 
-  const user = useAuthStore((s) => s.user);
-  const stats = useYoutubeStore((s) => s.stats);
-  const getYoutubeStats = useYoutubeStore((s) => s.getYoutubeStats);
+  const prefilled = useRef(false);
 
   useEffect(() => {
+    if (!stats) return;
+    if (prefilled.current) return;
+
+    setFormData((prev) => ({
+      ...prev,
+      subscriberCount: prev.subscriberCount || stats.subscriberCount || "",
+      totalViews: prev.totalViews || stats.totalViews || "",
+      videoCount: prev.videoCount || stats.videoCount || "",
+      avgViews:
+        prev.avgViews ||
+        (stats.totalViews && stats.videoCount
+          ? String(
+              Math.round(
+                Number(stats.totalViews) / Math.max(1, Number(stats.videoCount))
+              )
+            )
+          : ""),
+      channelAge: prev.channelAge || stats.channelAge?.toString() || "",
+    }));
+
+    prefilled.current = true;
+  }, [stats]);
+
+  const { user } = useAuthStore();
+  useEffect(() => {
     if (!user?.id) return;
-    if (stats) return; 
-
-    getYoutubeStats(user.id)
-      .then((data) => {
-        if (!data) return;
-
-        const s = data.stats || data; 
-
-        setFormData((prev) => ({
-          ...prev,
-          subscriberCount: s.subscriberCount || prev.subscriberCount,
-          totalViews: s.totalViews || prev.totalViews,
-          videoCount: s.videoCount || prev.videoCount,
-          channelAge: s.channelAge
-            ? convertToRange(s.channelAge)
-            : prev.channelAge,
-        }));
-        console.log("Fetched Stats:", data);
-
-        toast.success("YouTube stats imported successfully.");
-      })
-      .catch(() => {});
-  }, [user, stats, getYoutubeStats, setFormData]);
+    if (stats) return;
+    getYoutubeStats(user.id);
+  }, [user?.id]);
 
   const renderStep = () => {
     switch (currentStep) {
       case 1:
         return (
           <div className="space-y-6">
-            <Suspense fallback={null}>
-              <YouTubeConnectToast />
-            </Suspense>
+            <YouTubeConnectToast />
             <div className="text-center">
               <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Play className="w-8 h-8 text-red-600" />
@@ -504,8 +485,9 @@ export default function YouTuberOnboarding() {
             </div>
             {stats ? (
               <div className="rounded-md border border-green-200 bg-green-50 p-3 text-sm text-green-700">
-                We imported your YouTube stats automatically. You can edit them,
-                and these values will be used as fallback if syncing fails.
+                We imported your YouTube stats. You can change this field's
+                value, and these values will be used as fallback if syncing
+                fails.
               </div>
             ) : (
               <div className="rounded-md border border-yellow-200 bg-yellow-50 p-3 text-sm text-yellow-700">
@@ -1188,6 +1170,7 @@ export default function YouTuberOnboarding() {
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
+      <YouTubeConnectToast />
       <div className="max-w-2xl mx-auto px-4 mt-12">
         {/* Progress Bar */}
         <div className="mb-8">

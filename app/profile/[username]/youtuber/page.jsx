@@ -80,7 +80,11 @@ export default function YouTuberProfile() {
     }
   }, [getYoutubeStats, profile?.userProfile?.id]);
 
-  const avgViews = stats.totalViews / stats.videoCount;
+  const safeStats = stats || {};
+
+  const avgViews =
+    (Number(safeStats.totalViews) || 0) /
+    Math.max(1, Number(safeStats.videoCount) || 1);
 
   if (isLoading) {
     return (
@@ -251,6 +255,7 @@ export default function YouTuberProfile() {
       setHasError(true);
     }
   }, [imageSrc]);
+
   return (
     <div className="min-h-screen bg-gray-50 relative">
       {/* Cover Image */}
@@ -304,7 +309,7 @@ export default function YouTuberProfile() {
                       <Badge className={style?.className}>
                         {profile?.completion?.category}
                       </Badge>
-                      {stats && Object.keys(stats).length > 0 && (
+                      {safeStats && Object.keys(safeStats).length > 0 && (
                         <Badge className="bg-red-500">YouTube Verified</Badge>
                       )}
                     </div>
@@ -427,8 +432,8 @@ export default function YouTuberProfile() {
                       <div className="text-3xl font-bold text-red-600">
                         {formatNumber(
                           getStatValue(
-                            stats.subscriberCount,
-                            profileData?.statistics?.subscriberCount
+                            safeStats.subscriberCount,
+                            profileData.statistics?.subscriberCount
                           )
                         )}
                       </div>
@@ -438,7 +443,7 @@ export default function YouTuberProfile() {
                       <div className="text-3xl font-bold text-red-600">
                         {formatNumber(
                           getStatValue(
-                            stats.totalViews,
+                            safeStats.totalViews,
                             profileData?.statistics?.totalViews
                           )
                         )}

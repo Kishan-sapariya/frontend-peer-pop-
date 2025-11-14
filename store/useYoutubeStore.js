@@ -8,7 +8,7 @@ axios.defaults.withCredentials = true;
 export const useYoutubeStore = create((set, get) => ({
   profile: null,
   recentContent: [],
-  stats: [],
+  stats: null,
 
   createYoutubeProfile: async (profileData) => {
     try {
@@ -32,12 +32,14 @@ export const useYoutubeStore = create((set, get) => ({
   getYoutubeStats: async (profileId) => {
     try {
       const response = await axios.get(`${API_URL}/youtube/stats/${profileId}`);
+      const row = response.data.stats;
+      const youtubeStats = row?.stats || {};
+      set({ stats: youtubeStats });
 
-      const stats = response.data.stats.stats;
-      set({ stats: stats });
-      return stats;
-    } catch (error) {
-      console.error("Error fetching YouTube profile stats:", error);
+      return youtubeStats;
+    } catch (err) {
+      console.error("Error fetching YouTube stats:", err);
+      return null;
     }
   },
 
