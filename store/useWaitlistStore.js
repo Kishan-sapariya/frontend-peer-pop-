@@ -35,23 +35,19 @@ export const useWaitlistStore = create((set, get) => ({
       const res = await axios.post(`${API_URL}/waitlist`, formData);
       const data = res.data;
 
-      // success case
       resetForm();
       return data;
     } catch (err) {
-      // log full error for debugging
       console.error("Waitlist submission failed:", {
         status: err.response?.status,
         data: err.response?.data,
         message: err.message,
       });
 
-      // if backend sent a response, return that so frontend can show real msg
       if (err.response?.data) {
         return err.response.data;
       }
 
-      // fallback for network/unknown errors
       return {
         ok: false,
         message: "Network error. Please try again.",

@@ -12,7 +12,6 @@ const Footer = () => {
     <footer className="bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 py-12 px-4">
       <div className="max-w-6xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          {/* Logo & Description */}
           <div>
             <div className="flex items-center space-x-2 mb-4">
               <div className="rounded-lg flex items-center justify-center bg-black shadow-lg">
@@ -107,14 +106,14 @@ const Footer = () => {
             <h4 className={`font-bold mb-4 ${DARK_TEXT}`}>Follow Us</h4>
             <div className="flex space-x-4">
               <a
-                href="#"
+                href="https://www.instagram.com/peer.pop"
                 className={`text-[#041049] hover:text-pink-600 transition-colors`}
                 aria-label="Instagram"
               >
                 <Instagram className="w-6 h-6" />
               </a>
               <a
-                href="#"
+                href="https://www.facebook.com/people/Peer-pop/61581827147498/"
                 className={`text-[#041049] hover:text-blue-700 transition-colors`}
                 aria-label="Facebook"
               >

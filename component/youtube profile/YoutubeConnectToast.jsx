@@ -13,7 +13,7 @@ export default function YouTubeConnectToast() {
   const fired = useRef(false);
 
   useEffect(() => {
-    if (!user?.id) return; // 🚨 THE FIX
+    if (!user?.id) return; 
     if (fired.current) return;
 
     const params = new URLSearchParams(window.location.search);

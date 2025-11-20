@@ -79,7 +79,7 @@ const EarlyAccess = ({openForm}) => {
         <div className="text-center mt-12">
           <Button
             onClick={openForm}
-            className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold text-lg px-10 py-6"
+            className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold text-lg px-8 py-6"
           >
             Join the Waitlist & Unlock Benefits
           </Button>

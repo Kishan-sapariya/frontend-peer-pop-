@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Users } from "lucide-react";
+import { Loader2, Users } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -23,27 +23,34 @@ import {
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { useGroupStore } from "@/store/useGroupStore";
-import LoadingSpinner from "../LoadingSpinner";
+import toast from "react-hot-toast";
 
 const CreateGroupDialog = () => {
   const [groupName, setGroupName] = useState("");
   const [description, setDescription] = useState("");
-  const [joinType, setJoinType] = useState("Anyone can join");
+  const [joinType, setJoinType] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const { isCreating, createGroup } = useGroupStore();
 
   const handleCreate = async (e) => {
     e.preventDefault();
     try {
+      if (!groupName || groupName.length < 3) {
+        toast.error("Group name must be 3 character long");
+      }
+      if (!joinType) {
+        toast.error("Choose join type");
+      }
       await createGroup({
         name: groupName,
         desc: description,
         joinType: joinType,
       });
+      toast.success("Group created successfully");
 
       setGroupName("");
       setDescription("");
-      setJoinType("Anyone can join");
+      setJoinType("");
       setIsOpen(false);
     } catch (error) {
       console.error("Error creating group" || error);
@@ -86,14 +93,13 @@ const CreateGroupDialog = () => {
             placeholder="Tell members what your group is about (max 500 chars)."
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            required
           />
           <div className="space-y-1">
             <label className="text-xs font-medium text-zinc-700">
               Join Type
             </label>
             <Select onValueChange={setJoinType} value={joinType}>
-              <SelectTrigger>
+              <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Choose join type" />
               </SelectTrigger>
               <SelectContent>
@@ -113,7 +119,14 @@ const CreateGroupDialog = () => {
             variant="primary"
             className="w-full bg-yellow-500 cursor-pointer hover:bg-yellow-600 mt-4"
           >
-            {isCreating ? <LoadingSpinner /> : "Create Group"}
+            {isCreating ? (
+              <>
+                <Loader2 className="animate-spin" />
+                <span>Creating group</span>{" "}
+              </>
+            ) : (
+              "Create Group"
+            )}
           </Button>
         </form>
       </DialogContent>

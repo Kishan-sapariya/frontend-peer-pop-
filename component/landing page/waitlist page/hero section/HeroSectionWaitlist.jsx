@@ -1,13 +1,7 @@
 import React from "react";
 import { Clock3, Instagram, Youtube } from "lucide-react";
 import { motion } from "framer-motion";
-import {
-  Laugh,
-  Music,
-  Camera,
-  Mic,
-  Clapperboard,
-} from "lucide-react";
+import { Laugh, Music, Camera, Mic, Clapperboard } from "lucide-react";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 50 },
@@ -40,7 +34,7 @@ const DecorativeOrbits = () => {
   ];
 
   return (
-    <div className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden z-[0]">
+    <div className="pointer-events-none absolute inset-0 items-center justify-center overflow-hidden z-[0] hidden md:flex">
       <div className="relative size-[135vmin] translate-y-14 max-w-[1200px] max-h-[1200px]">
         {/* Outermost ring with animated border */}
         <div className="absolute inset-0 rounded-full">
@@ -129,7 +123,7 @@ const DecorativeOrbits = () => {
         />
 
         {icons.map(({ Icon, color, label }, i) => {
-          const position = iconPositions[i]; 
+          const position = iconPositions[i];
 
           return (
             <OrbIcon
@@ -303,7 +297,6 @@ const HeroSectionWaitlist = ({ openForm }) => {
         </motion.div>
       </div>
 
-      {/* Bottom gradient fade */}
       <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-black to-transparent z-[1]" />
     </section>
   );

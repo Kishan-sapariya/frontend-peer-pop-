@@ -1,4 +1,5 @@
 import axios from "axios";
+import toast from "react-hot-toast";
 import { create } from "zustand";
 
 const API_URL = process.env.NEXT_PUBLIC_BASE_API_URL;
