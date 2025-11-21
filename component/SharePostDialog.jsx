@@ -22,7 +22,7 @@ import {
 import toast from "react-hot-toast";
 
 const SharePostDialog = ({ postId }) => {
-  const baseUrl = "http://localhost:3000";
+  const baseUrl = process.env.NEXT_PUBLIC_NEXT_URL;
   const shareUrl = `${baseUrl}/posts/${postId}`;
 
   const shareMessage = `Check out this awesome post. You can find it here: ${shareUrl}`;
