@@ -8,6 +8,7 @@ axios.defaults.withCredentials = true;
 export const useFeedStore = create((set, get) => ({
   userDetails: null,
   posts: [],
+  singlePost: null,
   hasMore: true,
   cursor: null,
   loading: false,
@@ -175,6 +176,10 @@ export const useFeedStore = create((set, get) => ({
         posts: state.posts.map((post) =>
           post.id === postId ? { ...post, likesCount, likedByMe } : post
         ),
+        singlePost:
+          state.singlePost?.id === postId
+            ? { ...state.singlePost, likesCount, likedByMe }
+            : state.singlePost,
       }));
       return res.data.likesCount;
     } catch (error) {
@@ -190,7 +195,6 @@ export const useFeedStore = create((set, get) => ({
       const newComment = res.data.comment;
 
       set((state) => ({
-        ...state,
         posts: state.posts.map((post) =>
           post.id === postId
             ? {
@@ -200,7 +204,16 @@ export const useFeedStore = create((set, get) => ({
               }
             : post
         ),
+        singlePost:
+          state.singlePost?.id === postId
+            ? {
+                ...state.singlePost,
+                comments: [...(state.singlePost.comments || []), newComment],
+                commentsCount: (state.singlePost.commentsCount || 0) + 1,
+              }
+            : state.singlePost,
       }));
+      toast.success("Comment added!");
     } catch (error) {
       console.error("Error commenting post:", error);
       toast.error(error.response?.data?.message || "Failed to comment on post");
@@ -208,22 +221,37 @@ export const useFeedStore = create((set, get) => ({
   },
   deleteComment: async (postId, commentId) => {
     try {
-      const res = await axios.delete(
+      await axios.delete(
         `${API_URL}/feed/posts/${postId}/comments/${commentId}`
       );
 
-      set((state) => ({
-        ...state,
-        posts: state.posts.map((post) =>
+      set((state) => {
+        const updatedPosts = state.posts.map((post) =>
           post.id === postId
             ? {
                 ...post,
                 comments: post.comments.filter((c) => c.id !== commentId),
-                commentCount: post.commentCount - 1,
+                commentsCount: post.commentsCount - 1,
               }
             : post
-        ),
-      }));
+        );
+
+        const updatedSinglePost =
+          state.singlePost?.id === postId
+            ? {
+                ...state.singlePost,
+                comments: state.singlePost.comments.filter(
+                  (c) => c.id !== commentId
+                ),
+                commentsCount: state.singlePost.commentsCount - 1,
+              }
+            : state.singlePost;
+
+        return {
+          posts: updatedPosts,
+          singlePost: updatedSinglePost,
+        };
+      });
       toast.success("Comment deleted");
     } catch (error) {
       console.error("Error deleting comment:", error);
@@ -242,6 +270,16 @@ export const useFeedStore = create((set, get) => ({
       toast.error("Failed to load suggested peers");
     } finally {
       set({ loading: false });
+    }
+  },
+  fetchPostById: async (postId) => {
+    try {
+      if (!postId) return;
+      const res = await axios.get(`${API_URL}/feed/posts/${postId}`);
+      const post = await res.data.post;
+      set({ singlePost: post });
+    } catch (error) {
+      console.log(error || "error fetching post");
     }
   },
 }));

@@ -19,7 +19,7 @@ const page = () => {
     } else {
       toast.error("Post id missing");
     }
-  }, [fetchPostById,singlePost]);
+  }, [fetchPostById,postId.id]);
 
   if (!singlePost) {
     return (
