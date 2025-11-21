@@ -11,13 +11,13 @@ const ThankYouPage = () => {
         <div className="text-8xl animate-bounce-slow">🎉</div>
 
         <h1 className="text-4xl sm:text-5xl font-extrabold text-yellow-500 tracking-tight">
-          You're In! Welcome to the Peer pop Founding Circle.
+          Thanks for Joining the PeerPop Waitlist! 🙌
         </h1>
 
         <p className="text-lg text-zinc-300 leading-relaxed">
-          Your spot has been successfully reserved. We'll send your exclusive
-          early access invitation to your inbox shortly. Thank you for joining
-          our community!
+          You’re now part of a growing circle of creators and brands waiting to
+          experience a smarter way to collaborate. Your early access invite will
+          arrive in your inbox shortly.
         </p>
 
         <div className="space-y-4 pt-4">
