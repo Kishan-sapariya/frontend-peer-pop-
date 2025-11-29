@@ -15,6 +15,9 @@ export function middleware(request) {
     "/conversations",
     "/notification",
     "/search",
+    "/groups",
+    "/admin",
+    "/posts",
   ];
 
   if (authToken) {

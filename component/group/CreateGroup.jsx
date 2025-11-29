@@ -43,7 +43,7 @@ const CreateGroupDialog = () => {
       }
       await createGroup({
         name: groupName,
-        desc: description,
+        description: description,
         joinType: joinType,
       });
       toast.success("Group created successfully");
