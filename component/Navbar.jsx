@@ -10,16 +10,17 @@ import {
   ChevronDown,
   ChevronUp,
   User,
-  Sparkle,
   Building2,
-  Users,
+  Users, // Used for Peers (Connections)
   MessageCircle,
   Telescope,
-  User2,
   HomeIcon,
-  HelpCircle, // New icon for 'How It Works'
-  Briefcase, // New icon for 'Opportunities'
-  Info, // New icon for 'About'
+  HelpCircle,
+  Briefcase,
+  Info,
+  // --- NEW ICONS IMPORTED ---
+  LayoutGrid, // Used for Groups
+  ShieldCheck, // Used for Admin
 } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useRouter } from "next/navigation";
@@ -52,7 +53,6 @@ const Navbar = () => {
   );
 
   useEffect(() => {
-    // Only fetch connections and listen for socket events if authenticated
     if (isAuthenticated) {
       getConnections();
       listenForSocketEvents();
@@ -216,7 +216,6 @@ const Navbar = () => {
                           {user.email}
                         </p>
                       </div>
-
                       <div className="md:hidden border-t border-gray-100 pt-1">
                         <PopoverLinkItem href="/feed" icon={HomeIcon}>
                           Home
@@ -238,10 +237,16 @@ const Navbar = () => {
                         <div className="border-t border-gray-100"></div>
                       </div>
 
+                      <PopoverLinkItem href="/groups" icon={LayoutGrid}>
+                        Groups
+                      </PopoverLinkItem>
+
                       <PopoverLinkItem
                         href={
                           user.role === "BUSINESS"
                             ? `/profile/business/${user.username}`
+                            : !user.creatorType
+                            ? "/onboarding"
                             : `/profile/${
                                 user.username
                               }/${user?.creatorType?.toLowerCase()}`
@@ -252,7 +257,7 @@ const Navbar = () => {
                       </PopoverLinkItem>
 
                       {user?.isAdmin && (
-                        <PopoverLinkItem href="/admin" icon={User2}>
+                        <PopoverLinkItem href="/admin" icon={ShieldCheck}>
                           Admin
                         </PopoverLinkItem>
                       )}
@@ -262,7 +267,6 @@ const Navbar = () => {
                           Onboarding
                         </PopoverLinkItem>
                       )}
-
                       <div className="border-t border-gray-100 pt-1"></div>
                       <Button
                         onClick={handleLogout}
@@ -286,7 +290,7 @@ const Navbar = () => {
                   <PublicNavItem href="/opportunities" icon={Briefcase}>
                     Opportunities
                   </PublicNavItem>
-                  <PublicNavItem href="/mentors&peers" icon={Briefcase}>
+                  <PublicNavItem href="/mentors&peers" icon={Users}>
                     Mentors & Peers
                   </PublicNavItem>
                 </div>
