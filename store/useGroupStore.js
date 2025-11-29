@@ -4,8 +4,8 @@ import { create } from "zustand";
 const API_URL = process.env.NEXT_PUBLIC_BASE_API_URL;
 
 export const useGroupStore = create((set, get) => ({
-  groups: {}, 
-  groupPosts: {}, 
+  groups: {},
+  groupPosts: {},
   createdGroupIds: [],
   joinedGroupIds: [],
   suggestedGroupIds: [],
@@ -63,14 +63,12 @@ export const useGroupStore = create((set, get) => ({
 
       const newGroup = res.data.group;
 
-      // Insert into normalized dictionary
       get().upsertGroup(newGroup);
 
       set((state) => ({
-        groupPosts: {
-          ...state.groupPosts,
-          [groupId]: [post, ...(state.groupPosts[groupId] || [])],
-        },
+        createdGroupIds: [newGroup.id, ...state.createdGroupIds],
+        joinedGroupIds: [newGroup.id, ...state.joinedGroupIds],
+        isCreating: false,
       }));
 
       return newGroup;

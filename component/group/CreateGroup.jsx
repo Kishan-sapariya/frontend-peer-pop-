@@ -37,9 +37,11 @@ const CreateGroupDialog = () => {
     try {
       if (!groupName || groupName.length < 3) {
         toast.error("Group name must be 3 character long");
+        return;
       }
       if (!joinType) {
         toast.error("Choose join type");
+        return;
       }
       await createGroup({
         name: groupName,
