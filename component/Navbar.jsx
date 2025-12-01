@@ -131,8 +131,8 @@ const Navbar = () => {
       <div className="max-w-6xl mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <Link href="/">
-            <div className="flex items-center">
+          <div className="flex items-center">
+            <Link href="/" className="flex items-center">
               <Image
                 src="/logo.png"
                 alt="Peerpop Logo"
@@ -143,9 +143,9 @@ const Navbar = () => {
               <h1 className="text-2xl font-bold text-[#F0AF1B] hidden sm:block mr-2">
                 Peerpop
               </h1>
-              {user && <NavbarSearch />}
-            </div>
-          </Link>
+            </Link>
+            {user && <NavbarSearch />}
+          </div>
 
           <div className="flex items-center gap-3">
             {isAuthenticated ? (
