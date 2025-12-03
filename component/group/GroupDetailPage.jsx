@@ -12,6 +12,7 @@ import Link from "next/link";
 import GroupPostInput from "./GroupPostInput";
 import { getInitialLetter } from "@/utils/formatDate";
 import GroupPostCard from "./GroupPostCard";
+import JoinRequestManager from "./JoinRequestManager";
 
 const GroupDetailPage = () => {
   const params = useParams();
@@ -45,15 +46,15 @@ const GroupDetailPage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="sticky top-0 z-10 bg-white border-b shadow-sm">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <Link href="/groups">
+        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between w-full">
+          <div className="flex items-center space-x-4 flex-1 min-w-0">
+            <Link href="/groups" className="flex-shrink-0">
               <Button variant="ghost" size="icon">
                 <ChevronLeft className="h-6 w-6" />
               </Button>
             </Link>
 
-            <Avatar className="h-12 w-12 border-2 border-green-500 shadow-md">
+            <Avatar className="h-12 w-12 border-2 border-green-500 shadow-md flex-shrink-0">
               {group.image ? (
                 <img
                   src={group.image}
@@ -67,7 +68,7 @@ const GroupDetailPage = () => {
               )}
             </Avatar>
 
-            <div>
+            <div className="min-w-0">
               <h1 className="text-2xl font-extrabold text-zinc-900 truncate">
                 {group.name}
               </h1>
@@ -79,7 +80,9 @@ const GroupDetailPage = () => {
             </div>
           </div>
 
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 flex-shrink-0">
+            {isCreator && <JoinRequestManager groupId={group.id} />}
+
             {isCreator && (
               <Link href={`/groups/${groupId}/settings`}>
                 <Button variant="outline" size="icon">
@@ -91,11 +94,9 @@ const GroupDetailPage = () => {
         </div>
       </header>
 
-      {/* CONTENT */}
       <div className="max-w-4xl mx-auto px-4 py-6">
         <GroupPostInput groupId={groupId} />
 
-        {/* ABOUT SECTION */}
         <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md mb-6 border-l-4 border-green-500">
           <h3 className="text-lg font-semibold text-zinc-800 mb-2">
             About This Group

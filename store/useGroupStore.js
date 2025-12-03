@@ -6,11 +6,13 @@ const API_URL = process.env.NEXT_PUBLIC_BASE_API_URL;
 export const useGroupStore = create((set, get) => ({
   groups: {},
   groupPosts: {},
+  joinRequests: {},
   createdGroupIds: [],
   joinedGroupIds: [],
   suggestedGroupIds: [],
   singleGroupId: null,
 
+  isJoinRequestLoading: false,
   isLoading: false,
   isCreating: false,
   error: null,
@@ -97,8 +99,20 @@ export const useGroupStore = create((set, get) => ({
 
   fetchSuggestedGroups: async () => {
     try {
-      const res = await axios.get(`${API_URL}/group`);
-      const groups = res.data.groups;
+      const res = await axios.get(`${API_URL}/group`, {
+        withCredentials: true,
+      });
+
+      // backend returns an array, not an object
+      const groups = res.data;
+
+      if (!Array.isArray(groups)) {
+        console.error(
+          "Unexpected response format for suggested groups:",
+          res.data
+        );
+        return;
+      }
 
       get().upsertGroups(groups);
 
@@ -106,7 +120,7 @@ export const useGroupStore = create((set, get) => ({
         suggestedGroupIds: groups.map((g) => g.id),
       });
     } catch (err) {
-      console.error(err);
+      console.error("fetchSuggestedGroups error:", err);
     }
   },
 
@@ -114,14 +128,38 @@ export const useGroupStore = create((set, get) => ({
     set({ isLoading: true });
 
     try {
-      await axios.post(
+      const res = await axios.post(
         `${API_URL}/group/join-group/${groupId}`,
         {},
         { withCredentials: true }
       );
 
-      // Insert/update group
-      await get().fetchJoinedGroup(); // refresh full list
+      const message = res.data.message;
+
+      if (message === "Joined group successfully") {
+        await get().fetchJoinedGroup();
+        return { status: "JOINED" };
+      }
+
+      if (message === "Join request submitted") {
+        return { status: "PENDING" };
+      }
+
+      return { status: "UNKNOWN" };
+    } catch (error) {
+      const msg = error.response?.data?.message;
+
+      if (msg === "Join request already pending") {
+        return { status: "PENDING" };
+      }
+      if (msg === "User is already a member of this group") {
+        return { status: "JOINED" };
+      }
+      if (msg?.includes("rejected")) {
+        return { status: "REJECTED" };
+      }
+
+      return { status: "ERROR", error: msg || "Something went wrong" };
     } finally {
       set({ isLoading: false });
     }
@@ -339,6 +377,50 @@ export const useGroupStore = create((set, get) => ({
       }));
     } catch (err) {
       console.error("Error deleting group post:", err);
+    }
+  },
+
+  getJoinRequestsForGroup: async (groupId, status = "PENDING") => {
+    set({ isJoinRequestLoading: true });
+
+    try {
+      const res = await axios.get(
+        `${API_URL}/group/${groupId}/join-requests?status=${status}`,
+        { withCredentials: true }
+      );
+
+      const requests = res.data.requests || [];
+
+      set((state) => ({
+        joinRequests: {
+          ...state.joinRequests,
+          [groupId]: requests,
+        },
+      }));
+
+      return requests;
+    } catch (error) {
+      console.error("getJoinRequestsForGroup error:", error);
+      return [];
+    } finally {
+      set({ isJoinRequestLoading: false });
+    }
+  },
+
+  respondToJoinRequest: async (groupId, requestId, action) => {
+    try {
+      const res = await axios.post(
+        `${API_URL}/group/${groupId}/join-requests/${requestId}/decision`,
+        { action },
+        { withCredentials: true }
+      );
+
+      return { success: true, data: res.data };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.response?.data?.message || "Failed to update request",
+      };
     }
   },
 }));
