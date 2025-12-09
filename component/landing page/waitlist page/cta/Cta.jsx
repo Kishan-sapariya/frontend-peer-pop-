@@ -1,43 +1,70 @@
 import React from "react";
 import MotionSection from "../MotionSection/MotionSection";
 import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
 
 const Cta = ({ openForm }) => {
   return (
-    <MotionSection className="relative py-20 md:py-32 text-center bg-yellow-500/10">
-      <div className="relative z-10 px-4">
-        <h3 className="text-4xl sm:text-5xl md:text-6xl font-extrabold mb-4 text-white">
+    <MotionSection className="relative py-24 md:py-32 text-center bg-white overflow-hidden">
+      {/* Soft yellow glow background */}
+      <div className="absolute inset-0">
+        <div
+          className="absolute top-1/2 left-1/2 w-[90vw] h-[90vw] max-w-[900px] 
+                        -translate-x-1/2 -translate-y-1/2 rounded-full 
+                        bg-yellow-400/20 blur-[120px] opacity-30"
+        ></div>
+      </div>
+
+      <div className="relative z-10 px-4 max-w-4xl mx-auto">
+        {/* Headline */}
+        <motion.h3
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.4 }}
+          transition={{ duration: 0.6 }}
+          className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-black mb-6 leading-tight"
+        >
           <span className="text-yellow-500">Limited Spots</span> for Early
           Access — Don’t Miss Out!
-        </h3>
-        <p className="text-xl text-zinc-300 mb-8 max-w-3xl mx-auto">
-          Be part of the first 1,000 verified creators and brands shaping the
-          future of authentic collaborations.
-        </p>
-        <Button
-          onClick={openForm}
-          className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold text-2xl px-12 py-7 transition-transform hover:scale-[1.03] shadow-md"
+        </motion.h3>
+
+        {/* Description */}
+        <motion.p
+          initial={{ opacity: 0, y: 18 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.4 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="text-lg md:text-xl text-zinc-600 max-w-3xl mx-auto mb-10"
         >
-          Join the Waitlist Now →
-        </Button>
-        <p className="mt-4 text-zinc-500 text-sm">
+          Be one of the first 1,000 verified creators and brands shaping the
+          future of meaningful collaborations.
+        </motion.p>
+
+        {/* CTA Button */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.92 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true, amount: 0.4 }}
+          transition={{ duration: 0.5, delay: 0.15 }}
+        >
+          <Button
+            onClick={openForm}
+            className="bg-white hover:bg-yellow-500 border border-yellow-400 text-yellow-500 hover:text-white font-extrabold text-lg px-10 py-6 rounded-md cursor-pointer"
+          >
+            Join the Waitlist →
+          </Button>
+        </motion.div>
+
+        {/* Small footer text */}
+        <motion.p
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.4 }}
+          transition={{ duration: 0.5, delay: 0.25 }}
+          className="mt-4 text-zinc-500 text-sm"
+        >
           🔥 7,842 members already on the list
-        </p>
-      </div>
-      {/* Background Subtle Gradient/Animation */}
-      <div className="absolute inset-0 z-0 opacity-10">
-        <svg
-          className="w-full h-full"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 1440 320"
-          preserveAspectRatio="none"
-        >
-          <path
-            fill="currentColor"
-            d="M0,192L48,176C96,160,192,128,288,144C384,160,480,224,576,224C672,224,768,160,864,128C960,96,1056,96,1152,117.3C1248,139,1344,181,1392,202.7L1440,224L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"
-            className="text-yellow-500"
-          ></path>
-        </svg>
+        </motion.p>
       </div>
     </MotionSection>
   );

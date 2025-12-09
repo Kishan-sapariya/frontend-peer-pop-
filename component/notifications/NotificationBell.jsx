@@ -25,15 +25,14 @@ const NotificationBell = () => {
     };
   }, [user?.id, initSocket, disconnectSocket]);
 
-  if(!user){
+  if (!user) {
     return null;
   }
-
 
   return (
     <div className="relative cursor-pointer">
       <Link href="/notification">
-        <Bell className="w-6 h-6 hover:text-[#F0AF1B]" />
+        <Bell className="w-6 h-6" />
         {unreadCount > 0 && (
           <Badge
             className="absolute -top-2 -right-2 px-1.5 py-0 text-xs rounded-full"

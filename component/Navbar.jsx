@@ -6,21 +6,15 @@ import { Button } from "@/components/ui/button";
 import {
   Menu,
   LogOut,
-  Settings,
   ChevronDown,
   ChevronUp,
   User,
-  Building2,
-  Users, // Used for Peers (Connections)
+  Users,
   MessageCircle,
-  Telescope,
   HomeIcon,
-  HelpCircle,
-  Briefcase,
-  Info,
-  // --- NEW ICONS IMPORTED ---
-  LayoutGrid, // Used for Groups
-  ShieldCheck, // Used for Admin
+  Briefcase, 
+  LayoutGrid,
+  ShieldCheck,
 } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useRouter } from "next/navigation";
@@ -74,10 +68,11 @@ const Navbar = () => {
     <Link href={href}>
       <Button
         variant="ghost"
-        className="relative text-white hover:bg-white/10 hover:text-[#F0AF1B]"
+        className="relative text-black hover:bg-accent"
       >
-        <Icon className="h-5 w-5 mr-1 text-white group-hover:text-[#F0AF1B]" />
+        <Icon className="h-5 w-5 mr-1 text-black" />
         <span className="hidden lg:inline">{children}</span>
+
         {badgeCount > 0 && (
           <span
             className={`absolute top-0 right-0 -mt-1 -mr-1 bg-red-500 text-white text-xs font-bold ${
@@ -91,21 +86,12 @@ const Navbar = () => {
     </Link>
   );
 
-  const PopoverLinkItem = ({
-    href,
-    children,
-    badgeCount,
-    icon: Icon,
-    onClick = () => {},
-  }) => (
+  const PopoverLinkItem = ({ href, children, badgeCount, icon: Icon }) => (
     <Link href={href} passHref>
       <Button
         variant="ghost"
-        onClick={() => {
-          setIsPopoverOpen(false);
-          onClick();
-        }}
-        className="w-full justify-start text-gray-700 hover:text-black"
+        onClick={() => setIsPopoverOpen(false)}
+        className="w-full justify-start text-zinc-700 hover:text-black"
       >
         <Icon className="mr-2 h-4 w-4" /> {children}
         {badgeCount > 0 && (
@@ -117,241 +103,165 @@ const Navbar = () => {
     </Link>
   );
 
-  const PublicNavItem = ({ href, children, icon: Icon }) => (
-    <Link href={href}>
-      <Button className="bg-black text-white hover:text-[#F0AF1B] hidden md:flex">
-        <span className="hidden lg:inline">{children}</span>
-        <Icon className="h-5 w-5 mr-1 text-white group-hover:text-[#F0AF1B] lg:hidden" />
-      </Button>
-    </Link>
-  );
-
   return (
-    <header className="bg-black text-white sticky top-0 z-50 shadow-lg border-b border-white/10">
-      <div className="max-w-6xl mx-auto px-4 py-3">
-        <div className="flex items-center justify-between">
-          {/* Logo */}
-          <div className="flex items-center">
-            <Link href="/" className="flex items-center">
+    <header className="sticky top-4 z-50 w-full flex justify-center">
+      <div
+        className="
+				max-w-6xl w-[95%] 
+				bg-yellow-500 
+				rounded-2xl 
+				shadow-[0_4px_20px_rgba(234,179,8,0.25)]
+				border border-yellow-600/40
+				px-4 sm:px-6 py-3
+				flex items-center justify-between
+			"
+      >
+        {/* Logo */}
+        <div className="flex items-center gap-3">
+          <Link href="/" className="flex items-center gap-3">
+            <div className="bg-black rounded-md">
               <Image
                 src="/logo.png"
                 alt="Peerpop Logo"
-                width={55}
-                height={55}
-                className="ml-0"
+                width={42}
+                height={42}
+                className="rounded-lg"
               />
-              <h1 className="text-2xl font-bold text-[#F0AF1B] hidden sm:block mr-2">
-                Peerpop
-              </h1>
-            </Link>
-            {user && <NavbarSearch />}
-          </div>
+            </div>
+            <h1 className="text-xl font-bold text-black hidden sm:block">
+              Peerpop
+            </h1>
+          </Link>
 
-          <div className="flex items-center gap-3">
-            {isAuthenticated ? (
-              <>
-                <div className="hidden md:flex items-center space-x-2">
-                  <NavItem href="/feed" icon={HomeIcon}>
-                    Home
-                  </NavItem>
-                  <NavItem
-                    href="/connections"
-                    icon={Users}
-                    badgeCount={pendingCount}
-                  >
-                    Peers
-                  </NavItem>
-                  <NavItem
-                    href="/conversations"
-                    icon={MessageCircle}
-                    isMessage
-                    badgeCount={unreadConversations}
-                  >
-                    Messages
-                  </NavItem>
-                </div>
+          {user && <NavbarSearch />}
+        </div>
 
-                <NotificationBell />
-                <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      className="h-10 rounded-full p-1 flex items-center justify-center text-white hover:bg-white/10 transition-colors cursor-pointer"
-                    >
-                      <Avatar className="h-9 w-9">
-                        {user?.image && (
-                          <AvatarImage
-                            className="object-cover rounded-full"
-                            src={user.image}
-                            alt={user.username || "User Avatar"}
-                          />
-                        )}
-                        <AvatarFallback className="font-semibold text-white bg-[#F0AF1B]">
+        {/* Right Section */}
+        <div className="flex items-center gap-2 sm:gap-3">
+          {isAuthenticated ? (
+            <>
+              <div className="hidden md:flex items-center space-x-1">
+                <NavItem href="/feed" icon={HomeIcon}>
+                  Home
+                </NavItem>
+                <NavItem
+                  href="/connections"
+                  icon={Users}
+                  badgeCount={pendingCount}
+                >
+                  Peers
+                </NavItem>
+                <NavItem
+                  href="/conversations"
+                  icon={MessageCircle}
+                  isMessage
+                  badgeCount={unreadConversations}
+                >
+                  Messages
+                </NavItem>
+              </div>
+              <NotificationBell />
+              <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className="rounded-full p-1 flex items-center hover:bg-yellow-200/50"
+                  >
+                    <Avatar className="h-9 w-9">
+                      {user?.image ? (
+                        <AvatarImage
+                          src={user.image}
+                          alt={user.username}
+                          className="object-cover"
+                        />
+                      ) : (
+                        <AvatarFallback className="bg-black text-white">
                           {getInitialLetter(user.username)}
                         </AvatarFallback>
-                      </Avatar>
-
-                      <span className="font-medium text-white ml-2 mr-1 hidden lg:inline-block">
-                        {capitalizeInitials(user.username)}
-                      </span>
-
-                      {isPopoverOpen ? (
-                        <ChevronUp className="h-4 w-4 hidden text-white lg:inline-block" />
-                      ) : (
-                        <ChevronDown className="h-4 w-4 hidden text-white lg:inline-block" />
                       )}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent
-                    align="end"
-                    className="w-56 rounded-md border border-gray-100 bg-white shadow-xl p-2"
+                    </Avatar>
+                    <span className="hidden lg:inline ml-2 font-medium text-black">
+                      {capitalizeInitials(user.username)}
+                    </span>
+                    {isPopoverOpen ? (
+                      <ChevronUp className="ml-1 h-4 w-4" />
+                    ) : (
+                      <ChevronDown className="ml-1 h-4 w-4" />
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent
+                  align="end"
+                  className="w-56 rounded-lg border bg-white shadow-xl p-2"
+                >
+                  <PopoverLinkItem href="/groups" icon={LayoutGrid}>
+                    {" "}
+                    Groups{" "}
+                  </PopoverLinkItem>
+                  <PopoverLinkItem
+                    href={
+                      user.role === "BUSINESS"
+                        ? `/profile/business/${user.username}`
+                        : !user.creatorType
+                        ? "/onboarding"
+                        : `/profile/${
+                            user.username
+                          }/${user.creatorType.toLowerCase()}`
+                    }
+                    icon={User}
                   >
-                    <div className="flex flex-col space-y-1">
-                      {/* User Info */}
-                      <div className="py-2 px-2">
-                        <p className="text-sm font-medium leading-none truncate text-black">
-                          {user.username}
-                        </p>
-                        <p className="text-xs leading-none truncate text-gray-500">
-                          {user.email}
-                        </p>
-                      </div>
-                      <div className="md:hidden border-t border-gray-100 pt-1">
-                        <PopoverLinkItem href="/feed" icon={HomeIcon}>
-                          Home
-                        </PopoverLinkItem>
-                        <PopoverLinkItem
-                          href="/connections"
-                          icon={Users}
-                          badgeCount={pendingCount}
-                        >
-                          Peers
-                        </PopoverLinkItem>
-                        <PopoverLinkItem
-                          href="/conversations"
-                          icon={MessageCircle}
-                          badgeCount={unreadConversations}
-                        >
-                          Messages
-                        </PopoverLinkItem>
-                        <div className="border-t border-gray-100"></div>
-                      </div>
-
-                      <PopoverLinkItem href="/groups" icon={LayoutGrid}>
-                        Groups
-                      </PopoverLinkItem>
-
-                      <PopoverLinkItem
-                        href={
-                          user.role === "BUSINESS"
-                            ? `/profile/business/${user.username}`
-                            : !user.creatorType
-                            ? "/onboarding"
-                            : `/profile/${
-                                user.username
-                              }/${user?.creatorType?.toLowerCase()}`
-                        }
-                        icon={User}
-                      >
-                        Profile
-                      </PopoverLinkItem>
-
-                      {user?.isAdmin && (
-                        <PopoverLinkItem href="/admin" icon={ShieldCheck}>
-                          Admin
-                        </PopoverLinkItem>
-                      )}
-
-                      {!user.creatorType && user.role !== "BUSINESS" && (
-                        <PopoverLinkItem href="/onboarding" icon={Settings}>
-                          Onboarding
-                        </PopoverLinkItem>
-                      )}
-                      <div className="border-t border-gray-100 pt-1"></div>
-                      <Button
-                        onClick={handleLogout}
-                        className="w-full justify-start bg-red-50 hover:bg-red-100 text-red-500 hover:text-red-600 transition-colors"
-                      >
-                        <LogOut className="mr-2 h-4 w-4" /> Logout
-                      </Button>
-                    </div>
-                  </PopoverContent>
-                </Popover>
-              </>
-            ) : (
-              <>
-                <div className="hidden md:flex items-center space-x-2">
-                  <PublicNavItem href="/about" icon={Info}>
-                    About
-                  </PublicNavItem>
-                  <PublicNavItem href="/how-it-works" icon={HelpCircle}>
-                    How It Works
-                  </PublicNavItem>
-                  <PublicNavItem href="/opportunities" icon={Briefcase}>
-                    Opportunities
-                  </PublicNavItem>
-                  <PublicNavItem href="/mentors&peers" icon={Users}>
-                    Mentors & Peers
-                  </PublicNavItem>
-                </div>
-
-                <div className="flex items-center space-x-4">
-                  <Link href="/login/business" className="hidden md:block">
+                    Profile
+                  </PopoverLinkItem>
+                  {user?.isAdmin && (
+                    <PopoverLinkItem href="/admin" icon={ShieldCheck}>
+                      Admin
+                    </PopoverLinkItem>
+                  )}
+                  <div className="border-t mt-2 pt-2">
                     <Button
-                      variant="outline"
-                      className="bg-[#F0AF1B] text-black hover:bg-[#F0AF1B]/90 border-transparent"
+                      onClick={handleLogout}
+                      className="w-full bg-red-50 hover:bg-red-100 text-red-600"
                     >
-                      <Building2 className="h-4 w-4 mr-2" />
-                      Business Login
+                      <LogOut className="mr-2 h-4 w-4" /> Logout
                     </Button>
-                  </Link>
-                  <Link href="/signup" className="hidden md:block">
-                    <Button className="bg-white text-black hover:bg-gray-100 shadow-lg">
-                      <Users className="h-4 w-4 mr-2" />
-                      Join as Creator
-                    </Button>
-                  </Link>
-                </div>
+                  </div>
+                </PopoverContent>
+              </Popover>
+            </>
+          ) : (
+            <div className="flex items-center gap-2">
+              <Link href="/login/business" className="hidden sm:block">
+                <Button
+                  variant="ghost"
+                  className="text-black hover:bg-yellow-200/50 hover:text-black font-medium text-sm px-3 sm:px-4"
+                >
+                  <Briefcase className="h-4 w-4 mr-1" /> Business Login
+                </Button>
+              </Link>
 
-                <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      className="md:hidden text-[#F0AF1B] hover:bg-white/10"
-                    >
-                      <Menu className="h-7 w-7" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent
-                    align="end"
-                    className="w-56 rounded-md border border-gray-100 bg-white shadow-xl p-2"
-                  >
-                    <div className="flex flex-col space-y-1">
-                      <PopoverLinkItem href="/feed" icon={Telescope}>
-                        Explore
-                      </PopoverLinkItem>
-                      <PopoverLinkItem href="/how-it-works" icon={HelpCircle}>
-                        How It Works
-                      </PopoverLinkItem>
-                      <PopoverLinkItem href="/opportunities" icon={Briefcase}>
-                        Opportunities
-                      </PopoverLinkItem>
-                      <PopoverLinkItem href="/about" icon={Info}>
-                        About
-                      </PopoverLinkItem>
-                      <div className="border-t border-gray-100 pt-1"></div>
-                      <PopoverLinkItem href="/login/business" icon={Building2}>
-                        Business Login
-                      </PopoverLinkItem>
-                      <PopoverLinkItem href="/signup" icon={Users}>
-                        Join as Creator
-                      </PopoverLinkItem>
-                    </div>
-                  </PopoverContent>
-                </Popover>
-              </>
-            )}
-          </div>
+              <Link href="/signup">
+                <Button className="bg-black text-yellow-500 hover:bg-zinc-800 text-sm sm:text-base px-3 sm:px-4">
+                  Join as Creator
+                </Button>
+              </Link>
+
+              <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
+                <PopoverTrigger asChild>
+                  <Button variant="ghost" className="sm:hidden p-1 h-9 w-9">
+                    <Menu className="h-6 w-6 text-black" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent
+                  align="end"
+                  className="w-48 bg-white rounded-lg shadow-xl p-2"
+                >
+                  <PopoverLinkItem href="/business/login" icon={Briefcase}>
+                    Business Login
+                  </PopoverLinkItem>
+                </PopoverContent>
+              </Popover>
+            </div>
+          )}
         </div>
       </div>
     </header>

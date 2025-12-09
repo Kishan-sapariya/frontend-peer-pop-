@@ -28,7 +28,7 @@ import Faq from "./faq/Faq";
 import Cta from "./cta/Cta";
 
 const WaitlistForm = ({ isOpen, onClose }) => {
-  const router = useRouter(); 
+  const router = useRouter();
 
   const { formData, setField, submitWaitlist, loading } = useWaitlistStore();
 
@@ -158,8 +158,8 @@ export default function PeerPopWaitlist() {
     <main className="min-h-screen bg-black text-white overflow-y-hidden ">
       <WaitlistForm isOpen={isFormOpen} onClose={() => setIsFormOpen(false)} />
       <HeroSectionWaitlist openForm={openForm} />
-      <Testimonail />
       <EarlyAccess openForm={openForm} />
+      <Testimonail />
       <HowItWorks />
       <Faq />
       <Cta openForm={openForm} />

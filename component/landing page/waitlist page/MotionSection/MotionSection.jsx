@@ -3,10 +3,7 @@ import { motion } from "framer-motion";
 const MotionSection = ({ children, className, delay = 0 }) => (
   <motion.section
     className={className}
-    initial={{
-      opacity: 0,
-      y: 50,
-    }}
+    initial={false}
     whileInView={{
       opacity: 1,
       y: 0,
