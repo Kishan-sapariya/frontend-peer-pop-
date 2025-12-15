@@ -1,177 +1,217 @@
+"use client";
+
 import React from "react";
 import { motion } from "framer-motion";
 import {
+  UserPlus,
+  Target,
+  MessageCircle,
+  TrendingUp,
+  UserCircle,
   Users,
-  DollarSign,
-  ShieldCheck,
-  Zap,
-  HeartHandshake,
-  Layers,
+  Search,
+  Sparkles,
 } from "lucide-react";
-
-const features = [
-  {
-    icon: Users,
-    title: "Find Your People",
-    description:
-      "Connect with mentors, peers, and collaborators who share your creative vision and values.",
-    delay: 0.1,
-  },
-  {
-    icon: DollarSign,
-    title: "Brand Opportunities",
-    description:
-      "Access exclusive brand deals and partnerships tailored to your niche and audience.",
-    delay: 0.2,
-  },
-  {
-    icon: Layers,
-    title: "Grow Together",
-    description:
-      "Learn from experienced mentors and share knowledge with peers in your creative community.",
-    delay: 0.3,
-  },
-  {
-    icon: ShieldCheck,
-    title: "Verified Profiles",
-    description:
-      "Connect with confidence knowing all profiles are verified and authentic.",
-    delay: 0.4,
-  },
-  {
-    icon: Zap,
-    title: "Smart Matching",
-    description:
-      "Our algorithm connects you with the right people based on your goals and interests.",
-    delay: 0.5,
-  },
-  {
-    icon: HeartHandshake,
-    title: "Real Connections",
-    description:
-      "Build authentic relationships that go beyond transactions and create lasting impact.",
-    delay: 0.6,
-  },
-];
-
-const container = {
-  hidden: {},
-  visible: {
-    transition: {
-      delayChildren: 0.2,
-      staggerChildren: 0.2,
-    },
-  },
-};
-
-const cardVariants = {
-  hidden: { opacity: 0, y: 50 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.3, ease: "easeOut" },
-  },
-};
-
-const inner = {
-  hidden: {},
-  visible: {
-    transition: {
-      staggerChildren: 0.1,
-    },
-  },
-};
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: {
-      type: "spring",
-      stiffness: 80,
-    },
+    transition: { type: "spring", stiffness: 90, damping: 18 },
   },
 };
 
-const FeatureCard = ({ feature }) => {
-  const Icon = feature.icon;
+const Rings = () => (
+  <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
+    {[500, 900, 1300].map((size, i) => (
+      <div
+        key={i}
+        className="absolute border border-yellow-300 rounded-full opacity-40"
+        style={{
+          width: size,
+          height: size,
+          left: "50%",
+          top: "50%",
+          transform: "translate(-50%, -50%)",
+          borderStyle: "dashed",
+        }}
+      ></div>
+    ))}
+  </div>
+);
 
+export default function BrandConnectionSection() {
   return (
-    <motion.div
-      className="p-6 py-10 bg-black/80 backdrop-blur-2xl border border-yellow-500/30 hover:border-yellow-500/60 rounded-xl shadow-xl  transition-all duration-300 ease-in-out cursor-pointer h-full flex flex-col"
-      variants={cardVariants}
-    >
-      <motion.div variants={inner} className="flex items-center space-x-4 mb-4">
-        {/* Icon with yellow accent circle */}
-        <motion.div
-          variants={fadeUp}
-          className="p-3 rounded-full bg-yellow-500/10 border border-yellow-500"
-        >
-          <Icon className="w-6 h-6 text-yellow-500" />
-        </motion.div>
-        <motion.h3
-          variants={fadeUp}
-          className="text-xl font-semibold text-white"
-        >
-          {feature.title}
-        </motion.h3>
-      </motion.div>
-      <motion.p
-        variants={fadeUp}
+    <section className="relative w-full bg-white py-28 px-6 md:px-16 overflow-hidden">
+      <Rings />
+
+      {/* SECTION 1: Connecting With Influencers */}
+      <motion.h2
         initial="hidden"
-        animate="visible"
-        className="text-gray-400 mt-2 text-sm flex-grow"
+        whileInView="visible"
+        variants={fadeUp}
+        viewport={{ once: true }}
+        className="text-center text-4xl md:text-5xl font-extrabold text-black mb-16"
       >
-        {feature.description}
-      </motion.p>
-    </motion.div>
-  );
-};
+        Connecting Your Brand with the{" "}
+        <span className="text-yellow-500">Right Influencers</span>
+      </motion.h2>
 
-const ContentSlide = () => {
-  return (
-    <div className="min-h-screen bg-black text-white font-sans p-4 sm:p-8 md:p-12">
-      <div className="max-w-7xl mx-auto">
-        <motion.header
-          variants={container}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-7xl mx-auto items-start">
+        {/* LEFT COLUMN – FEATURES */}
+        <motion.div
           initial="hidden"
           whileInView="visible"
+          variants={fadeUp}
           viewport={{ once: true }}
-          className="text-center mb-12 mt-8"
+          className="space-y-6 text-gray-900"
         >
-          <motion.h1
-            variants={fadeUp}
-            className="text-white font-extrabold text-4xl md:text-5xl tracking-tight"
-          >
-            Everything you need to <span className="text-yellow-500">Grow</span>
-          </motion.h1>
-          <motion.p
-            variants={fadeUp}
-            className="text-gray-400 text-lg md:text-xl mx-auto"
-          >
-            PeerPop brings together the tools, connections, and opportunities to
-            accelerate your creative career.
-          </motion.p>
-        </motion.header>
+          <Feature
+            icon={<UserPlus className="w-5 h-5" />}
+            title="Easy Signup"
+            desc="Register your brand on the platform in minutes."
+          />
+          <Feature
+            icon={<Users className="w-5 h-5" />}
+            title="Wide Reach"
+            desc="Access a diverse network of influencers and brands across various industries."
+          />
+          <Feature
+            icon={<MessageCircle className="w-5 h-5" />}
+            title="Direct Communication"
+            desc="Connect instantly with influencers who align with your brand values."
+          />
+          <Feature
+            icon={<TrendingUp className="w-5 h-5" />}
+            title="Growth Focused"
+            desc="Build lasting relationships to expand your brand’s visibility."
+          />
+        </motion.div>
 
-        {/* Feature Grid */}
-        <main>
-          <motion.div
-            variants={container}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
-          >
-            {features.map((feature, index) => (
-              <FeatureCard key={index} feature={feature} />
-            ))}
-          </motion.div>
-        </main>
+        {/* RIGHT COLUMN – BRAND COLLAB CARD */}
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          variants={fadeUp}
+          viewport={{ once: true }}
+          className="flex justify-center md:justify-end"
+        >
+          <BrandCollabMockup />
+        </motion.div>
       </div>
-    </div>
-  );
-};
 
-export default ContentSlide;
+      {/* SECTION 2 – Simple Steps */}
+      <motion.h2
+        initial="hidden"
+        whileInView="visible"
+        variants={fadeUp}
+        viewport={{ once: true }}
+        className="text-center text-4xl md:text-5xl font-extrabold text-black mt-28 mb-16"
+      >
+        Simple Steps to Get Started on{" "}
+        <span className="text-yellow-500">Peerpop</span>
+      </motion.h2>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-7xl mx-auto items-start">
+        {/* LEFT – Portfolio Mockup */}
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          variants={fadeUp}
+          viewport={{ once: true }}
+        >
+          <PortfolioMockup />
+        </motion.div>
+
+        {/* RIGHT – Steps List */}
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          variants={fadeUp}
+          viewport={{ once: true }}
+          className="space-y-8 text-gray-900"
+        >
+          <Step
+            icon={<UserCircle className="w-5 h-5" />}
+            title="Create Your Profile"
+            desc="Sign up by adding your personal info, niche, and audience details."
+          />
+          <Step
+            icon={<Users className="w-5 h-5" />}
+            title="Set Preferences"
+            desc="Select the brands and campaigns that match your interests."
+          />
+          <Step
+            icon={<Search className="w-5 h-5" />}
+            title="Browse Opportunities"
+            desc="Find brands looking for influencers like you."
+          />
+          <Step
+            icon={<Sparkles className="w-5 h-5" />}
+            title="Start Collaborating"
+            desc="Apply, connect, and build partnerships with brands."
+          />
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+const Feature = ({ icon, title, desc }) => (
+  <div className="flex items-start gap-3">
+    <div className="text-yellow-600 mt-1">{icon}</div>
+    <div>
+      <p className="font-bold">{title}:</p>
+      <p className="text-gray-700">{desc}</p>
+    </div>
+  </div>
+);
+
+const Step = ({ icon, title, desc }) => (
+  <div className="flex items-start gap-4">
+    <div className="text-gray-900">{icon}</div>
+    <div>
+      <p className="font-bold">{title}</p>
+      <p className="text-gray-700">{desc}</p>
+    </div>
+  </div>
+);
+
+const BrandCollabMockup = () => (
+  <motion.div
+    initial={{ opacity: 0, x: 50 }}
+    whileInView={{ opacity: 1, x: 0 }}
+    viewport={{ once: true, amount: 0.4 }}
+    transition={{ duration: 0.7 }}
+    className="flex justify-center md:justify-end"
+  >
+    <div className="w-[280px] sm:w-[320px] md:w-[360px] rounded-3xl bg-amber-50 border border-yellow-300/70 shadow-xl overflow-hidden">
+      <img
+        src="https://res.cloudinary.com/dvzqfb2z3/image/upload/v1764912635/brand_zcfrai.png"
+        alt="Brand workflow preview"
+        className="w-full h-full object-cover"
+      />
+    </div>
+  </motion.div>
+);
+
+const PortfolioMockup = () => (
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+    <motion.div
+      initial={{ opacity: 0, x: -40 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      viewport={{ once: true, amount: 0.4 }}
+      transition={{ duration: 0.6 }}
+      className="w-full flex justify-center"
+    >
+      <div className="w-[280px] sm:w-[320px] md:w-[360px] rounded-3xl bg-amber-50 border border-yellow-300/70 shadow-xl overflow-hidden">
+        <img
+          src="https://res.cloudinary.com/dvzqfb2z3/image/upload/v1764912634/influencer_ui_img_du1fe5.png"
+          alt="Influencer profile preview"
+          className="w-full h-full object-cover"
+        />
+      </div>
+    </motion.div>
+  </div>
+);

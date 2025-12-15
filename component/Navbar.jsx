@@ -15,6 +15,7 @@ import {
   Briefcase, 
   LayoutGrid,
   ShieldCheck,
+  Clock,
 } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useRouter } from "next/navigation";
@@ -107,7 +108,7 @@ const Navbar = () => {
     <header className="sticky top-4 z-50 w-full flex justify-center">
       <div
         className="
-				max-w-6xl w-[95%] 
+				max-w-7xl w-[95%] 
 				bg-yellow-500 
 				rounded-2xl 
 				shadow-[0_4px_20px_rgba(234,179,8,0.25)]
@@ -230,6 +231,14 @@ const Navbar = () => {
             </>
           ) : (
             <div className="flex items-center gap-2">
+              <Link href="/waitlist" className="hidden sm:block">
+                <Button
+                  variant="ghost"
+                  className="text-black hover:bg-yellow-200/50 hover:text-black font-medium text-sm px-3 sm:px-4"
+                >
+                  <Clock className="h-4 w-4 mr-1" /> Waitlist
+                </Button>
+              </Link>
               <Link href="/login/business" className="hidden sm:block">
                 <Button
                   variant="ghost"

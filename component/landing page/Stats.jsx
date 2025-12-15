@@ -1,5 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
+import AnimatedCount from "./waitlist page/AnimatedCount";
 
 const Stats = () => {
   const container = {
@@ -31,7 +32,7 @@ const Stats = () => {
   ];
 
   return (
-    <section className="w-full bg-black border-t border-gray-900 border-b py-12 md:py-16">
+    <section className="w-full bg-white pb-12 py-8 md:pb-16">
       <motion.div
         variants={container}
         initial="hidden"
@@ -49,11 +50,11 @@ const Stats = () => {
               variants={fadeUp}
               className="text-4xl md:text-5xl font-extrabold text-yellow-500"
             >
-              {stat.value}
+              <AnimatedCount to={stat.value} duration={1500} />
             </motion.h1>
             <motion.p
               variants={fadeUp}
-              className="text-gray-300 text-base md:text-lg font-medium"
+              className="text-gray-600 text-base md:text-lg font-medium"
             >
               {stat.label}
             </motion.p>

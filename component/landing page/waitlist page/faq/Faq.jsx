@@ -14,7 +14,7 @@ const Faq = () => {
       <div className="px-4 md:px-10 max-w-4xl mx-auto">
         {/* Heading */}
         <h3 className="text-3xl md:text-5xl font-extrabold text-center mb-14 text-black">
-          Questions? <span className="text-yellow-600">We Have Answers.</span>
+          Questions? <span className="text-yellow-500">We Have Answers.</span>
         </h3>
 
         {/* Accordion */}

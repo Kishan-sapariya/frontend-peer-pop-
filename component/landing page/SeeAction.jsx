@@ -43,105 +43,98 @@ const SeeAction = () => {
     },
   ];
 
+  // Animations
   const container = {
     hidden: {},
-    visible: {
-      transition: {
-        delayChildren: 0.2,
-        staggerChildren: 0.2,
-      },
-    },
+    visible: { transition: { staggerChildren: 0.18 } },
   };
 
   const fadeUp = {
-    hidden: { opacity: 0, y: 30 },
+    hidden: { opacity: 0, y: 28 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: {
-        type: "spring",
-        stiffness: 80,
-      },
+      transition: { type: "spring", stiffness: 90, damping: 16 },
     },
   };
 
   const renderMedia = (item) => {
-    if (item.component) {
-      const MockupComponent = item.component;
-      return <MockupComponent />;
-    }
+    const Mock = item.component;
     return (
-      <img
-        src={item.imageUrl}
-        alt={item.title}
-        className="rounded-3xl shadow-2xl w-full max-w-[500px] object-cover aspect-video hover:scale-105 transition-transform duration-500"
-      />
+      <div className="rounded-5xl p-4 w-full max-w-[520px]">
+        <Mock />
+      </div>
     );
   };
 
   return (
-    <div className="py-20 px-6 md:px-16 bg-black w-full flex flex-col justify-center items-center">
+    <section className="py-24 px-6 md:px-16 w-full bg-amber-300/40">
       <motion.div
         variants={container}
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true }}
-        className="space-y-3 text-center max-w-3xl mb-16"
+        className="text-center mb-24 max-w-3xl mx-auto"
       >
         <motion.h1
           variants={fadeUp}
-          className="text-white font-extrabold text-4xl md:text-5xl"
+          className="text-gray-900 font-extrabold text-4xl md:text-5xl"
         >
           See Peer Pop in <span className="text-yellow-500">Action</span>
         </motion.h1>
+
         <motion.p
           variants={fadeUp}
-          className="text-gray-400 text-lg md:text-xl"
+          className="text-gray-800 mt-4 text-lg md:text-xl"
         >
           A powerful platform designed to make networking effortless and
           authentic.
         </motion.p>
       </motion.div>
-
-      <div className="space-y-24 w-full max-w-7xl">
+      {/* Content Rows */}
+      <div className="space-y-32 max-w-7xl mx-auto">
         {content.map((c, index) => {
-          const isReversed = index % 2 === 1;
+          const reversed = index % 2 !== 0;
 
           return (
             <div
               key={index}
               className={`flex flex-col md:flex-row ${
-                isReversed ? "md:flex-row-reverse" : ""
-              } items-center justify-between gap-12`}
+                reversed ? "md:flex-row-reverse" : ""
+              } items-center justify-between gap-16`}
             >
+              {/* Text Section */}
               <motion.div
                 variants={container}
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true }}
-                className="w-full md:w-1/2 space-y-4 text-center md:text-left px-4 md:px-8"
+                className="w-full md:w-1/2 px-2 md:px-6"
               >
                 <motion.div
                   variants={fadeUp}
-                  className="uppercase tracking-wide bg-yellow-500 text-black inline-block px-3 py-1 rounded-full text-xs font-semibold"
+                  className="uppercase bg-yellow-500 text-white px-4 py-1.5 rounded-full text-xs tracking-wide font-semibold inline-block"
                 >
                   {c.tag}
                 </motion.div>
+
                 <motion.h2
                   variants={fadeUp}
-                  className="text-3xl md:text-4xl font-bold text-yellow-500"
+                  className="text-3xl md:text-4xl font-extrabold text-yellow-500 mt-3"
                 >
                   {c.title}
                 </motion.h2>
+
                 <motion.p
                   variants={fadeUp}
-                  className="text-gray-300 leading-relaxed"
+                  className="text-gray-900 mt-4 text-lg leading-relaxed"
                 >
                   {c.desc}
                 </motion.p>
+
                 <motion.ul
                   variants={fadeUp}
-                  className="text-gray-400 list-disc pl-5 space-y-2"
+                  className="text-gray-900 mt-4 space-y-2 list-disc pl-6"
                 >
                   {c.points.split(",").map((p, i) => (
                     <li key={i}>{p}</li>
@@ -149,21 +142,21 @@ const SeeAction = () => {
                 </motion.ul>
               </motion.div>
 
-              <div className="w-full md:w-1/2 flex justify-center">
-                <motion.div
-                  variants={fadeUp}
-                  initial="hidden"
-                  whileInView="visible"
-                  className="w-full max-w-[500px]"
-                >
-                  {renderMedia(c)}
-                </motion.div>
-              </div>
+              {/* Mockup Section */}
+              <motion.div
+                variants={fadeUp}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                className="w-full md:w-1/2 flex justify-center"
+              >
+                {renderMedia(c)}
+              </motion.div>
             </div>
           );
         })}
       </div>
-    </div>
+    </section>
   );
 };
 

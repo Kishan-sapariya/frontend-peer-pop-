@@ -6,302 +6,202 @@ import {
   Sparkles,
   ArrowRight,
   Building2,
-  Telescope,
-  Check,
+  Instagram,
+  Youtube,
+  Linkedin,
+  UserPlus,
 } from "lucide-react";
 
+// Mock Data
 const mockProfileData = {
   name: "Sarah Johnson",
   handle: "@sarahjohnson",
-  bio: "Tech & Lifestyle Creator | Sharing my journey in content creation",
   profilePic:
     "https://images.unsplash.com/photo-1580489944761-15a19d654956?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-  stats: [
-    { label: "Subscribers", value: "2.4M" },
-    { label: "Videos", value: "156" },
-    { label: "Total Views", value: "48.2M" },
-    { label: "Avg. Engagement", value: "4.8%" },
-  ],
-  recentVideos: [
-    {
-      title: "My Morning Routine as a Content Creator",
-      views: "1.2M views",
-      days: "3 days ago",
-      likes: "45K",
-      comments: "2.1K",
-    },
-    {
-      title: "Top 5 Tech Gadgets You Need in 2025",
-      views: "856K views",
-      days: "1 week ago",
-      likes: "38K",
-      comments: "1.8K",
-    },
-  ],
-  growth: {
-    subscribers: "+8K",
-    views: "+2.8M",
-  },
-  locations: [
-    { country: "United States", percentage: "42%" },
-    { country: "United Kingdom", percentage: "18%" },
-    { country: "Canada", percentage: "12%" },
-    { country: "Australia", percentage: "8%" },
-  ],
 };
 
-const RightPanelUI = () => (
-  <div
-    className="relative w-full lg:w-[600px] h-[550px] md:h-[600px] flex items-center justify-center p-4 lg:p-0"
-    style={{ perspective: "1000px" }}
-  >
-    <div className="w-full h-full max-w-sm md:max-w-md bg-[#181A20] rounded-3xl shadow-2xl overflow-hidden border border-gray-700/50 transform transition-transform duration-500 hover:scale-[1.02] hover:rotate-1">
-      <div className="h-24 bg-gradient-to-r from-yellow-500 to-orange-500"></div>
-
-      <div className="px-5 -mt-10">
-        <div className="w-20 h-20 rounded-full overflow-hidden border-4 border-[#181A20] shadow-xl">
-          <img
-            src={mockProfileData.profilePic}
-            alt={mockProfileData.name}
-            className="w-full h-full object-cover"
-          />
-        </div>
-
-        <h2 className="text-xl font-bold text-white mt-3 flex items-center">
-          {mockProfileData.name}{" "}
-          <Check className="w-4 h-4 ml-2 text-green-400" />
-        </h2>
-        <p className="text-sm text-gray-400">{mockProfileData.handle}</p>
-        <p className="text-sm text-gray-300 mt-1 mb-4">{mockProfileData.bio}</p>
-      </div>
-
-      <div className="grid grid-cols-4 gap-2 bg-[#20232A] py-3 px-5 border-t border-b border-gray-700/50">
-        {mockProfileData.stats.map((stat, index) => (
-          <div key={index} className="text-center">
-            <p className="text-lg font-bold text-white">{stat.value}</p>
-            <p className="text-xs text-gray-400">{stat.label}</p>
-          </div>
-        ))}
-      </div>
-
-      <div className="p-5 overflow-y-auto h-[calc(100%-250px)] custom-scrollbar">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          <div className="md:col-span-2">
-            <h3 className="text-base font-semibold text-white mb-3">
-              Recent Videos
-            </h3>
-            <div className="space-y-3">
-              {mockProfileData.recentVideos.map((video, index) => (
-                <div
-                  key={index}
-                  className="flex items-start p-2 bg-[#20232A] rounded-xl cursor-pointer hover:bg-[#282B32] transition"
-                >
-                  <div className="w-16 h-12 bg-yellow-500 flex items-center justify-center rounded-lg flex-shrink-0 shadow-md">
-                    <Telescope className="w-5 h-5 text-black" />
-                  </div>
-                  <div className="ml-3">
-                    <p className="text-sm font-medium text-white line-clamp-1">
-                      {video.title}
-                    </p>
-                    <p className="text-xs text-gray-400">
-                      {video.views} • {video.days}
-                    </p>
-                    <p className="text-xs text-gray-500 mt-0.5">
-                      ❤️ {video.likes} | 💬 {video.comments}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="md:col-span-0 w-33 space-y-5">
-            <div className="bg-[#20232A] p-4 rounded-xl shadow-inner">
-              <h4 className="text-base font-semibold text-white mb-3 border-b border-gray-700/50 pb-2">
-                30-Day Growth
-              </h4>
-              <div className="text-sm space-y-3">
-                <div className="flex flex-col">
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="text-gray-300">Subscribers</span>
-                    <span className="text-green-400 font-bold">
-                      {mockProfileData.growth.subscribers}
-                    </span>
-                  </div>
-                  <div className="h-2 bg-gray-600 rounded-full overflow-hidden">
-                    <div
-                      className="w-[80%] h-full bg-green-400 transition-width duration-500"
-                      style={{ width: "80%" }}
-                    ></div>
-                  </div>
-                </div>
-
-                <div className="flex flex-col">
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="text-gray-300">Views</span>
-                    <span className="text-green-400 font-bold">
-                      {mockProfileData.growth.views}
-                    </span>
-                  </div>
-                  <div className="h-2 bg-gray-600 rounded-full overflow-hidden">
-                    <div
-                      className="w-[90%] h-full bg-green-400 transition-width duration-500"
-                      style={{ width: "90%" }}
-                    ></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-[#20232A] p-4 rounded-xl shadow-inner">
-              <h4 className="text-base font-semibold text-white mb-3 border-b border-gray-700/50 pb-2">
-                Top Locations
-              </h4>
-              <div className="text-sm space-y-1">
-                {mockProfileData.locations.map((loc, index) => (
-                  <div
-                    key={index}
-                    className="flex justify-between items-center py-1"
-                  >
-                    <span className="text-gray-300">{loc.country}</span>
-                    <span className="text-yellow-400 font-medium">
-                      {loc.percentage}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-);
-
+// Animations
 const container = {
   hidden: {},
   visible: {
-    transition: {
-      staggerChildren: 0.2,
-      delayChildren: 0.2,
-    },
+    transition: { staggerChildren: 0.15, delayChildren: 0.1 },
   },
 };
-
 const fadeUp = {
-  hidden: { opacity: 0, y: 40 },
+  hidden: { opacity: 0, y: 26 },
   visible: {
     opacity: 1,
     y: 0,
     transition: {
-      opacity: { duration: 0.1 },
-      y: {
-        type: "spring",
-        stiffness: 120,
-        damping: 20,
-      },
+      type: "spring",
+      stiffness: 110,
+      damping: 20,
     },
   },
 };
 
-const HeroSection = () => {
-  return (
-    <section className="relative flex items-center justify-center min-h-[92vh] px-4 py-16 md:py-0 overflow-hidden bg-black font-['Inter']">
-      <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap"
-        rel="stylesheet"
-      />
+// Ring Generator
+const Rings = () => (
+  <div className="absolute inset-0 -z-10 pointer-events-none">
+    {[260, 420, 600].map((size, i) => (
+      <div
+        key={i}
+        className="absolute left-1/2 top-1/2 border border-yellow-300/40 rounded-full"
+        style={{
+          width: size,
+          height: size,
+          transform: "translate(-50%, -50%)",
+          borderStyle: "dashed",
+          borderWidth: 2,
+          opacity: 0.5 - i * 0.12,
+        }}
+      ></div>
+    ))}
+  </div>
+);
 
-      <style>{`
-        .custom-scrollbar::-webkit-scrollbar {
-          display: none; /* For Chrome, Safari, and Opera */
-        }
-        .custom-scrollbar {
-          -ms-overflow-style: none; /* For Internet Explorer and Edge */
-          scrollbar-width: none; /* For Firefox */
-        }
-      `}</style>
+const TopHero = () => (
+  <section className="relative pt-20 pb-0 bg-white overflow-hidden">
+    <Rings />
 
-      <div className="absolute inset-0 bg-gradient-to-br from-orange-500 via-yellow-500 to-yellow-500 opacity-90"></div>
-
+    <motion.div
+      initial="hidden"
+      whileInView="visible"
+      variants={container}
+      viewport={{ once: true }}
+      className="relative max-w-7xl mx-auto px-6 flex flex-col lg:flex-row items-center justify-between gap-14"
+    >
+      {/* Left Text */}
       <motion.div
-        initial="hidden"
-        whileInView="visible"
-        variants={container}
-        viewport={{ once: true }}
-        className="relative z-10 flex flex-col lg:flex-row items-center lg:items-start justify-between max-w-7xl mx-auto w-full gap-12 py-6 md:py-16"
+        variants={fadeUp}
+        className="lg:w-1/2 pl-10 text-center lg:text-left"
       >
-        <motion.div
-          variants={container}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          className="lg:w-1/2 text-center lg:text-left px-4 pt-0 lg:pt-10"
-        >
-          <motion.h1
-            variants={fadeUp}
-            className="text-5xl md:text-6xl lg:text-6xl font-extrabold text-white mb-6 leading-tight tracking-tight"
-          >
-            Where Creators, Mentors
-            <br />
-            <span className=" text-black ">& Brand Connect</span>
-          </motion.h1>
-          <motion.p
-            variants={fadeUp}
-            className="text-lg md:text-xl font-medium text-white/90 mb-10 max-w-2xl lg:max-w-none mx-auto leading-relaxed"
-          >
-            Build real connections. Find authentic collaborations. Grow your
-            creative career with the platform designed for meaningful
-            partnerships.
-          </motion.p>
-          <div className="flex flex-col sm:flex-row flex-wrap lg:justify-start justify-center gap-4 mb-12">
-            <motion.a
-              variants={fadeUp}
-              href="#signup"
-              className="inline-flex items-center justify-center px-6 py-3 text-base font-semibold rounded-xl bg-black text-white transition-all duration-200 min-w-[200px] hover:shadow-lg"
-            >
-              <Sparkles className="w-5 h-5 mr-2" />
-              Get started for free
-              <ArrowRight className="w-4 h-4 ml-2" />
-            </motion.a>
+        <h1 className="text-4xl md:text-5xl font-extrabold leading-tight text-gray-900">
+          Where Creators, Mentors
+          <br />
+          <span className="text-yellow-500">&amp; Brands Connect.</span>
+        </h1>
 
-            <motion.a
-              variants={fadeUp}
-              href="#business-login"
-              className="inline-flex items-center justify-center px-6 py-3 text-base font-semibold rounded-xl border-2 border-black bg-transparent text-black transition-all duration-200 min-w-[200px] hover:bg-black hover:text-white"
-            >
-              <Building2 className="w-5 h-5 mr-2" />
-              I'm a Business
-            </motion.a>
-          </div>
-          <motion.div
-            variants={fadeUp}
-            className="flex flex-wrap lg:justify-start justify-center items-center gap-4 text-black font-semibold text-sm mt-8"
+        <p className="text-lg text-gray-600 mt-6 max-w-xl">
+          Thousands of creators, mentors, and brands have already joined
+          PeerPop's Elite Network. Be next in line to unlock premium
+          collaborations and growth.
+        </p>
+
+        {/* CTA Buttons */}
+        <div className="flex flex-col sm:flex-row gap-4 mt-10">
+          <a
+            href="/signup"
+            className="px-8 py-4 rounded-xl bg-yellow-500 shadow-lg text-gray-900 text-lg font-semibold flex items-center justify-center gap-2"
           >
+            <Sparkles className="w-5 h-5" /> Get Started for Free
+          </a>
+
+          <a
+            href="/login/business"
+            className="px-8 py-4 rounded-xl border-2 border-yellow-500 bg-white text-gray-900 text-lg font-semibold flex items-center justify-center gap-2"
+          >
+            <Building2 className="w-5 h-5" /> I'm a Business
+          </a>
+        </div>
+
+        {/* Tags */}
+        <div className="flex flex-wrap gap-4 mt-10 justify-center lg:justify-start">
+          {[
+            { color: "bg-green-400", label: "Free to join" },
+            { color: "bg-blue-400", label: "Verified creators" },
+            { color: "bg-purple-400", label: "Global community" },
+          ].map((t, i) => (
+            <div key={i} className="flex items-center gap-2">
+              <div className={`w-2 h-2 rounded-full ${t.color}`} />
+              <div className="px-3 py-1 rounded-full text-sm bg-white border shadow-sm">
+                {t.label}
+              </div>
+            </div>
+          ))}
+        </div>
+      </motion.div>
+
+      {/* Right Card (Small Profile Preview) */}
+      <motion.div variants={fadeUp} className="lg:w-1/2 flex justify-center">
+        <div className="bg-[#F6E6A8] rounded-3xl p-6 shadow-xl w-[360px]">
+          <div className="flex gap-4 items-center">
+            <img
+              src={mockProfileData.profilePic}
+              alt=""
+              className="w-16 h-16 rounded-full object-cover"
+            />
+            <div>
+              <p className="text-sm text-gray-700">Hi Sarah,</p>
+              <h3 className="text-xl font-bold text-gray-900">Welcome Back!</h3>
+            </div>
+          </div>
+
+          {/* Social */}
+          <div className="flex gap-4 mt-4 text-xs font-semibold text-gray-900">
+            <div className="flex items-center gap-1">
+              <Instagram className="w-4 text-pink-500" /> 2.4M
+            </div>
+            <div className="flex items-center gap-1">
+              <Youtube className="w-4 text-red-500" /> 145K
+            </div>
+            <div className="flex items-center gap-1">
+              <Linkedin className="w-4 text-blue-600" /> 48K
+            </div>
+          </div>
+
+          {/* Stats */}
+          <div className="grid grid-cols-2 gap-4 mt-6">
             {[
-              { color: "bg-green-400", text: "Free to join" },
-              { color: "bg-blue-400", text: "Verified creators" },
-              { color: "bg-purple-400", text: "Global community" },
-            ].map((item, i) => (
-              <div key={i} className="flex items-center">
-                <div className={`w-2 h-2 ${item.color} rounded-full mr-2`} />
-                <div className="px-3 py-1 rounded-full text-xs font-semibold bg-white text-black border border-white/40 shadow-sm">
-                  {item.text}
-                </div>
+              { label: "Response Rate", value: "45.2%" },
+              { label: "Engagement", value: "20%" },
+              { label: "Growth Rate", value: "10%" },
+              { label: "Avg Audience", value: "5000" },
+            ].map((s, i) => (
+              <div
+                key={i}
+                className="bg-white p-4 rounded-xl shadow text-gray-900"
+              >
+                <p className="text-xs text-gray-600">{s.label}</p>
+                <p className="text-xl font-bold text-yellow-600 mt-1">
+                  {s.value}
+                </p>
               </div>
             ))}
-          </motion.div>
-        </motion.div>
-
-        <motion.div
-          variants={fadeUp}
-          className="lg:w-1/2 flex justify-center lg:justify-end px-4 mt-12 lg:mt-0"
-        >
-          <RightPanelUI />
-        </motion.div>
+          </div>
+        </div>
       </motion.div>
-    </section>
-  );
-};
+    </motion.div>
+  </section>
+);
+
+const DashboardPreview = () => (
+  <section className="relative pb-10 bg-white">
+    <Rings />
+
+    <motion.div
+      initial={{ opacity: 0, y: 50 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.7, delay: 0.2 }}
+      className="relative z-10 mt-20 w-full max-w-5xl mx-auto"
+    >
+      <img
+        className="w-full h-full bg-[#f5d88a] rounded-3xl shadow-xl border border-yellow-300/40 flex items-center justify-center text-xl text-yellow-800 font-semibold object-cover"
+        src="https://res.cloudinary.com/dvzqfb2z3/image/upload/v1764912675/Frame_48_rsh292.png"
+      />
+    </motion.div>
+  </section>
+);
+
+// -----------------------------------------------------------------------------
+//  EXPORT PAGE
+// -----------------------------------------------------------------------------
+const HeroSection = () => (
+  <>
+    <TopHero />
+    <DashboardPreview />
+  </>
+);
 
 export default HeroSection;
