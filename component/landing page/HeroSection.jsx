@@ -11,7 +11,6 @@ import {
   Linkedin,
 } from "lucide-react";
 
-// Mock Data
 const mockProfileData = {
   name: "Sarah Johnson",
   handle: "@sarahjohnson",
@@ -19,7 +18,6 @@ const mockProfileData = {
     "https://images.unsplash.com/photo-1580489944761-15a19d654956?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
 };
 
-// Animations
 const container = {
   hidden: {},
   visible: {
