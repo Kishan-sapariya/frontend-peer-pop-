@@ -43,7 +43,7 @@ const Rings = () => (
       viewBox="0 0 2000 2000"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className="w-[1200px] lg:w-[1800px] h-auto opacity-100 overflow-visible"
+      className="w-[1200px] lg:w-[1800px] h-auto opacity-60 overflow-visible"
     >
       {[650, 750, 850, 950].map((radius, i) => (
         <circle
@@ -52,7 +52,7 @@ const Rings = () => (
           cy="1000"
           r={radius}
           stroke="#fadb2a"
-          strokeWidth="2"
+          strokeWidth="1.5"
           strokeDasharray="15 16"
         />
       ))}

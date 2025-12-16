@@ -23,119 +23,126 @@ const fadeUp = {
 
 export default function BrandConnectionSection() {
   return (
-    <section className="relative w-full py-20 px-6 md:px-16 overflow-hidden">
-      {/* SECTION 1: Connecting With Influencers */}
-      <motion.h2
-        initial="hidden"
-        whileInView="visible"
-        variants={fadeUp}
-        viewport={{ once: true }}
-        className="text-center text-3xl md:text-4xl font-extrabold text-black mb-12"
-      >
-        Connecting Your Brand with the{" "}
-        <span className="text-yellow-500">Right Influencers</span>
-      </motion.h2>
+    <section className="relative w-full py-20 px-6 md:px-16 overflow-hidden bg-white">
+      {/* BACKGROUND RINGS */}
+      <Rings position="top-right" />
+      <Rings position="bottom-left" />
 
-      {/* Reduced max-w to 5xl for a more compact feel */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-5xl mx-auto items-center">
-        <motion.div
+      {/* CONTENT WRAPPER - Ensure relative z-index to stay above rings */}
+      <div className="relative z-10">
+        {/* SECTION 1: Connecting With Influencers */}
+        <motion.h2
           initial="hidden"
           whileInView="visible"
           variants={fadeUp}
           viewport={{ once: true }}
-          className="space-y-4 text-gray-900"
+          className="text-center text-3xl md:text-4xl font-extrabold text-black mb-12"
         >
-          <Feature
-            icon={<UserPlus className="w-5 h-5" />}
-            title="Easy Signup"
-            desc="Register your brand on the platform in minutes."
-          />
-          <Feature
-            icon={<Users className="w-5 h-5" />}
-            title="Wide Reach"
-            desc="Access a diverse network of influencers across industries."
-          />
-          <Feature
-            icon={<MessageCircle className="w-5 h-5" />}
-            title="Direct Communication"
-            desc="Connect instantly with influencers who align with you."
-          />
-          <Feature
-            icon={<TrendingUp className="w-5 h-5" />}
-            title="Growth Focused"
-            desc="Build lasting relationships to expand visibility."
-          />
-        </motion.div>
+          Connecting Your Brand with the{" "}
+          <span className="text-yellow-500">Right Influencers</span>
+        </motion.h2>
 
-        <motion.div
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-5xl mx-auto items-center">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            variants={fadeUp}
+            viewport={{ once: true }}
+            className="space-y-4 text-gray-900"
+          >
+            <Feature
+              icon={<UserPlus className="w-5 h-5" />}
+              title="Easy Signup"
+              desc="Register your brand on the platform in minutes."
+            />
+            <Feature
+              icon={<Users className="w-5 h-5" />}
+              title="Wide Reach"
+              desc="Access a diverse network of influencers across industries."
+            />
+            <Feature
+              icon={<MessageCircle className="w-5 h-5" />}
+              title="Direct Communication"
+              desc="Connect instantly with influencers who align with you."
+            />
+            <Feature
+              icon={<TrendingUp className="w-5 h-5" />}
+              title="Growth Focused"
+              desc="Build lasting relationships to expand visibility."
+            />
+          </motion.div>
+
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            variants={fadeUp}
+            viewport={{ once: true }}
+            className="flex justify-center md:justify-end"
+          >
+            <BrandCollabMockup />
+          </motion.div>
+        </div>
+
+        {/* SECTION 2 – Simple Steps */}
+        <motion.h2
           initial="hidden"
           whileInView="visible"
           variants={fadeUp}
           viewport={{ once: true }}
-          className="flex justify-center md:justify-end"
+          className="text-center text-3xl md:text-4xl font-extrabold text-black mt-24 mb-12"
         >
-          <BrandCollabMockup />
-        </motion.div>
-      </div>
+          Simple Steps to Get Started on{" "}
+          <span className="text-yellow-500">Peerpop</span>
+        </motion.h2>
 
-      {/* SECTION 2 – Simple Steps */}
-      <motion.h2
-        initial="hidden"
-        whileInView="visible"
-        variants={fadeUp}
-        viewport={{ once: true }}
-        className="text-center text-3xl md:text-4xl font-extrabold text-black mt-24 mb-12"
-      >
-        Simple Steps to Get Started on{" "}
-        <span className="text-yellow-500">Peerpop</span>
-      </motion.h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-5xl mx-auto items-center">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            variants={fadeUp}
+            viewport={{ once: true }}
+            className="order-2 md:order-1"
+          >
+            <PortfolioMockup />
+          </motion.div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-5xl mx-auto items-center">
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          variants={fadeUp}
-          viewport={{ once: true }}
-          className="order-2 md:order-1"
-        >
-          <PortfolioMockup />
-        </motion.div>
-
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          variants={fadeUp}
-          viewport={{ once: true }}
-          className="space-y-4 text-gray-900 order-1 md:order-2"
-        >
-          <Step
-            icon={<UserCircle className="w-5 h-5" />}
-            title="Create Your Profile"
-            desc="Sign up by adding your personal info and niche."
-          />
-          <Step
-            icon={<Users className="w-5 h-5" />}
-            title="Set Preferences"
-            desc="Select the brands that match your interests."
-          />
-          <Step
-            icon={<Search className="w-5 h-5" />}
-            title="Browse Opportunities"
-            desc="Find brands looking for influencers like you."
-          />
-          <Step
-            icon={<Sparkles className="w-5 h-5" />}
-            title="Start Collaborating"
-            desc="Apply, connect, and build partnerships."
-          />
-        </motion.div>
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            variants={fadeUp}
+            viewport={{ once: true }}
+            className="space-y-4 text-gray-900 order-1 md:order-2"
+          >
+            <Step
+              icon={<UserCircle className="w-5 h-5" />}
+              title="Create Your Profile"
+              desc="Sign up by adding your personal info and niche."
+            />
+            <Step
+              icon={<Users className="w-5 h-5" />}
+              title="Set Preferences"
+              desc="Select the brands that match your interests."
+            />
+            <Step
+              icon={<Search className="w-5 h-5" />}
+              title="Browse Opportunities"
+              desc="Find brands looking for influencers like you."
+            />
+            <Step
+              icon={<Sparkles className="w-5 h-5" />}
+              title="Start Collaborating"
+              desc="Apply, connect, and build partnerships."
+            />
+          </motion.div>
+        </div>
       </div>
     </section>
   );
 }
 
+// Reusable Components
 const Feature = ({ icon, title, desc }) => (
-  <div className="flex items-start gap-3 bg-amber-50 p-4 rounded-xl border border-amber-100/50 transition-colors hover:bg-amber-100/80">
+  <div className="flex items-start gap-3 bg-amber-50/50 backdrop-blur-sm p-4 rounded-xl border border-amber-100/50 transition-colors hover:bg-amber-100/80">
     <div className="text-yellow-600 mt-1">{icon}</div>
     <div>
       <p className="font-bold text-sm md:text-base">{title}</p>
@@ -145,7 +152,7 @@ const Feature = ({ icon, title, desc }) => (
 );
 
 const Step = ({ icon, title, desc }) => (
-  <div className="flex items-start gap-4 bg-amber-50 p-4 rounded-xl border border-amber-100/50 transition-colors hover:bg-amber-100/80">
+  <div className="flex items-start gap-4 bg-amber-50/50 backdrop-blur-sm p-4 rounded-xl border border-amber-100/50 transition-colors hover:bg-amber-100/80">
     <div className="text-gray-900 mt-1">{icon}</div>
     <div>
       <p className="font-bold text-sm md:text-base">{title}</p>
@@ -183,3 +190,35 @@ const PortfolioMockup = () => (
     </div>
   </motion.div>
 );
+
+const Rings = ({ position }) => {
+  const posClasses =
+    position === "top-right"
+      ? "top-[-200px] right-[-200px] md:top-[-300px] md:right-[-300px]"
+      : "bottom-[-200px] left-[-200px] md:bottom-[-400px] md:left-[-400px]";
+
+  return (
+    <div
+      className={`absolute ${posClasses} z-0 pointer-events-none opacity-40 md:opacity-80`}
+    >
+      <svg
+        viewBox="0 0 1000 1000"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        className="w-[600px] h-[600px] md:w-[1000px] md:h-[1000px]"
+      >
+        {[150, 250, 350, 450, 550].map((radius, i) => (
+          <circle
+            key={i}
+            cx="500"
+            cy="500"
+            r={radius}
+            stroke="#fadb2a"
+            strokeWidth="1.4"
+            strokeDasharray="12 12"
+          />
+        ))}
+      </svg>
+    </div>
+  );
+};
