@@ -90,7 +90,7 @@ const HowItWorks = () => {
             transition={{ duration: 0.7 }}
             className="flex justify-center md:justify-end"
           >
-            <div className="w-[280px] sm:w-[320px] md:w-[360px] rounded-3xl bg-amber-50 border border-yellow-300/70 shadow-xl overflow-hidden">
+            <div className="w-[280px] sm:w-[320px] md:w-[360px] hover:scale-105 transition-all duration-200 overflow-hidden">
               <img
                 src="https://res.cloudinary.com/dvzqfb2z3/image/upload/v1764912635/brand_zcfrai.png"
                 alt="Brand workflow preview"
@@ -123,7 +123,7 @@ const HowItWorks = () => {
             transition={{ duration: 0.6 }}
             className="w-full flex justify-center"
           >
-            <div className="w-[280px] sm:w-[320px] md:w-[360px] rounded-3xl bg-amber-50 border border-yellow-300/70 shadow-xl overflow-hidden">
+            <div className="w-[280px] sm:w-[320px] md:w-[360px] hover:scale-105 transition-all duration-200l overflow-hidden">
               <img
                 src="https://res.cloudinary.com/dvzqfb2z3/image/upload/v1764912634/influencer_ui_img_du1fe5.png"
                 alt="Influencer profile preview"

@@ -9,7 +9,6 @@ import {
   Instagram,
   Youtube,
   Linkedin,
-  UserPlus,
 } from "lucide-react";
 
 // Mock Data
@@ -40,66 +39,67 @@ const fadeUp = {
   },
 };
 
-// Ring Generator
 const Rings = () => (
-  <div className="absolute inset-0 -z-10 pointer-events-none">
-    {[260, 420, 600].map((size, i) => (
-      <div
-        key={i}
-        className="absolute left-1/2 top-1/2 border border-yellow-300/40 rounded-full"
-        style={{
-          width: size,
-          height: size,
-          transform: "translate(-50%, -50%)",
-          borderStyle: "dashed",
-          borderWidth: 2,
-          opacity: 0.5 - i * 0.12,
-        }}
-      ></div>
-    ))}
+  <div className="absolute top-[-550px] left-1/2 -translate-x-1/2 z-0 pointer-events-none overflow-visible hidden sm:flex items-center justify-center">
+    <svg
+      viewBox="0 0 2000 2000"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className="w-[1200px] lg:w-[1800px] h-auto opacity-100 overflow-visible"
+    >
+      {[650, 750, 850, 950].map((radius, i) => (
+        <circle
+          key={i}
+          cx="1000"
+          cy="1000"
+          r={radius}
+          stroke="#fadb2a"
+          strokeWidth="2"
+          strokeDasharray="15 16"
+        />
+      ))}
+    </svg>
   </div>
 );
 
 const TopHero = () => (
-  <section className="relative pt-20 pb-0 bg-white overflow-hidden">
-    <Rings />
-
+  <section className="relative pt-20 pb-0 overflow-hidden">
     <motion.div
       initial="hidden"
       whileInView="visible"
       variants={container}
       viewport={{ once: true }}
-      className="relative max-w-7xl mx-auto px-6 flex flex-col lg:flex-row items-center justify-between gap-14"
+      className="relative max-w-6xl mx-auto px-6 flex flex-col lg:flex-row items-center justify-between gap-14"
     >
       {/* Left Text */}
       <motion.div
         variants={fadeUp}
-        className="lg:w-1/2 pl-10 text-center lg:text-left"
+        className="lg:w-1/2 lg:pl-10 text-center lg:text-left"
       >
-        <h1 className="text-4xl md:text-5xl font-extrabold leading-tight text-gray-900">
-          Where Creators, Mentors
-          <br />
-          <span className="text-yellow-500">&amp; Brands Connect.</span>
+        <h1 className="text-3xl md:text-5xl font-extrabold leading-tight text-gray-900">
+          <span className="whitespace-nowrap">Where Creators, Mentors</span>
+
+          <span className="text-yellow-500 block">&amp; Brands Connect.</span>
         </h1>
 
-        <p className="text-lg text-gray-600 mt-6 max-w-xl">
+        <p className="text-lg text-gray-600 mt-6 max-w-xl mx-auto lg:mx-0">
           Thousands of creators, mentors, and brands have already joined
           PeerPop's Elite Network. Be next in line to unlock premium
           collaborations and growth.
         </p>
 
         {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 mt-10">
+        <div className="flex flex-col sm:flex-row gap-4 mt-10 justify-center lg:justify-start">
           <a
             href="/signup"
-            className="px-8 py-4 rounded-xl bg-yellow-500 shadow-lg text-gray-900 text-lg font-semibold flex items-center justify-center gap-2"
+            className="px-8 py-4 rounded-xl bg-yellow-500 shadow-lg text-gray-900 text-lg font-semibold flex items-center justify-center gap-2 transition-transform hover:scale-105"
           >
             <Sparkles className="w-5 h-5" /> Get Started for Free
           </a>
 
           <a
             href="/login/business"
-            className="px-8 py-4 rounded-xl border-2 border-yellow-500 bg-white text-gray-900 text-lg font-semibold flex items-center justify-center gap-2"
+            className="px-8 py-4 rounded-xl border-2 border-yellow-500 bg-white text-gray-900 text-lg font-semibold flex items-center justify-center gap-2 transition-transform hover:scale-105"
           >
             <Building2 className="w-5 h-5" /> I'm a Business
           </a>
@@ -114,7 +114,7 @@ const TopHero = () => (
           ].map((t, i) => (
             <div key={i} className="flex items-center gap-2">
               <div className={`w-2 h-2 rounded-full ${t.color}`} />
-              <div className="px-3 py-1 rounded-full text-sm bg-white border shadow-sm">
+              <div className="px-3 py-1 rounded-full text-sm border shadow-sm">
                 {t.label}
               </div>
             </div>
@@ -122,22 +122,21 @@ const TopHero = () => (
         </div>
       </motion.div>
 
-      {/* Right Card (Small Profile Preview) */}
-      <motion.div variants={fadeUp} className="lg:w-1/2 flex justify-center">
-        <div className="bg-[#F6E6A8] rounded-3xl p-6 shadow-xl w-[360px]">
+      {/* Right Card */}
+      <motion.div variants={fadeUp} className="lg:w-1/2 flex justify-center hover:scale-103 transition-all duration-300">
+        <div className="bg-[#F6E6A8] rounded-3xl p-6 shadow-xl w-full max-w-[360px]">
           <div className="flex gap-4 items-center">
             <img
               src={mockProfileData.profilePic}
               alt=""
               className="w-16 h-16 rounded-full object-cover"
             />
-            <div>
+            <div className="text-left">
               <p className="text-sm text-gray-700">Hi Sarah,</p>
               <h3 className="text-xl font-bold text-gray-900">Welcome Back!</h3>
             </div>
           </div>
 
-          {/* Social */}
           <div className="flex gap-4 mt-4 text-xs font-semibold text-gray-900">
             <div className="flex items-center gap-1">
               <Instagram className="w-4 text-pink-500" /> 2.4M
@@ -150,7 +149,6 @@ const TopHero = () => (
             </div>
           </div>
 
-          {/* Stats */}
           <div className="grid grid-cols-2 gap-4 mt-6">
             {[
               { label: "Response Rate", value: "45.2%" },
@@ -176,32 +174,32 @@ const TopHero = () => (
 );
 
 const DashboardPreview = () => (
-  <section className="relative pb-10 bg-white">
-    <Rings />
-
+  <section className="relative pb-10  hidden md:block">
     <motion.div
       initial={{ opacity: 0, y: 50 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.7, delay: 0.2 }}
-      className="relative z-10 mt-20 w-full max-w-5xl mx-auto"
+      className="relative z-10 mt-20 w-full max-w-5xl mx-auto px-6"
     >
       <img
-        className="w-full h-full bg-[#f5d88a] rounded-3xl shadow-xl border border-yellow-300/40 flex items-center justify-center text-xl text-yellow-800 font-semibold object-cover"
+        className="w-full h-auto rounded-3xl shadow-xl object-cover"
         src="https://res.cloudinary.com/dvzqfb2z3/image/upload/v1764912675/Frame_48_rsh292.png"
+        alt="Dashboard Preview"
       />
     </motion.div>
   </section>
 );
 
-// -----------------------------------------------------------------------------
-//  EXPORT PAGE
-// -----------------------------------------------------------------------------
 const HeroSection = () => (
-  <>
-    <TopHero />
-    <DashboardPreview />
-  </>
+  // overflow-hidden here prevents the giant rings from causing a horizontal scroll
+  <div className="relative w-full overflow-hidden bg-white">
+    <Rings />
+    <div className="relative z-10">
+      <TopHero />
+      <DashboardPreview />
+    </div>
+  </div>
 );
 
 export default HeroSection;

@@ -26,6 +26,7 @@ import EarlyAccess from "./early access/EarlyAccess";
 import HowItWorks from "./how it works/HowItWorks";
 import Faq from "./faq/Faq";
 import Cta from "./cta/Cta";
+import Footer from "../Footer";
 
 const WaitlistForm = ({ isOpen, onClose }) => {
   const router = useRouter();
@@ -163,6 +164,7 @@ export default function PeerPopWaitlist() {
       <HowItWorks />
       <Faq />
       <Cta openForm={openForm} />
+      <Footer />
     </main>
   );
 }

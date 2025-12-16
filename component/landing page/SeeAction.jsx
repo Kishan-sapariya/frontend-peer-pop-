@@ -2,10 +2,6 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { DiscoveryFeedMockup } from "./see actions/DiscoveryFeedMockup";
-import { ProfileShowcaseMockup } from "./see actions/ProfileShowCaseMockup";
-import { MessagingMockup } from "./see actions/MessagingMockup";
-import { OpportunitiesMockup } from "./see actions/OpportunintesMockup";
 
 const SeeAction = () => {
   const content = [
@@ -15,7 +11,7 @@ const SeeAction = () => {
       desc: "Browse through thousands of verified creators, mentors, and brands. Our smart filters and AI-powered recommendations help you discover exactly who you're looking for based on niche, location, experience, and goals.",
       points:
         "Advanced search with 20+ filters,AI-powered match suggestions,Save and organize favorites",
-      component: DiscoveryFeedMockup,
+      img: "https://res.cloudinary.com/dvzqfb2z3/image/upload/v1765888140/find_your_perfect_match_a8mxvg.png",
     },
     {
       tag: "Profiles",
@@ -23,7 +19,7 @@ const SeeAction = () => {
       desc: "Create a stunning profile that highlights your best work, achievements, and creative vision. Add your portfolio, social links, and let your personality shine through with rich media and custom layouts.",
       points:
         "Portfolio gallery with rich media,Verified badges and credentials,Real-time analytics and insights",
-      component: ProfileShowcaseMockup,
+      img: "https://res.cloudinary.com/dvzqfb2z3/image/upload/v1765888137/Showcase_your_work_beautifully_y1ux6m.png",
     },
     {
       tag: "Communication",
@@ -31,7 +27,7 @@ const SeeAction = () => {
       desc: "Built-in messaging makes it easy to start conversations, share ideas, and build relationships. Send files, schedule meetings, and keep all your communications organized in one place.",
       points:
         "Real-time chat with file sharing,Integrated video call scheduling,Smart notifications and reminders",
-      component: MessagingMockup,
+      img: "https://res.cloudinary.com/dvzqfb2z3/image/upload/v1765888135/Connect_in_real_time_gstg12.png",
     },
     {
       tag: "Opportunities",
@@ -39,11 +35,10 @@ const SeeAction = () => {
       desc: "Access a curated feed of brand partnerships and campaigns tailored to your niche. Apply with one click, track your applications, and manage all your collaborations from a single dashboard.",
       points:
         "Personalized opportunity feed,One-click application process,Application tracking and analytics",
-      component: OpportunitiesMockup,
+      img: "https://res.cloudinary.com/dvzqfb2z3/image/upload/v1765888134/connecting_your_brand_with_the_right_influencers_p4n3pu.png",
     },
   ];
 
-  // Animations
   const container = {
     hidden: {},
     visible: { transition: { staggerChildren: 0.18 } },
@@ -59,10 +54,13 @@ const SeeAction = () => {
   };
 
   const renderMedia = (item) => {
-    const Mock = item.component;
     return (
-      <div className="rounded-5xl p-4 w-full max-w-[520px]">
-        <Mock />
+      <div className="overflow-hidden p-2 w-full max-w-[520px] hover:scale-105 transition-all duration-300">
+        <img
+          src={item.img}
+          alt={item.title}
+          className="w-full h-auto object-cover rounded-[32px]"
+        />
       </div>
     );
   };

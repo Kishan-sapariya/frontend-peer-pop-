@@ -4,32 +4,8 @@ import React from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Cloud, Gem, Star, ArrowRight } from "lucide-react";
 
-/* ------------------------------
-  Soft Background Rings
---------------------------------*/
-const Rings = () => (
-  <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
-    {[600, 900, 1300].map((size, i) => (
-      <div
-        key={i}
-        className="absolute border border-yellow-400/40 rounded-full opacity-40"
-        style={{
-          width: size,
-          height: size,
-          left: "50%",
-          top: "50%",
-          transform: "translate(-50%, -50%)",
-          borderStyle: "dashed",
-        }}
-      />
-    ))}
-  </div>
-);
-
-/* ------------------------------
-  Animation
---------------------------------*/
 const fadeUp = {
   hidden: { opacity: 0, y: 25 },
   visible: {
@@ -41,55 +17,68 @@ const fadeUp = {
 
 export default function CTASection() {
   return (
-    <section className="relative py-28 px-6 bg-[#F6E8A5] overflow-hidden">
-      <Rings />
-
+    <section className="relative py-24 px-6 bg-white overflow-hidden">
       <motion.div
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true }}
         variants={fadeUp}
-        className="max-w-4xl mx-auto text-center"
+        className="max-w-6xl mx-auto text-center"
       >
-        {/* Heading */}
-        <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-3">
+        {/* Main Headings */}
+        <h2 className="text-4xl md:text-5xl font-extrabold text-yellow-500 mb-2">
           Ready to Connect?
         </h2>
-
-        <h3 className="text-3xl md:text-4xl font-bold text-yellow-600 mb-10">
-          Join the Beta Today
+        <h3 className="text-3xl md:text-4xl font-extrabold text-black mb-16">
+          Join Peerpop Today
         </h3>
 
-        {/* CTA Card */}
-        <motion.div
-          variants={fadeUp}
-          className="bg-white rounded-3xl p-10 shadow-xl border border-yellow-300/50 mx-auto max-w-3xl"
-        >
-          {/* Beta Icon */}
-          <div className="w-24 h-24 bg-yellow-400 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow">
-            <span className="text-gray-900 text-4xl font-black">β</span>
-          </div>
+        {/* Benefits Header */}
+        <p className="text-2xl font-bold text-yellow-500 mb-12">
+          Exclusive Early Access Benefits
+        </p>
 
-          <h4 className="text-2xl font-semibold mb-6 text-yellow-700">
-            Exclusive Early Access Benefits
-          </h4>
+        {/* Benefits Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-0 items-center max-w-5xl mx-auto mb-16">
+          <Benefit
+            icon={
+              <div className="relative">
+                <Cloud className="w-12 h-12 text-yellow-500" />
+                <div className="absolute -bottom-1 -right-1 bg-white p-0.5">
+                  <div className="w-4 h-4 border-2 border-yellow-500 rounded-sm" />
+                </div>
+              </div>
+            }
+            title="Platform Access"
+            showBorder={true}
+          />
+          <Benefit
+            icon={<Gem className="w-12 h-12 text-yellow-500" />}
+            title="Premium Features"
+            showBorder={true}
+          />
+          <Benefit
+            icon={
+              <div className="relative">
+                <Star className="w-12 h-12 text-yellow-500" />
+                <div className="absolute -bottom-2 left-1/2 -translate-x-1/2">
+                  <div className="w-6 h-3 border-t-2 border-yellow-500 rounded-full" />
+                </div>
+              </div>
+            }
+            title="Shape New Features"
+            showBorder={false}
+          />
+        </div>
 
-          {/* Benefits */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-gray-800">
-            <Benefit icon="🔥" title="Beta Platform Access" />
-            <Benefit icon="💎" title="Lifetime Premium Features" />
-            <Benefit icon="🛠️" title="Shape New Features" />
-          </div>
-        </motion.div>
-
-        {/* CTA Button */}
-        <motion.div variants={fadeUp} className="mt-12">
+        {/* Action Button */}
+        <motion.div variants={fadeUp}>
           <Link href="/signup">
             <Button
               size="lg"
-              className="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-8 py-4 rounded-xl shadow-md hover:scale-105 transition-all"
+              className="bg-[#EAB308] hover:bg-yellow-600 text-black font-bold px-10 py-7 text-lg rounded-xl shadow-lg transition-transform hover:scale-105 flex items-center gap-3 mx-auto"
             >
-              Start Creating Now <span className="ml-2 text-2xl">🚀</span>
+              Start Creating Now <ArrowRight className="w-6 h-6" />
             </Button>
           </Link>
         </motion.div>
@@ -98,9 +87,13 @@ export default function CTASection() {
   );
 }
 
-const Benefit = ({ icon, title }) => (
-  <div className="flex flex-col items-center text-center space-y-2">
-    <span className="text-yellow-600 text-3xl">{icon}</span>
-    <span className="font-semibold">{title}</span>
+const Benefit = ({ icon, title, showBorder }) => (
+  <div
+    className={`flex flex-col items-center px-8 py-4 ${
+      showBorder ? "md:border-r-2 border-yellow-200" : ""
+    }`}
+  >
+    <div className="mb-4 h-16 flex items-center justify-center">{icon}</div>
+    <span className="text-xl font-bold text-black">{title}</span>
   </div>
 );

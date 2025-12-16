@@ -40,26 +40,30 @@ const Stats = () => {
         viewport={{ once: true, amount: 0.3 }}
         className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12 px-6"
       >
-        {stats.map((stat, i) => (
-          <motion.div
-            key={i}
-            variants={fadeUp}
-            className="flex flex-col items-center text-center space-y-2"
-          >
-            <motion.h1
-              variants={fadeUp}
-              className="text-4xl md:text-5xl font-extrabold text-yellow-500"
-            >
-              <AnimatedCount to={stat.value} duration={1500} />
-            </motion.h1>
-            <motion.p
-              variants={fadeUp}
-              className="text-gray-600 text-base md:text-lg font-medium"
-            >
-              {stat.label}
-            </motion.p>
-          </motion.div>
-        ))}
+        <motion.div
+          initial="initial"
+          whileInView="animate"
+          viewport={{ once: true }}
+          className="relative z-10 grid grid-cols-3 gap-10 max-w-2xl mx-auto"
+        >
+          {/* STAT 1 */}
+          <div className="flex flex-col items-center">
+            <AnimatedCount to={10000} duration={1500} suffix="+" />
+            <p className="text-zinc-800 mt-2">Active Creators</p>
+          </div>
+
+          {/* STAT 2 */}
+          <div className="flex flex-col items-center">
+            <AnimatedCount to={500} duration={1500} suffix="+" />
+            <p className="text-zinc-800 mt-2">Brand Partners</p>
+          </div>
+
+          {/* STAT 3 */}
+          <div className="flex flex-col items-center">
+            <AnimatedCount to={8000} duration={1500} suffix="+" />
+            <p className="text-zinc-800 mt-2">Deals Activated</p>
+          </div>
+        </motion.div>
       </motion.div>
     </section>
   );

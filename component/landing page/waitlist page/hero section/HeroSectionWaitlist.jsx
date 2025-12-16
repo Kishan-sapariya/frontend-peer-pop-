@@ -15,7 +15,7 @@ const fadeInUp = {
 // ⭐ Perfect full-screen scalable orbit background
 const DecorativeOrbits = () => {
   return (
-    <div className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-visible z-0">
+    <div className="pointer-events-none absolute inset-0 hidden sm:flex items-center justify-center overflow-visible z-0">
       <div className="relative size-[160vmin] translate-y-[-36vh]">
         {/* Outer Ring */}
         <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100">
@@ -116,10 +116,10 @@ const PremiumHero = ({ openForm }) => {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.7, delay: 0.2 }}
-        className="relative z-10 mt-20 w-full max-w-5xl mx-auto"
+        className="sm:flex relative hidden z-10 mt-20 w-full max-w-5xl mx-auto"
       >
         <img
-          className="w-full h-[440px] md:h-[520px] bg-[#f5d88a] rounded-3xl shadow-xl border border-yellow-300/40 flex items-center justify-center text-xl text-yellow-800 font-semibold object-cover"
+          className="w-full h-full rounded-3xl shadow-xl border border-yellow-300/40 flex items-center justify-center text-xl text-yellow-800 font-semibold object-cover"
           src="https://res.cloudinary.com/dvzqfb2z3/image/upload/v1764912675/Frame_48_rsh292.png"
         />
       </motion.div>

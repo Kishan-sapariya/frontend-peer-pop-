@@ -10,7 +10,6 @@ import CompanyMarquee from "@/component/landing page/CompanyMarquee";
 import Stats from "@/component/landing page/Stats";
 import SeeAction from "@/component/landing page/SeeAction";
 import ContentSlide from "@/component/landing page/ContentSlide";
-import PeerPopWaitlist from "@/component/landing page/waitlist page/WaitlistPage";
 import Faq from "@/component/landing page/waitlist page/faq/Faq";
 
 const LandingPage = () => {
@@ -30,7 +29,6 @@ const LandingPage = () => {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <div className="min-h-screen bg-white">
-        {/* <PeerPopWaitlist /> */}
         <HeroSection />
         <Stats />
         <SeeAction />
