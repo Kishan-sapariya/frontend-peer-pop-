@@ -12,10 +12,13 @@ import {
   Users,
   MessageCircle,
   HomeIcon,
-  Briefcase, 
+  Briefcase,
   LayoutGrid,
   ShieldCheck,
-  Clock,
+  Home,
+  Info, // Added for About
+  Zap, // Added for How it Works
+  Lightbulb, // Added for Opportunities
 } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useRouter } from "next/navigation";
@@ -69,7 +72,7 @@ const Navbar = () => {
     <Link href={href}>
       <Button
         variant="ghost"
-        className="relative text-black hover:bg-accent"
+        className="relative text-black hover:bg-yellow-600/20"
       >
         <Icon className="h-5 w-5 mr-1 text-black" />
         <span className="hidden lg:inline">{children}</span>
@@ -106,18 +109,8 @@ const Navbar = () => {
 
   return (
     <header className="sticky top-4 z-50 w-full flex justify-center">
-      <div
-        className="
-				max-w-7xl w-[95%] 
-				bg-yellow-500 
-				rounded-2xl 
-				shadow-[0_4px_20px_rgba(234,179,8,0.25)]
-				border border-yellow-600/40
-				px-4 sm:px-6 py-3
-				flex items-center justify-between
-			"
-      >
-        {/* Logo */}
+      <div className="max-w-7xl w-[95%] bg-yellow-500 rounded-2xl shadow-[0_4px_20px_rgba(234,179,8,0.25)] border border-yellow-600/40 px-4 sm:px-6 py-3 flex items-center justify-between">
+        {/* Logo Section */}
         <div className="flex items-center gap-3">
           <Link href="/" className="flex items-center gap-3">
             <div className="bg-black rounded-md">
@@ -133,9 +126,23 @@ const Navbar = () => {
               Peerpop
             </h1>
           </Link>
-
           {user && <NavbarSearch />}
         </div>
+
+        {/* Desktop Links (Non-Authenticated) */}
+        {!isAuthenticated && (
+          <div className="hidden md:flex items-center gap-1">
+            <NavItem href="/about" icon={Info}>
+              About
+            </NavItem>
+            <NavItem href="/how-it-works" icon={Zap}>
+              How it Works
+            </NavItem>
+            <NavItem href="/opportunities" icon={Lightbulb}>
+              Opportunities
+            </NavItem>
+          </div>
+        )}
 
         {/* Right Section */}
         <div className="flex items-center gap-2 sm:gap-3">
@@ -161,7 +168,9 @@ const Navbar = () => {
                   Messages
                 </NavItem>
               </div>
+
               <NotificationBell />
+
               <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
                 <PopoverTrigger asChild>
                   <Button
@@ -196,8 +205,7 @@ const Navbar = () => {
                   className="w-56 rounded-lg border bg-white shadow-xl p-2"
                 >
                   <PopoverLinkItem href="/groups" icon={LayoutGrid}>
-                    {" "}
-                    Groups{" "}
+                    Groups
                   </PopoverLinkItem>
                   <PopoverLinkItem
                     href={
@@ -213,11 +221,27 @@ const Navbar = () => {
                   >
                     Profile
                   </PopoverLinkItem>
+
+                  {/* Mobile-only links inside the profile popover when logged in */}
+                  <div className="md:hidden">
+                    <div className="border-t my-2"></div>
+                    <PopoverLinkItem href="/about" icon={Info}>
+                      About
+                    </PopoverLinkItem>
+                    <PopoverLinkItem href="/how-it-works" icon={Zap}>
+                      How it Works
+                    </PopoverLinkItem>
+                    <PopoverLinkItem href="/opportunities" icon={Lightbulb}>
+                      Opportunities
+                    </PopoverLinkItem>
+                  </div>
+
                   {user?.isAdmin && (
                     <PopoverLinkItem href="/admin" icon={ShieldCheck}>
                       Admin
                     </PopoverLinkItem>
                   )}
+
                   <div className="border-t mt-2 pt-2">
                     <Button
                       onClick={handleLogout}
@@ -231,44 +255,47 @@ const Navbar = () => {
             </>
           ) : (
             <div className="flex items-center gap-2">
-              <Link href="/waitlist" className="hidden sm:block">
+              <Link href="/home" className="hidden sm:block">
                 <Button
                   variant="ghost"
-                  className="text-black hover:bg-yellow-200/50 hover:text-black font-medium text-sm px-3 sm:px-4"
+                  className="text-black hover:bg-yellow-200/50 font-medium text-sm px-3 sm:px-4"
                 >
-                  <Clock className="h-4 w-4 mr-1" /> Waitlist
-                </Button>
-              </Link>
-              <Link href="/login/business" className="hidden sm:block">
-                <Button
-                  variant="ghost"
-                  className="text-black hover:bg-yellow-200/50 hover:text-black font-medium text-sm px-3 sm:px-4"
-                >
-                  <Briefcase className="h-4 w-4 mr-1" /> Business Login
+                  <Home className="h-4 w-4 mr-1" /> Home
                 </Button>
               </Link>
 
-              <Link href="/signup">
-                <Button className="bg-black text-yellow-500 hover:bg-zinc-800 text-sm sm:text-base px-3 sm:px-4">
-                  Join as Creator
-                </Button>
-              </Link>
-
+              {/* Mobile Menu for Guest Users */}
               <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
                 <PopoverTrigger asChild>
-                  <Button variant="ghost" className="sm:hidden p-1 h-9 w-9">
+                  <Button variant="ghost" className="md:hidden p-1 h-9 w-9">
                     <Menu className="h-6 w-6 text-black" />
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent
                   align="end"
-                  className="w-48 bg-white rounded-lg shadow-xl p-2"
+                  className="w-52 bg-white rounded-lg shadow-xl p-2"
                 >
+                  <PopoverLinkItem href="/about" icon={Info}>
+                    About
+                  </PopoverLinkItem>
+                  <PopoverLinkItem href="/how-it-works" icon={Zap}>
+                    How it Works
+                  </PopoverLinkItem>
+                  <PopoverLinkItem href="/opportunities" icon={Lightbulb}>
+                    Opportunities
+                  </PopoverLinkItem>
+                  <div className="border-t my-2"></div>
                   <PopoverLinkItem href="/business/login" icon={Briefcase}>
                     Business Login
                   </PopoverLinkItem>
                 </PopoverContent>
               </Popover>
+
+              <Link href="/login" className="hidden sm:block">
+                <Button className="bg-black text-yellow-500 hover:bg-zinc-800">
+                  Login
+                </Button>
+              </Link>
             </div>
           )}
         </div>

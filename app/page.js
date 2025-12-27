@@ -11,6 +11,7 @@ import Stats from "@/component/landing page/Stats";
 import SeeAction from "@/component/landing page/SeeAction";
 import ContentSlide from "@/component/landing page/ContentSlide";
 import Faq from "@/component/landing page/waitlist page/faq/Faq";
+import PeerPopWaitlist from "@/component/landing page/waitlist page/WaitlistPage";
 
 const LandingPage = () => {
   const { isAuthenticated, getCurrentUser } = useAuthStore();
@@ -29,14 +30,15 @@ const LandingPage = () => {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <div className="min-h-screen bg-white">
-        <HeroSection />
+        <PeerPopWaitlist />
+        {/* <HeroSection />
         <Stats />
         <SeeAction />
         <CompanyMarquee />
         <ContentSlide />
         <Faq />
         <CTASection />
-        <Footer />
+        <Footer /> */}
       </div>
     </>
   );

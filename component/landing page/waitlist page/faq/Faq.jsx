@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import MotionSection from "../MotionSection/MotionSection";
 import { motion } from "framer-motion";
