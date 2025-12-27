@@ -49,6 +49,12 @@ import MyPostsSection from "@/component/feeds/MyPostsSection";
 import ProfileActionsMenu from "@/component/profile/ProfileActionMenu";
 import PrivateAccountUI from "@/component/PrivateAccountUI";
 import PostInputSection from "@/component/feeds/PostInputSection";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 export default function YouTuberProfile() {
   const {
@@ -276,21 +282,49 @@ export default function YouTuberProfile() {
           <CardContent className="p-8">
             <div className="flex flex-col lg:flex-row items-start lg:items-center space-y-6 lg:space-y-0 lg:space-x-8">
               <div className="relative">
-                <Avatar className="relative w-40 h-40 border-4 border-white shadow-xl">
-                  <AvatarImage
-                    className="object-cover"
-                    src={
-                      isOwnProfile ? user?.image : profile?.userProfile?.image
-                    }
-                  />
-                  <AvatarFallback className="text-3xl">
-                    {creator.name
-                      .split(" ")
-                      .map((n) => n[0] || "")
-                      .join("")
-                      .toUpperCase() || "C"}
-                  </AvatarFallback>
-                </Avatar>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Avatar className="relative w-40 h-40 border-4 border-white shadow-xl cursor-pointer hover:opacity-90 transition-opacity">
+                      <AvatarImage
+                        className="object-cover"
+                        src={
+                          isOwnProfile
+                            ? user?.image
+                            : profile?.userProfile?.image
+                        }
+                      />
+                      <AvatarFallback className="text-3xl">
+                        {creator.name
+                          .split(" ")
+                          .map((n) => n[0] || "")
+                          .join("")
+                          .toUpperCase() || "C"}
+                      </AvatarFallback>
+                    </Avatar>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-md bg-transparent border-none shadow-none flex justify-center items-center">
+                    <DialogTitle className="sr-only">
+                      Profile Picture
+                    </DialogTitle>
+                    <Avatar className="w-64 h-64 sm:w-96 sm:h-96 border-4 border-white shadow-2xl">
+                      <AvatarImage
+                        className="object-cover"
+                        src={
+                          isOwnProfile
+                            ? user?.image
+                            : profile?.userProfile?.image
+                        }
+                      />
+                      <AvatarFallback className="text-6xl">
+                        {creator.name
+                          .split(" ")
+                          .map((n) => n[0] || "")
+                          .join("")
+                          .toUpperCase() || "C"}
+                      </AvatarFallback>
+                    </Avatar>
+                  </DialogContent>
+                </Dialog>
                 {isOwnProfile && <UploadImageModal />}
                 {creator.verified && (
                   <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-red-500 rounded-full flex items-center justify-center">

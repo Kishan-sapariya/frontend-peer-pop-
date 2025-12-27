@@ -112,7 +112,7 @@ const Navbar = () => {
       <div className="max-w-7xl w-[95%] bg-yellow-500 rounded-2xl shadow-[0_4px_20px_rgba(234,179,8,0.25)] border border-yellow-600/40 px-4 sm:px-6 py-3 flex items-center justify-between">
         {/* Logo Section */}
         <div className="flex items-center gap-3">
-          <Link href="/" className="flex items-center gap-3">
+          <Link href={user ? "/feed" : "/"} className="flex items-center gap-3">
             <div className="bg-black rounded-md">
               <Image
                 src="/logo.png"

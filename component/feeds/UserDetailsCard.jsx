@@ -17,7 +17,15 @@ import {
   Instagram,
   User,
 } from "lucide-react";
+import Link from "next/link";
 import React, { useEffect } from "react";
+// Import Dialog components
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const UserDetailsCard = () => {
   const { getUserDetails, userDetail } = useFeedStore();
@@ -56,17 +64,13 @@ const UserDetailsCard = () => {
     }
   };
 
-  // Kept original badge colors for readability/differentiation, but applied theme principles where possible
   const getCreatorTypeColor = (type) => {
     switch (type) {
       case "YOUTUBER":
-        // Theme: Red text/light red bg for YouTube, but keeping the original color family
         return "bg-red-100 text-red-700 hover:bg-red-200";
       case "INFLUENCER":
-        // Theme: Pink text/light pink bg for Instagram, but keeping the original color family
         return "bg-pink-100 text-pink-700 hover:bg-pink-200";
       case "COMEDIAN":
-        // Theme: Yellow text/light yellow bg, closer to accent color
         return "bg-yellow-50 text-[#F0AF1B] hover:bg-yellow-100";
       default:
         return "bg-gray-100 text-gray-700 hover:bg-gray-200";
@@ -78,17 +82,35 @@ const UserDetailsCard = () => {
       {/* Profile Card */}
       <Card className="border-0 shadow-lg bg-white rounded-2xl hover:shadow-xl transition-all duration-300 overflow-hidden">
         <CardContent className="p-4">
-          {/* Avatar */}
+          {/* Avatar Section with Dialog Enhancement */}
           <div className="relative mb-6">
-            <Avatar className="w-28 h-28 mx-auto border-4 border-white shadow-xl">
-              <AvatarImage
-                className="object-cover rounded-full"
-                src={userDetails.image}
-              />
-              <AvatarFallback className="bg-yellow-500 text-white font-bold text-4xl">
-                {userDetails.username?.[0]?.toUpperCase() || "U"}
-              </AvatarFallback>
-            </Avatar>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Avatar className="w-28 h-28 mx-auto border-4 border-white shadow-xl cursor-pointer hover:opacity-90 transition-opacity">
+                  <AvatarImage
+                    className="object-cover rounded-full"
+                    src={userDetails.image}
+                  />
+                  <AvatarFallback className="bg-yellow-500 text-white font-bold text-4xl">
+                    {userDetails.username?.[0]?.toUpperCase() || "U"}
+                  </AvatarFallback>
+                </Avatar>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-md bg-transparent border-none shadow-none flex justify-center items-center">
+                <DialogTitle className="sr-only">Profile Picture</DialogTitle>
+                {/* Big Avatar inside Dialog */}
+                <Avatar className="w-64 h-64 sm:w-80 sm:h-80 border-4 border-white shadow-2xl">
+                  <AvatarImage
+                    className="object-cover rounded-full"
+                    src={userDetails.image}
+                  />
+                  <AvatarFallback className="bg-yellow-500 text-white font-bold text-6xl">
+                    {userDetails.username?.[0]?.toUpperCase() || "U"}
+                  </AvatarFallback>
+                </Avatar>
+              </DialogContent>
+            </Dialog>
+
             {userDetails?.role === "CREATOR" &&
               userDetail?.completion?.category && (
                 <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2">
@@ -160,7 +182,6 @@ const UserDetailsCard = () => {
             {userDetails?.state && (
               <div className="flex justify-center items-center gap-2 text-gray-600">
                 <MapPin className="w-4 h-4 text-[#041049] flex-shrink-0" />{" "}
-                {/* THEME: Dark Blue icon color */}
                 <span className="text-sm">
                   {userDetails.state},{" "}
                   {userDetails.city === "Other"
@@ -176,14 +197,12 @@ const UserDetailsCard = () => {
                 {businessDetails?.location && (
                   <div className="flex justify-center items-center gap-2 text-gray-600">
                     <MapPin className="w-4 h-4 text-[#041049] flex-shrink-0" />{" "}
-                    {/* THEME: Dark Blue icon color */}
                     <span className="text-sm">{businessDetails.location}</span>
                   </div>
                 )}
                 {businessDetails?.industry && (
                   <div className="flex justify-center items-center gap-2 text-gray-600">
                     <Briefcase className="w-4 h-4 text-[#F0AF1B] flex-shrink-0" />{" "}
-                    {/* THEME: Yellow/Gold accent color */}
                     <span className="text-sm">
                       <span className="font-semibold">Industry:</span>{" "}
                       {businessDetails.industry}
@@ -208,14 +227,16 @@ const UserDetailsCard = () => {
                 Posts
               </div>
             </div>
-            <div className="group transition-colors p-6 text-center">
-              <div className="font-bold text-4xl text-[#F0AF1B]">
-                {userDetails.peersCount}
+            <Link href="/connections" className="block">
+              <div className="group transition-all p-6 text-center hover:bg-zinc-50 rounded-xl cursor-pointer">
+                <div className="font-bold text-4xl text-[#F0AF1B] group-hover:scale-110 transition-transform">
+                  {userDetails.peersCount}
+                </div>
+                <div className="text-sm font-medium uppercase tracking-wider mt-1 text-zinc-600 group-hover:text-black">
+                  Peers
+                </div>
               </div>
-              <div className="text-sm font-medium uppercase tracking-wider mt-1">
-                Peers
-              </div>
-            </div>
+            </Link>
           </div>
         </CardContent>
       </Card>

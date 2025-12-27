@@ -86,23 +86,11 @@ const PremiumHero = ({ openForm }) => {
           animate="animate"
           variants={fadeInUp}
           transition={{ delay: 0.35 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-3"
+          className="flex flex-col w-full items-center justify-center"
         >
-          <div className="flex items-center bg-white rounded-full ring-1 ring-yellow-300/90 px-4 py-2 w-full sm:w-auto">
-            <input
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="user@email.com"
-              className="bg-transparent text-zinc-800 text-sm md:text-base px-2 py-2 outline-none flex-1"
-            />
-            <button className="bg-yellow-400 hover:bg-yellow-500 transition px-6 py-2 rounded-full text-black font-semibold text-sm">
-              Submit
-            </button>
-          </div>
-
           <button
             onClick={openForm}
-            className="flex items-center gap-2 bg-gradient-to-r from-yellow-400 to-yellow-500 px-7 py-3 rounded-full text-black font-bold shadow-[0_8px_32px_rgba(234,179,8,0.5)] text-sm md:text-base"
+            className="flex items-center justify-center gap-2 bg-gradient-to-r from-yellow-400 to-yellow-500 px-16 py-3 rounded-full text-black font-bold shadow-[0_8px_32px_rgba(234,179,8,0.5)] text-sm md:text-base transition-transform active:scale-95"
           >
             <Clock3 className="h-4 w-4" />
             Join Waitlist

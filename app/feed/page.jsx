@@ -130,7 +130,7 @@ export default function HomeFeed() {
                     }`}
                   >
                     <Users className="w-4 h-4 mr-1" />
-                    My Peers
+                    Peers Posts
                   </Button>
 
                   {/* Filter Popover */}
