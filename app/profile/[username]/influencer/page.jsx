@@ -206,17 +206,18 @@ export default function InfluencerProfile() {
     }
   }, [imageSrc]);
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Cover Image */}
-      <div className="relative h-64 bg-black">
+    <div className="min-h-screen bg-gray-100 -mt-16">
+      {/* Cover Image - extends behind navbar */}
+      <div className="relative h-72 bg-gradient-to-b from-gray-900 to-gray-800">
         {imageSrc && !hasError && (
           <img
             src={imageSrc}
             alt="Cover"
-            className="w-full h-full object-cover"
+            className="absolute inset-0 w-full h-full object-cover"
             onError={() => setHasError(true)}
           />
         )}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
       </div>
       <div className="max-w-7xl mx-auto px-4 -mt-20 relative z-10">
         {/* Profile Header */}

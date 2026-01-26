@@ -425,65 +425,89 @@ export default function SearchPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {results.map((user) => (
-              <Card
+              <Link
                 key={user.id}
-                className="border-0 shadow-lg hover:shadow-xl transition-all rounded-2xl bg-white"
+                href={
+                  user.type === "BUSINESS"
+                    ? `/profile/business/${user.username}`
+                    : `/profile/${user.username}/${user.creatorType?.toLowerCase()}`
+                }
               >
-                <CardHeader className="p-0 relative h-32">
-                  <div className="absolute inset-0 bg-black"></div>
-                  <Avatar className="w-24 h-24 absolute -bottom-12 left-6 ring-4 ring-white shadow-sm">
-                    <AvatarImage
-                      src={user.image}
-                      alt={user.username}
-                      className="object-cover"
-                    />
-                    <AvatarFallback className="bg-yellow-500 text-gray-900 text-3xl font-bold">
-                      {user.type === "BUSINESS"
-                        ? getInitialLetter(user.companyName)
-                        : getInitialLetter(user.username)}
-                    </AvatarFallback>
-                  </Avatar>
-                </CardHeader>
-                <CardContent className="px-6 pt-16 pb-6 space-y-4">
-                  <div className="flex justify-between items-center">
-                    <h3 className="font-bold text-xl text-gray-900">
-                      {user.type === "BUSINESS"
-                        ? user.companyName
-                        : user.username}
-                    </h3>
-                    <Badge className="bg-yellow-500 text-white font-medium">
+                <Card className="group border border-gray-100 shadow-md hover:shadow-2xl transition-all duration-300 rounded-2xl bg-white overflow-hidden cursor-pointer hover:-translate-y-1">
+                  {/* Header with gradient */}
+                  <CardHeader className="p-0 relative h-28">
+                    <div className="absolute inset-0 bg-gradient-to-br from-gray-800 via-gray-900 to-black"></div>
+                    {/* Decorative pattern */}
+                    <div className="absolute inset-0 opacity-10">
+                      <div className="absolute top-4 right-4 w-20 h-20 border-4 border-white/30 rounded-full"></div>
+                      <div className="absolute -bottom-6 -left-6 w-24 h-24 border-4 border-white/20 rounded-full"></div>
+                    </div>
+                    {/* Badge positioned on header */}
+                    <Badge className="absolute top-3 right-3 bg-yellow-500 text-black font-semibold px-3 py-1 text-xs">
                       {user.type === "BUSINESS"
                         ? "Business"
                         : user.creatorType.charAt(0) +
                           user.creatorType.slice(1).toLowerCase()}
                     </Badge>
+                  </CardHeader>
+
+                  {/* Avatar */}
+                  <div className="relative px-5">
+                    <Avatar className="w-20 h-20 absolute -top-10 ring-4 ring-white shadow-lg group-hover:scale-105 transition-transform duration-300">
+                      <AvatarImage
+                        src={user.image}
+                        alt={user.username}
+                        className="object-cover"
+                      />
+                      <AvatarFallback className="bg-yellow-500 text-black text-2xl font-bold">
+                        {user.type === "BUSINESS"
+                          ? getInitialLetter(user.companyName)
+                          : getInitialLetter(user.username)}
+                      </AvatarFallback>
+                    </Avatar>
                   </div>
-                  <p className="text-gray-700 text-sm">
-                    {user.type === "BUSINESS" ? user.industry : ""}
-                  </p>
-                  <div className="flex items-center gap-1 text-sm text-gray-600">
-                    <MapPin className="w-4 h-4 text-yellow-600" />
-                    {user.type === "BUSINESS"
-                      ? user.headquarters
-                      : user?.location ||
-                        user?.data?.personalInfo?.location ||
-                        "Location not specified"}
-                  </div>
-                  <Link
-                    href={
-                      user.type === "BUSINESS"
-                        ? `/profile/business/${user.username}`
-                        : `/profile/${
-                            user.username
-                          }/${user.creatorType?.toLowerCase()}`
-                    }
-                  >
-                    <Button className="w-full mt-3 bg-yellow-500 text-white hover:bg-yellow-600 transition-colors">
-                      <Eye className="w-4 h-4 mr-2" /> View Profile
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
+
+                  <CardContent className="px-5 pt-14 pb-5">
+                    {/* Name */}
+                    <h3 className="font-bold text-lg text-gray-900 group-hover:text-yellow-600 transition-colors truncate">
+                      {user.type === "BUSINESS" ? user.companyName : user.username}
+                    </h3>
+
+                    {/* Industry for business */}
+                    {user.type === "BUSINESS" && user.industry && (
+                      <p className="text-gray-500 text-sm mt-1">{user.industry}</p>
+                    )}
+
+                    {/* Location */}
+                    <div className="flex items-center gap-1.5 text-sm text-gray-500 mt-2">
+                      <MapPin className="w-3.5 h-3.5 text-yellow-500 shrink-0" />
+                      <span className="truncate">
+                        {user.type === "BUSINESS"
+                          ? user.headquarters || "Location not specified"
+                          : user?.location ||
+                            user?.data?.personalInfo?.location ||
+                            "Location not specified"}
+                      </span>
+                    </div>
+
+                    {/* View Profile Button */}
+                    <div className="mt-4 pt-4 border-t border-gray-100">
+                      <div className="flex items-center justify-center gap-2 text-sm font-medium text-yellow-600 group-hover:text-yellow-700 transition-colors">
+                        <Eye className="w-4 h-4" />
+                        <span>View Profile</span>
+                        <svg
+                          className="w-4 h-4 group-hover:translate-x-1 transition-transform"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
             ))}
           </div>
         </div>

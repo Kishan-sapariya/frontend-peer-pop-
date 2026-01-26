@@ -9,6 +9,8 @@ export const useConversationStore = create((set, get) => ({
   conversations: [],
   messages: [],
   activeConversation: null,
+  publicUsers: [],
+  publicUsersLoading: false,
   loading: false,
   error: null,
 
@@ -201,4 +203,29 @@ export const useConversationStore = create((set, get) => ({
     const { conversations } = get();
     return conversations.filter((c) => (c.unreadCount || 0) > 0).length;
   },
+
+  getPublicUsersForChat: async (search = "") => {
+    try {
+      set({ publicUsersLoading: true, error: null });
+      const res = await axios.get(`${API_URL}/conversation/public-users`, {
+        params: { search, limit: 20 },
+      });
+
+      set({
+        publicUsers: res.data.users,
+        publicUsersLoading: false,
+      });
+
+      return res.data.users;
+    } catch (err) {
+      console.error("Failed to fetch public users:", err);
+      set({
+        error: err.response?.data?.message || "Failed to fetch public users",
+        publicUsersLoading: false,
+      });
+      return [];
+    }
+  },
+
+  clearPublicUsers: () => set({ publicUsers: [], publicUsersLoading: false }),
 }));

@@ -11,6 +11,7 @@ import { useAuthStore } from "../../store/useAuthStore";
 import { useRouter } from "next/navigation";
 import { Search, MessageSquare, PlusCircle } from "lucide-react";
 import Link from "next/link";
+import { NewChatModal } from "@/component/conversations/NewChatModal";
 
 export default function ConversationsPage() {
   const { user } = useAuthStore();
@@ -18,6 +19,7 @@ export default function ConversationsPage() {
     useConversationStore();
 
   const [searchTerm, setSearchTerm] = useState("");
+  const [isNewChatModalOpen, setIsNewChatModalOpen] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -151,11 +153,12 @@ export default function ConversationsPage() {
                     : "Start a new conversation to see it here."}
                 </p>
                 {!searchTerm && (
-                  <Link href="/connections">
-                    <Button className="bg-yellow-500 text-gray-900 hover:bg-yellow-600 shadow-lg transition-all font-semibold">
-                      <PlusCircle className="w-4 h-4 mr-2" /> Start a New Chat
-                    </Button>
-                  </Link>
+                  <Button
+                    onClick={() => setIsNewChatModalOpen(true)}
+                    className="bg-yellow-500 text-gray-900 hover:bg-yellow-600 shadow-lg transition-all font-semibold"
+                  >
+                    <PlusCircle className="w-4 h-4 mr-2" /> Start a New Chat
+                  </Button>
                 )}
               </CardContent>
             </Card>
@@ -250,6 +253,22 @@ export default function ConversationsPage() {
             })
           )}
         </div>
+
+        <NewChatModal
+          open={isNewChatModalOpen}
+          onOpenChange={setIsNewChatModalOpen}
+        />
+
+        {/* Floating Action Button for New Chat */}
+        {filteredConversations.length > 0 && (
+          <Button
+            onClick={() => setIsNewChatModalOpen(true)}
+            className="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-yellow-500 hover:bg-yellow-600 text-gray-900 shadow-lg hover:shadow-xl transition-all hover:scale-105 p-0"
+            aria-label="Start new chat"
+          >
+            <PlusCircle className="w-6 h-6" />
+          </Button>
+        )}
       </div>
     </div>
   );

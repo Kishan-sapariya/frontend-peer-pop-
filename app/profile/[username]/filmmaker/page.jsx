@@ -120,15 +120,15 @@ export default function FilmmakerProfile() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Cover Image */}
-      <div className="relative h-64 bg-gradient-to-r from-gray-900 via-purple-900 to-black">
+    <div className="min-h-screen bg-gray-100 -mt-16">
+      {/* Cover Image - extends behind navbar */}
+      <div className="relative h-72 bg-gradient-to-r from-gray-900 via-purple-900 to-black">
         <img
           src={profileData?.coverImage || "/placeholder.svg"}
           alt="Cover"
-          className="w-full h-full object-cover opacity-60"
+          className="absolute inset-0 w-full h-full object-cover opacity-60"
         />
-        <div className="absolute inset-0 bg-black bg-opacity-40" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 -mt-20 relative z-10">

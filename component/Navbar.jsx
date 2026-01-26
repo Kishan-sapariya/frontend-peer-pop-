@@ -7,7 +7,6 @@ import {
   Menu,
   LogOut,
   ChevronDown,
-  ChevronUp,
   User,
   Users,
   MessageCircle,
@@ -16,9 +15,10 @@ import {
   LayoutGrid,
   ShieldCheck,
   Home,
-  Info, // Added for About
-  Zap, // Added for How it Works
-  Lightbulb, // Added for Opportunities
+  Info,
+  Zap,
+  Lightbulb,
+  Search,
 } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useRouter } from "next/navigation";
@@ -72,10 +72,10 @@ const Navbar = () => {
     <Link href={href}>
       <Button
         variant="ghost"
-        className="relative text-black hover:bg-yellow-600/20"
+        className="relative text-black/80 hover:text-black hover:bg-black/10 transition-all duration-200 rounded-lg"
       >
-        <Icon className="h-5 w-5 mr-1 text-black" />
-        <span className="hidden lg:inline">{children}</span>
+        <Icon className="h-5 w-5 mr-1" />
+        <span className="hidden lg:inline font-medium">{children}</span>
 
         {badgeCount > 0 && (
           <span
@@ -95,7 +95,7 @@ const Navbar = () => {
       <Button
         variant="ghost"
         onClick={() => setIsPopoverOpen(false)}
-        className="w-full justify-start text-zinc-700 hover:text-black"
+        className="w-full justify-start text-zinc-600 hover:text-black hover:bg-yellow-50 transition-all duration-200"
       >
         <Icon className="mr-2 h-4 w-4" /> {children}
         {badgeCount > 0 && (
@@ -108,21 +108,21 @@ const Navbar = () => {
   );
 
   return (
-    <header className="sticky top-4 z-50 w-full flex justify-center">
-      <div className="max-w-7xl w-[95%] bg-yellow-500 rounded-2xl shadow-[0_4px_20px_rgba(234,179,8,0.25)] border border-yellow-600/40 px-4 sm:px-6 py-3 flex items-center justify-between">
+    <header className="fixed top-0 left-0 right-0 z-50 flex justify-center p-2 sm:p-3">
+      <div className="max-w-7xl w-[98%] sm:w-[95%] bg-yellow-500 backdrop-blur-sm rounded-xl sm:rounded-2xl shadow-lg shadow-black/10 px-3 sm:px-6 py-2 sm:py-2.5 flex items-center justify-between gap-2">
         {/* Logo Section */}
-        <div className="flex items-center gap-3">
-          <Link href={user ? "/feed" : "/"} className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+          <Link href={user ? "/feed" : "/"} className="flex items-center gap-2 shrink-0">
             <div className="bg-black rounded-md">
               <Image
                 src="/logo.png"
                 alt="Peerpop Logo"
-                width={42}
-                height={42}
-                className="rounded-lg"
+                width={36}
+                height={36}
+                className="rounded-lg sm:w-[42px] sm:h-[42px]"
               />
             </div>
-            <h1 className="text-xl font-bold text-black hidden sm:block">
+            <h1 className="text-lg sm:text-xl font-bold text-black hidden sm:block">
               Peerpop
             </h1>
           </Link>
@@ -145,7 +145,7 @@ const Navbar = () => {
         )}
 
         {/* Right Section */}
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-1 sm:gap-2">
           {isAuthenticated ? (
             <>
               <div className="hidden md:flex items-center space-x-1">
@@ -175,9 +175,9 @@ const Navbar = () => {
                 <PopoverTrigger asChild>
                   <Button
                     variant="ghost"
-                    className="rounded-full p-1 flex items-center hover:bg-yellow-200/50"
+                    className="group rounded-lg sm:rounded-xl px-1 sm:px-2 py-1 sm:py-1.5 flex items-center gap-1 sm:gap-2 bg-transparent sm:bg-black/5 hover:bg-black/10 sm:hover:bg-black/15 border-none sm:border sm:border-transparent sm:hover:border-black/10 transition-all duration-300 ease-out"
                   >
-                    <Avatar className="h-9 w-9">
+                    <Avatar className="h-7 w-7 sm:h-8 sm:w-8 ring-0 sm:ring-2 sm:ring-black/20 sm:group-hover:ring-black/40 transition-all duration-300">
                       {user?.image ? (
                         <AvatarImage
                           src={user.image}
@@ -185,25 +185,43 @@ const Navbar = () => {
                           className="object-cover"
                         />
                       ) : (
-                        <AvatarFallback className="bg-black text-white">
+                        <AvatarFallback className="bg-black text-yellow-500 font-semibold text-xs sm:text-sm">
                           {getInitialLetter(user.username)}
                         </AvatarFallback>
                       )}
                     </Avatar>
-                    <span className="hidden lg:inline ml-2 font-medium text-black">
+                    <span className="hidden lg:inline font-medium text-black/80 group-hover:text-black transition-colors duration-200">
                       {capitalizeInitials(user.username)}
                     </span>
-                    {isPopoverOpen ? (
-                      <ChevronUp className="ml-1 h-4 w-4" />
-                    ) : (
-                      <ChevronDown className="ml-1 h-4 w-4" />
-                    )}
+                    <ChevronDown className={`h-3 w-3 sm:h-4 sm:w-4 text-black/60 group-hover:text-black transition-all duration-300 ${isPopoverOpen ? 'rotate-180' : 'rotate-0'}`} />
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent
                   align="end"
                   className="w-56 rounded-lg border bg-white shadow-xl p-2"
                 >
+                  {/* Mobile-only nav links */}
+                  <div className="md:hidden">
+                    <PopoverLinkItem href="/feed" icon={HomeIcon}>
+                      Home
+                    </PopoverLinkItem>
+                    <PopoverLinkItem
+                      href="/connections"
+                      icon={Users}
+                      badgeCount={pendingCount}
+                    >
+                      Peers
+                    </PopoverLinkItem>
+                    <PopoverLinkItem
+                      href="/conversations"
+                      icon={MessageCircle}
+                      badgeCount={unreadConversations}
+                    >
+                      Messages
+                    </PopoverLinkItem>
+                    <div className="border-t my-2"></div>
+                  </div>
+
                   <PopoverLinkItem href="/groups" icon={LayoutGrid}>
                     Groups
                   </PopoverLinkItem>
@@ -222,20 +240,6 @@ const Navbar = () => {
                     Profile
                   </PopoverLinkItem>
 
-                  {/* Mobile-only links inside the profile popover when logged in */}
-                  <div className="md:hidden">
-                    <div className="border-t my-2"></div>
-                    <PopoverLinkItem href="/about" icon={Info}>
-                      About
-                    </PopoverLinkItem>
-                    <PopoverLinkItem href="/how-it-works" icon={Zap}>
-                      How it Works
-                    </PopoverLinkItem>
-                    <PopoverLinkItem href="/opportunities" icon={Lightbulb}>
-                      Opportunities
-                    </PopoverLinkItem>
-                  </div>
-
                   {user?.isAdmin && (
                     <PopoverLinkItem href="/admin" icon={ShieldCheck}>
                       Admin
@@ -245,7 +249,7 @@ const Navbar = () => {
                   <div className="border-t mt-2 pt-2">
                     <Button
                       onClick={handleLogout}
-                      className="w-full bg-red-50 hover:bg-red-100 text-red-600"
+                      className="w-full bg-red-50 hover:bg-red-100 text-red-600 transition-all duration-200"
                     >
                       <LogOut className="mr-2 h-4 w-4" /> Logout
                     </Button>
@@ -254,11 +258,11 @@ const Navbar = () => {
               </Popover>
             </>
           ) : (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 sm:gap-2">
               <Link href="/home" className="hidden sm:block">
                 <Button
                   variant="ghost"
-                  className="text-black hover:bg-yellow-200/50 font-medium text-sm px-3 sm:px-4"
+                  className="text-black/80 hover:text-black hover:bg-black/10 font-medium text-sm px-3 sm:px-4 transition-all duration-200"
                 >
                   <Home className="h-4 w-4 mr-1" /> Home
                 </Button>
@@ -267,14 +271,17 @@ const Navbar = () => {
               {/* Mobile Menu for Guest Users */}
               <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
                 <PopoverTrigger asChild>
-                  <Button variant="ghost" className="md:hidden p-1 h-9 w-9">
-                    <Menu className="h-6 w-6 text-black" />
+                  <Button variant="ghost" className="md:hidden p-1 h-8 w-8 sm:h-9 sm:w-9 hover:bg-black/10 transition-all duration-200">
+                    <Menu className="h-5 w-5 sm:h-6 sm:w-6 text-black" />
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent
                   align="end"
                   className="w-52 bg-white rounded-lg shadow-xl p-2"
                 >
+                  <PopoverLinkItem href="/home" icon={Home}>
+                    Home
+                  </PopoverLinkItem>
                   <PopoverLinkItem href="/about" icon={Info}>
                     About
                   </PopoverLinkItem>
@@ -288,11 +295,16 @@ const Navbar = () => {
                   <PopoverLinkItem href="/business/login" icon={Briefcase}>
                     Business Login
                   </PopoverLinkItem>
+                  <Link href="/login" className="block mt-2">
+                    <Button className="w-full bg-black text-yellow-500 hover:bg-zinc-800 transition-all duration-200">
+                      Login
+                    </Button>
+                  </Link>
                 </PopoverContent>
               </Popover>
 
               <Link href="/login" className="hidden sm:block">
-                <Button className="bg-black text-yellow-500 hover:bg-zinc-800">
+                <Button className="bg-black text-yellow-500 hover:bg-zinc-800 hover:scale-105 transition-all duration-200 shadow-md">
                   Login
                 </Button>
               </Link>

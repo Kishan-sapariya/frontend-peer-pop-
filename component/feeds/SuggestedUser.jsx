@@ -12,6 +12,7 @@ import {
   capitalizeInitials,
   getCompletionCateogryStyle,
 } from "@/utils/formatDate";
+import Link from "next/link";
 
 const SuggestedUserSkeleton = () => (
   <div className="p-4 space-y-3 animate-pulse">
@@ -100,13 +101,20 @@ const SuggestedUsers = () => {
           const isSending = sendingRequests[user.id];
           const isSent = sentRequests[user.id];
 
+          const profileLink = user.creatorType
+            ? `/profile/${user.username}/${user.creatorType.toLowerCase()}`
+            : `/profile/business/${user.username}`;
+
           return (
             <div
               key={user.id}
               className="p-4 space-y-3 transition duration-150 ease-in-out"
             >
-              <div className="flex items-start gap-3">
-                <Avatar className="w-12 h-12 shrink-0">
+              <Link
+                href={profileLink}
+                className="flex items-start gap-3 group"
+              >
+                <Avatar className="w-12 h-12 shrink-0 transition-transform duration-200 group-hover:scale-105">
                   {user.image ? (
                     <AvatarImage
                       src={user.image}
@@ -122,7 +130,7 @@ const SuggestedUsers = () => {
 
                 <div className="flex flex-col pt-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <p className="font-semibold text-gray-900 truncate">
+                    <p className="font-semibold text-gray-900 truncate group-hover:text-yellow-600 transition-colors duration-200">
                       {capitalizeInitials(user.username)}
                     </p>
                     {user.completion?.category && (
@@ -133,13 +141,13 @@ const SuggestedUsers = () => {
                       </Badge>
                     )}
                   </div>
-                  <p className="text-sm text-gray-700 truncate mt-0.5">
+                  <p className="text-sm text-gray-500 truncate mt-0.5">
                     {user.creatorType
                       ? capitalizeInitials(user.creatorType.toLowerCase())
                       : "Business Account"}
                   </p>
                 </div>
-              </div>
+              </Link>
 
               <Button
                 size="lg"

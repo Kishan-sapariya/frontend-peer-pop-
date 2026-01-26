@@ -14,9 +14,11 @@ export default function ClientLayout({ children }) {
 
   return (
     <>
-      <Toaster position="top-center" reverseOrder={false} /> 
+      <Toaster position="top-center" reverseOrder={false} />
       <Navbar />
-      {children}
+      <div className="pt-16">
+        {children}
+      </div>
     </>
   );
 }

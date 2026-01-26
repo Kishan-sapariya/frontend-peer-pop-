@@ -149,15 +149,17 @@ export default function BusinessProfilePage() {
   }
   const isOwnProfile = business.userProfileId === user?.id;
   return (
-    <div className="min-h-screen bg-gray-50 relative">
-      <div className="relative h-64 bg-black">
+    <div className="min-h-screen bg-gray-100 relative -mt-16">
+      {/* Cover Image - extends behind navbar */}
+      <div className="relative h-72 bg-gradient-to-b from-gray-900 to-gray-800">
         <img
           src={
             isOwnProfile ? user?.coverImage : businessProfileDetails?.coverImage
           }
           alt="Cover"
-          className="w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-cover"
         />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
       </div>
       <div className="max-w-7xl mx-auto px-4 -mt-20 relative z-10">
         <Card className="mb-6 shadow-lg">

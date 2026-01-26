@@ -93,7 +93,7 @@ export default function HomeFeed() {
     <div className="min-h-screen bg-gray-100">
       <div className="max-w-7xl mx-auto px-4 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          <div className="lg:sticky lg:top-25 lg:self-start">
+          <div className="lg:sticky lg:top-20 lg:self-start">
             <UserDetailsCard />
           </div>
 

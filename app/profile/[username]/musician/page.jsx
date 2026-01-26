@@ -66,15 +66,15 @@ export default function profileDataProfile() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Cover Image */}
-      <div className="relative h-64 bg-gradient-to-r from-purple-600 via-blue-600 to-green-500">
+    <div className="min-h-screen bg-gray-100 -mt-16">
+      {/* Cover Image - extends behind navbar */}
+      <div className="relative h-72 bg-gradient-to-r from-purple-600 via-blue-600 to-green-500">
         <img
           src={profileData.coverImage || "/placeholder.svg"}
           alt="Cover"
-          className="w-full h-full object-cover opacity-70"
+          className="absolute inset-0 w-full h-full object-cover opacity-70"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
       </div>
 
       <div className="max-w-6xl mx-auto px-4 -mt-20 relative z-10">
