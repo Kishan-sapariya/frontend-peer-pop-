@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,7 +18,6 @@ import {
   Info,
   Zap,
   Lightbulb,
-  Search,
 } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useRouter } from "next/navigation";
@@ -39,21 +38,41 @@ import Image from "next/image";
 
 const Navbar = () => {
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
-  const { isAuthenticated, user, logout } = useAuthStore();
   const router = useRouter();
+  const hasInitialized = useRef(false);
+
+  // Use specific selectors to avoid unnecessary re-renders
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const user = useAuthStore((state) => state.user);
+  const logout = useAuthStore((state) => state.logout);
+
   const getConnections = useConnectionStore((s) => s.getConnections);
-  const listenForSocketEvents = useConnectionStore(
-    (s) => s.listenForSocketEvents
-  );
-  const pendingCount = useConnectionStore((s) => s.getPendingCount());
-  const unreadConversations = useConversationStore((state) =>
-    state.getUnreadConversationCount()
-  );
+  const listenForSocketEvents = useConnectionStore((s) => s.listenForSocketEvents);
+  const connections = useConnectionStore((s) => s.connections);
+  const conversations = useConversationStore((state) => state.conversations);
+
+  // Compute counts from state instead of calling methods (avoids re-renders)
+  const pendingCount = useMemo(() => {
+    if (!connections || !user) return 0;
+    return connections.filter(
+      (c) => c.status === "PENDING" && c.receiverId === user.id
+    ).length;
+  }, [connections, user]);
+
+  const unreadConversations = useMemo(() => {
+    return conversations?.filter((c) => c.unreadCount > 0)?.length || 0;
+  }, [conversations]);
 
   useEffect(() => {
-    if (isAuthenticated) {
+    // Only initialize once when authenticated
+    if (isAuthenticated && !hasInitialized.current) {
+      hasInitialized.current = true;
       getConnections();
       listenForSocketEvents();
+    }
+    // Reset when logged out
+    if (!isAuthenticated) {
+      hasInitialized.current = false;
     }
   }, [isAuthenticated, getConnections, listenForSocketEvents]);
 

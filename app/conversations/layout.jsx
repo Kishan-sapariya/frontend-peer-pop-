@@ -79,7 +79,7 @@ function ConversationsSidebar({ onConversationSelect, selectedConversationId }) 
   return (
     <div className="flex flex-col h-full bg-white">
       {/* Header */}
-      <div className="flex-shrink-0 p-4 border-b border-gray-100">
+      <div className="flex-shrink-0 p-4 pt-2 border-b border-gray-100">
         <div className="flex items-center justify-between mb-4">
           <h1 className="text-xl font-bold text-gray-900">Messages</h1>
           <Button
@@ -214,7 +214,7 @@ export default function ConversationsLayout({ children }) {
   const conversationId = pathname.split("/").pop();
 
   return (
-    <div className="h-[calc(100dvh-64px)] flex bg-gray-100">
+    <div className="fixed inset-0 top-20 flex bg-gray-100">
       {/* Sidebar - Hidden on mobile when in a chat, always visible on desktop */}
       <aside
         className={`

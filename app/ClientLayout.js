@@ -1,16 +1,22 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useAuthStore } from "@/store/useAuthStore";
 import { Toaster } from "react-hot-toast";
-import Navbar from "@/component/Navbar"; 
+import Navbar from "@/component/Navbar";
 
 export default function ClientLayout({ children }) {
-  const { getCurrentUser } = useAuthStore();
+  const getCurrentUser = useAuthStore((state) => state.getCurrentUser);
+  const isInitialized = useAuthStore((state) => state.isInitialized);
+  const hasInitialized = useRef(false);
 
   useEffect(() => {
-    getCurrentUser();
-  }, [getCurrentUser]);
+    // Only fetch user once on app mount, not on every navigation
+    if (!hasInitialized.current && !isInitialized) {
+      hasInitialized.current = true;
+      getCurrentUser();
+    }
+  }, [getCurrentUser, isInitialized]);
 
   return (
     <>

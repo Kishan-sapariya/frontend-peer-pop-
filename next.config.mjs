@@ -8,8 +8,12 @@ const nextConfig = {
         port: '',
         pathname: '/**',
       },
-      // If you are getting images from other Google subdomains, 
-      // you can add a generic pattern or specific ones like:
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+        port: '',
+        pathname: '/**',
+      },
       {
         protocol: 'http',
         hostname: 'googleusercontent.com',
@@ -17,6 +21,11 @@ const nextConfig = {
         pathname: '/**',
       },
     ],
+  },
+  // Optimize compilation
+  reactStrictMode: false, // Disable double-renders in dev
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production',
   },
 };
 

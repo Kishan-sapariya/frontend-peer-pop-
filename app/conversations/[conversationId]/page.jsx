@@ -174,6 +174,16 @@ const ChatPage = () => {
     );
   }
 
+  // Get profile link for the other user
+  const getProfileLink = () => {
+    if (!otherUser) return "/";
+    const userType = otherUser?.type;
+    if (userType === "BUSINESS") {
+      return `/profile/business/${otherUser?.username}`;
+    }
+    return `/profile/${otherUser?.username}/${otherUser?.creatorType?.toLowerCase() || "creator"}`;
+  };
+
   return (
     <div className="flex flex-col h-full bg-white">
       {/* Chat Header */}
@@ -189,20 +199,25 @@ const ChatPage = () => {
             <ArrowLeft className="w-5 h-5" />
           </Button>
 
-          <Avatar className="h-10 w-10 border-2 border-yellow-400">
-            <AvatarImage src={otherUser.image} alt={otherUser.username} className="object-cover" />
-            <AvatarFallback className="bg-yellow-400 text-gray-900 font-semibold">
-              {otherUser.username?.charAt(0).toUpperCase() || "?"}
-            </AvatarFallback>
-          </Avatar>
+          <div
+            className="flex items-center gap-3 flex-1 min-w-0 cursor-pointer hover:opacity-80 transition-opacity"
+            onClick={() => router.push(getProfileLink())}
+          >
+            <Avatar className="h-10 w-10 border-2 border-yellow-400">
+              <AvatarImage src={otherUser.image} alt={otherUser.username} className="object-cover" />
+              <AvatarFallback className="bg-yellow-400 text-gray-900 font-semibold">
+                {otherUser.username?.charAt(0).toUpperCase() || "?"}
+              </AvatarFallback>
+            </Avatar>
 
-          <div className="flex-1 min-w-0">
-            <h2 className="text-base font-semibold text-gray-900 truncate">
-              {otherUser.username}
-            </h2>
-            <p className="text-xs text-gray-500 truncate">
-              {otherUser.displayName || "Tap to view profile"}
-            </p>
+            <div className="flex-1 min-w-0">
+              <h2 className="text-base font-semibold text-gray-900 truncate">
+                {otherUser.username}
+              </h2>
+              <p className="text-xs text-gray-500 truncate">
+                Tap to view profile
+              </p>
+            </div>
           </div>
 
           <Button
@@ -217,7 +232,7 @@ const ChatPage = () => {
 
       {/* Messages Container */}
       <main ref={messagesContainerRef} className="flex-1 overflow-y-auto bg-gray-50 chat-messages">
-        <div className="max-w-3xl mx-auto px-4 py-6">
+        <div className="py-4">
           {isLoading ? (
             <div className="flex items-center justify-center min-h-[50vh]">
               <LoadingSpinner />
@@ -240,7 +255,7 @@ const ChatPage = () => {
               </p>
             </div>
           ) : (
-            <div className="space-y-6">
+            <div className="space-y-4">
               {Object.entries(groupedMessages).map(([date, dateMessages]) => (
                 <div key={date}>
                   {/* Date Separator */}
@@ -251,7 +266,7 @@ const ChatPage = () => {
                   </div>
 
                   {/* Messages */}
-                  <div className="space-y-2">
+                  <div className="space-y-1">
                     {dateMessages.map((msg, index) => {
                       const isFromCurrentUser = msg.senderId === currentUser?.id;
                       const sender = isFromCurrentUser ? currentUser : otherUser;
@@ -262,18 +277,18 @@ const ChatPage = () => {
                       return (
                         <div
                           key={msg.id}
-                          className={`flex ${isFromCurrentUser ? "justify-end" : "justify-start"}`}
+                          className={`flex w-full px-3 ${isFromCurrentUser ? "justify-end" : "justify-start"}`}
                         >
                           <div
-                            className={`flex items-end gap-2 max-w-[80%] sm:max-w-[65%] ${
+                            className={`flex items-end gap-2 max-w-[85%] md:max-w-[70%] ${
                               isFromCurrentUser ? "flex-row-reverse" : "flex-row"
                             }`}
                           >
                             {/* Avatar */}
                             {!isFromCurrentUser && (
-                              <div className="w-7 flex-shrink-0 mb-5">
+                              <div className="w-8 flex-shrink-0 mb-5">
                                 {showAvatar && (
-                                  <Avatar className="h-7 w-7">
+                                  <Avatar className="h-8 w-8">
                                     <AvatarImage src={sender.image} alt={sender.username} className="object-cover" />
                                     <AvatarFallback className="bg-gray-300 text-gray-700 text-xs">
                                       {sender.username?.charAt(0).toUpperCase() || "?"}
@@ -353,91 +368,87 @@ const ChatPage = () => {
 
       {/* File Preview */}
       {selectedFile && (
-        <div className="flex-shrink-0 bg-white border-t border-gray-200 px-4 py-3">
-          <div className="max-w-3xl mx-auto">
-            <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
-              <div className="relative flex-shrink-0">
-                {isImageFile(selectedFile) && filePreview ? (
-                  <img src={filePreview} alt="Preview" className="w-12 h-12 object-cover rounded-lg" />
-                ) : isVideoFile(selectedFile) && filePreview ? (
-                  <video src={filePreview} className="w-12 h-12 object-cover rounded-lg" muted />
-                ) : (
-                  <div className="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center">
-                    <File className="w-5 h-5 text-gray-500" />
-                  </div>
-                )}
-                <button
-                  onClick={removeFilePreview}
-                  className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-gray-800 text-white rounded-full flex items-center justify-center hover:bg-gray-900 transition-colors"
-                >
-                  <X className="w-3 h-3" />
-                </button>
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900 truncate">{selectedFile.name}</p>
-                <p className="text-xs text-gray-500">{getFileSize(selectedFile.size)}</p>
-              </div>
+        <div className="flex-shrink-0 bg-white border-t border-gray-200 px-3 py-3">
+          <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+            <div className="relative flex-shrink-0">
+              {isImageFile(selectedFile) && filePreview ? (
+                <img src={filePreview} alt="Preview" className="w-12 h-12 object-cover rounded-lg" />
+              ) : isVideoFile(selectedFile) && filePreview ? (
+                <video src={filePreview} className="w-12 h-12 object-cover rounded-lg" muted />
+              ) : (
+                <div className="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center">
+                  <File className="w-5 h-5 text-gray-500" />
+                </div>
+              )}
+              <button
+                onClick={removeFilePreview}
+                className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-gray-800 text-white rounded-full flex items-center justify-center hover:bg-gray-900 transition-colors"
+              >
+                <X className="w-3 h-3" />
+              </button>
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-gray-900 truncate">{selectedFile.name}</p>
+              <p className="text-xs text-gray-500">{getFileSize(selectedFile.size)}</p>
             </div>
           </div>
         </div>
       )}
 
       {/* Input Area */}
-      <div className="flex-shrink-0 bg-white border-t border-gray-200 px-4 py-3 safe-area-inset-bottom">
-        <div className="max-w-3xl mx-auto">
-          <div className="flex items-end gap-3">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => fileInputRef.current?.click()}
-              className="h-10 w-10 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-full flex-shrink-0"
-              disabled={isSending}
-            >
-              <Paperclip className="w-5 h-5" />
-            </Button>
+      <div className="flex-shrink-0 bg-white border-t border-gray-200 px-3 py-3 safe-area-inset-bottom">
+        <div className="flex items-end gap-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => fileInputRef.current?.click()}
+            className="h-10 w-10 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-full flex-shrink-0"
+            disabled={isSending}
+          >
+            <Paperclip className="w-5 h-5" />
+          </Button>
 
-            <div className="flex-1">
-              <textarea
-                ref={inputRef}
-                placeholder="Type a message..."
-                value={messageInput}
-                onChange={(e) => {
-                  setMessageInput(e.target.value);
-                  e.target.style.height = "auto";
-                  e.target.style.height = Math.min(e.target.scrollHeight, 100) + "px";
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) {
-                    e.preventDefault();
-                    handleSendMessage();
-                  }
-                }}
-                disabled={isSending}
-                rows={1}
-                className="w-full px-4 py-2.5 text-[15px] bg-gray-100 border border-gray-200 rounded-2xl resize-none focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400 transition-all placeholder:text-gray-400 disabled:opacity-50"
-                style={{ minHeight: "44px", maxHeight: "100px" }}
-              />
-            </div>
-
-            <Button
-              onClick={handleSendMessage}
-              disabled={(!messageInput.trim() && !selectedFile) || isSending}
-              size="icon"
-              className={`
-                h-10 w-10 rounded-full flex-shrink-0 transition-all duration-200
-                ${(!messageInput.trim() && !selectedFile) || isSending
-                  ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                  : "bg-yellow-400 text-gray-900 hover:bg-yellow-500 active:scale-95"
+          <div className="flex-1">
+            <textarea
+              ref={inputRef}
+              placeholder="Type a message..."
+              value={messageInput}
+              onChange={(e) => {
+                setMessageInput(e.target.value);
+                e.target.style.height = "auto";
+                e.target.style.height = Math.min(e.target.scrollHeight, 100) + "px";
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSendMessage();
                 }
-              `}
-            >
-              {isSending ? (
-                <div className="w-5 h-5 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
-              ) : (
-                <Send className="w-5 h-5" />
-              )}
-            </Button>
+              }}
+              disabled={isSending}
+              rows={1}
+              className="w-full px-4 py-2.5 text-[15px] bg-gray-100 border border-gray-200 rounded-2xl resize-none focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400 transition-all placeholder:text-gray-400 disabled:opacity-50"
+              style={{ minHeight: "44px", maxHeight: "100px" }}
+            />
           </div>
+
+          <Button
+            onClick={handleSendMessage}
+            disabled={(!messageInput.trim() && !selectedFile) || isSending}
+            size="icon"
+            className={`
+              h-10 w-10 rounded-full flex-shrink-0 transition-all duration-200
+              ${(!messageInput.trim() && !selectedFile) || isSending
+                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                : "bg-yellow-400 text-gray-900 hover:bg-yellow-500 active:scale-95"
+              }
+            `}
+          >
+            {isSending ? (
+              <div className="w-5 h-5 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
+            ) : (
+              <Send className="w-5 h-5" />
+            )}
+          </Button>
         </div>
 
         <input
