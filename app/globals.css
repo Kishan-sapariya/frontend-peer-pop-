@@ -161,3 +161,37 @@ body {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* Safe area support for iOS devices */
+.safe-area-inset-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+/* Chat scrollbar styling */
+.chat-messages::-webkit-scrollbar {
+  width: 4px;
+}
+.chat-messages::-webkit-scrollbar-track {
+  background: transparent;
+}
+.chat-messages::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 2px;
+}
+.chat-messages::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* Smooth scroll for chat */
+@supports (scroll-behavior: smooth) {
+  .scroll-smooth {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Fix for 100dvh on mobile browsers */
+@supports (height: 100dvh) {
+  .h-screen-safe {
+    height: 100dvh;
+  }
+}

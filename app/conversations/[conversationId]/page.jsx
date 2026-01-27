@@ -1,25 +1,24 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { useConversationStore } from "@/store/useConversationStore";
 import { useParams, useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/useAuthStore";
 import LoadingSpinner from "@/component/LoadingSpinner";
 import socket from "@/lib/socket";
-import { ArrowLeft, Paperclip, Send, X, File } from "lucide-react";
+import { ArrowLeft, Paperclip, Send, X, File, MoreVertical } from "lucide-react";
 
-const MessagesArea = () => {
+const ChatPage = () => {
   const [messageInput, setMessageInput] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
   const [filePreview, setFilePreview] = useState(null);
   const [isSending, setIsSending] = useState(false);
   const messagesEndRef = useRef(null);
+  const messagesContainerRef = useRef(null);
   const fileInputRef = useRef(null);
+  const inputRef = useRef(null);
   const router = useRouter();
   const { user: currentUser } = useAuthStore();
   const {
@@ -33,12 +32,16 @@ const MessagesArea = () => {
   } = useConversationStore();
   const { conversationId } = useParams();
 
-  const currentConversation = conversations?.find(
-    (c) => c.id === conversationId
-  );
+  const currentConversation = conversations?.find((c) => c.id === conversationId);
   const otherUser = currentConversation?.participants?.find(
     (p) => p.userId !== currentUser?.id
   )?.user;
+
+  const scrollToBottom = useCallback(() => {
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+    }
+  }, []);
 
   useEffect(() => {
     getAllConversation();
@@ -71,8 +74,13 @@ const MessagesArea = () => {
   }, [setMessages]);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+    scrollToBottom();
+  }, [messages, scrollToBottom]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => scrollToBottom(), 100);
+    return () => clearTimeout(timer);
+  }, [conversationId, isLoading, scrollToBottom]);
 
   const formatTime = (timestamp) =>
     new Date(timestamp).toLocaleTimeString("en-US", {
@@ -114,27 +122,15 @@ const MessagesArea = () => {
     const receiverId = otherUser?.id;
 
     try {
-      await sendMessage(
-        receiverId,
-        conversationId,
-        messageInput.trim() || null,
-        selectedFile
-      );
-
+      await sendMessage(receiverId, conversationId, messageInput.trim() || null, selectedFile);
       setMessageInput("");
       setSelectedFile(null);
       setFilePreview(null);
       if (fileInputRef.current) fileInputRef.current.value = null;
+      if (inputRef.current) inputRef.current.style.height = '44px';
     } catch (error) {
       console.error("Failed to send message:", error);
       setIsSending(false);
-    }
-  };
-
-  const handleKeyPress = (e) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSendMessage();
     }
   };
 
@@ -172,253 +168,288 @@ const MessagesArea = () => {
 
   if (!currentConversation || !otherUser) {
     return (
-      <div className="flex items-center justify-center h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50">
+      <div className="flex items-center justify-center h-full bg-gray-50">
         <LoadingSpinner />
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col h-screen bg-white font-sans">
-      {/* Header */}
-      <div className="fixed top-16 w-full z-10 bg-white shadow-sm p-3 sm:p-4">
+    <div className="flex flex-col h-full bg-white">
+      {/* Chat Header */}
+      <div className="flex-shrink-0 bg-white border-b border-gray-200 px-4 py-3">
         <div className="flex items-center gap-3">
+          {/* Back button - Only on mobile */}
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => router.back()}
-            className="p-2 text-gray-600 hover:bg-gray-100"
+            onClick={() => router.push("/conversations")}
+            className="md:hidden h-9 w-9 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full"
           >
             <ArrowLeft className="w-5 h-5" />
           </Button>
-          <Avatar className="h-10 w-10 sm:h-12 sm:w-12">
-            <AvatarImage
-              src={otherUser.image}
-              alt={otherUser.username}
-              className="object-cover"
-            />
-            <AvatarFallback className="bg-yellow-500 text-white">
+
+          <Avatar className="h-10 w-10 border-2 border-yellow-400">
+            <AvatarImage src={otherUser.image} alt={otherUser.username} className="object-cover" />
+            <AvatarFallback className="bg-yellow-400 text-gray-900 font-semibold">
               {otherUser.username?.charAt(0).toUpperCase() || "?"}
             </AvatarFallback>
           </Avatar>
+
           <div className="flex-1 min-w-0">
-            <h2 className="text-lg font-semibold text-gray-900 truncate">
+            <h2 className="text-base font-semibold text-gray-900 truncate">
               {otherUser.username}
             </h2>
+            <p className="text-xs text-gray-500 truncate">
+              {otherUser.displayName || "Tap to view profile"}
+            </p>
           </div>
+
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-9 w-9 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-full"
+          >
+            <MoreVertical className="w-5 h-5" />
+          </Button>
         </div>
       </div>
 
-      {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-3 sm:px-4 pt-24 pb-28 space-y-4">
-        {isLoading ? (
-          <div className="flex items-center justify-center w-full">
-            <LoadingSpinner />
-          </div>
-        ) : (
-          Object.entries(groupedMessages).map(([date, dateMessages]) => (
-            <div key={date}>
-              <div className="flex items-center justify-center my-4">
-                <Badge
-                  variant="secondary"
-                  className="bg-white/80 backdrop-blur-sm text-gray-600 border-gray-200"
-                >
-                  {date}
-                </Badge>
-              </div>
-              <div className="space-y-3">
-                {dateMessages.map((msg) => {
-                  const isFromCurrentUser = msg.senderId === currentUser?.id;
-                  const sender = isFromCurrentUser ? currentUser : otherUser;
-                  return (
-                    <div
-                      key={msg.id}
-                      className={`flex ${
-                        isFromCurrentUser ? "justify-end" : "justify-start"
-                      }`}
-                    >
-                      <div
-                        className={`flex items-end gap-2 max-w-[75%] ${
-                          isFromCurrentUser ? "flex-row-reverse" : "flex-row"
-                        }`}
-                      >
-                        {!isFromCurrentUser && (
-                          <Avatar className="h-8 w-8 flex-shrink-0">
-                            <AvatarImage
-                              src={sender.image}
-                              alt={sender.username}
-                              className="object-cover"
-                            />
-                            <AvatarFallback className="bg-gray-100 text-gray-600 text-xs">
-                              {sender.username?.charAt(0).toUpperCase() || "?"}
-                            </AvatarFallback>
-                          </Avatar>
-                        )}
-                        <div
-                          className={`flex flex-col ${
-                            isFromCurrentUser ? "items-end" : "items-start"
-                          }`}
-                        >
-                          <Card
-                            className={`
-                              p-3 rounded-2xl shadow-sm border-none
-                              ${
-                                isFromCurrentUser
-                                  ? "bg-gradient-to-r from-yellow-500 to-orange-300 text-white rounded-br-none"
-                                  : "bg-gray-100 shadow-md text-gray-900 rounded-bl-none"
-                              }
-                            `}
-                          >
-                            <CardContent className="p-0 space-y-2">
-                              {msg.content && (
-                                <p className="text-sm whitespace-pre-wrap">
-                                  {msg.content}
-                                </p>
-                              )}
-                              {msg.attachmentUrl && (
-                                <>
-                                  {msg.attachmentType?.startsWith("image/") ? (
-                                    <a
-                                      href={msg.attachmentUrl}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                    >
-                                      <img
-                                        src={msg.attachmentUrl}
-                                        alt="attachment"
-                                        className="max-w-xs rounded-lg shadow-md cursor-pointer"
-                                      />
-                                    </a>
-                                  ) : msg.attachmentType?.startsWith(
-                                      "video/"
-                                    ) ? (
-                                    <video
-                                      controls
-                                      className="max-w-xs rounded-lg shadow-md"
-                                      src={msg.attachmentUrl}
-                                    />
-                                  ) : (
-                                    <a
-                                      href={msg.attachmentUrl}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className={`
-                                        flex items-center gap-2 p-3 rounded-lg border
-                                        ${
-                                          isFromCurrentUser
-                                            ? "bg-yellow-600/30 text-white"
-                                            : "bg-gray-100 text-gray-800"
-                                        }
-                                      `}
-                                    >
-                                      <File className="w-5 h-5" />
-                                      <span className="text-sm font-medium">
-                                        Download File
-                                      </span>
-                                    </a>
-                                  )}
-                                </>
-                              )}
-                            </CardContent>
-                          </Card>
-                          <span className="text-xs text-gray-500 mt-1 px-1">
-                            {formatTime(msg.createdAt)}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+      {/* Messages Container */}
+      <main ref={messagesContainerRef} className="flex-1 overflow-y-auto bg-gray-50 chat-messages">
+        <div className="max-w-3xl mx-auto px-4 py-6">
+          {isLoading ? (
+            <div className="flex items-center justify-center min-h-[50vh]">
+              <LoadingSpinner />
             </div>
-          ))
-        )}
-        <div ref={messagesEndRef} />
-      </div>
+          ) : Object.keys(groupedMessages).length === 0 ? (
+            <div className="flex flex-col items-center justify-center min-h-[50vh] text-center px-4">
+              <div className="w-20 h-20 rounded-full bg-yellow-50 border-2 border-yellow-200 flex items-center justify-center mb-4">
+                <Avatar className="h-14 w-14">
+                  <AvatarImage src={otherUser.image} alt={otherUser.username} className="object-cover" />
+                  <AvatarFallback className="bg-yellow-400 text-gray-900 text-xl font-semibold">
+                    {otherUser.username?.charAt(0).toUpperCase() || "?"}
+                  </AvatarFallback>
+                </Avatar>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                Start chatting with {otherUser.username}
+              </h3>
+              <p className="text-sm text-gray-500 max-w-sm">
+                Send a message to begin your conversation.
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-6">
+              {Object.entries(groupedMessages).map(([date, dateMessages]) => (
+                <div key={date}>
+                  {/* Date Separator */}
+                  <div className="flex items-center justify-center my-4">
+                    <span className="px-3 py-1 bg-gray-200 text-gray-600 text-xs font-medium rounded-full">
+                      {date}
+                    </span>
+                  </div>
 
-      {/* File preview */}
-      {selectedFile && (
-        <div className="bg-white/80 backdrop-blur-sm border-t border-gray-200 p-3 fixed w-full bottom-20">
-          <div className="flex items-center gap-3 p-3 bg-gray-100 rounded-xl shadow-inner">
-            <div className="relative">
-              {isImageFile(selectedFile) && filePreview ? (
-                <img
-                  src={filePreview}
-                  alt="Preview"
-                  className="w-16 h-16 object-cover rounded-lg"
-                />
-              ) : isVideoFile(selectedFile) && filePreview ? (
-                <video
-                  src={filePreview}
-                  className="w-16 h-16 object-cover rounded-lg"
-                  muted
-                />
-              ) : (
-                <div className="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center text-gray-500">
-                  <File className="w-8 h-8" />
+                  {/* Messages */}
+                  <div className="space-y-2">
+                    {dateMessages.map((msg, index) => {
+                      const isFromCurrentUser = msg.senderId === currentUser?.id;
+                      const sender = isFromCurrentUser ? currentUser : otherUser;
+                      const showAvatar =
+                        !isFromCurrentUser &&
+                        (index === 0 || dateMessages[index - 1]?.senderId !== msg.senderId);
+
+                      return (
+                        <div
+                          key={msg.id}
+                          className={`flex ${isFromCurrentUser ? "justify-end" : "justify-start"}`}
+                        >
+                          <div
+                            className={`flex items-end gap-2 max-w-[80%] sm:max-w-[65%] ${
+                              isFromCurrentUser ? "flex-row-reverse" : "flex-row"
+                            }`}
+                          >
+                            {/* Avatar */}
+                            {!isFromCurrentUser && (
+                              <div className="w-7 flex-shrink-0 mb-5">
+                                {showAvatar && (
+                                  <Avatar className="h-7 w-7">
+                                    <AvatarImage src={sender.image} alt={sender.username} className="object-cover" />
+                                    <AvatarFallback className="bg-gray-300 text-gray-700 text-xs">
+                                      {sender.username?.charAt(0).toUpperCase() || "?"}
+                                    </AvatarFallback>
+                                  </Avatar>
+                                )}
+                              </div>
+                            )}
+
+                            {/* Message Bubble */}
+                            <div className={`flex flex-col ${isFromCurrentUser ? "items-end" : "items-start"}`}>
+                              <div
+                                className={`
+                                  px-4 py-2.5 rounded-2xl
+                                  ${isFromCurrentUser
+                                    ? "bg-yellow-400 text-gray-900 rounded-br-sm"
+                                    : "bg-white text-gray-900 rounded-bl-sm shadow-sm border border-gray-100"
+                                  }
+                                `}
+                              >
+                                {msg.content && (
+                                  <p className="text-[15px] leading-relaxed whitespace-pre-wrap break-words">
+                                    {msg.content}
+                                  </p>
+                                )}
+
+                                {msg.attachmentUrl && (
+                                  <div className={msg.content ? "mt-2" : ""}>
+                                    {msg.attachmentType?.startsWith("image/") ? (
+                                      <a href={msg.attachmentUrl} target="_blank" rel="noopener noreferrer" className="block">
+                                        <img
+                                          src={msg.attachmentUrl}
+                                          alt="attachment"
+                                          className="max-w-full sm:max-w-[280px] rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
+                                          loading="lazy"
+                                        />
+                                      </a>
+                                    ) : msg.attachmentType?.startsWith("video/") ? (
+                                      <video controls className="max-w-full sm:max-w-[280px] rounded-lg" src={msg.attachmentUrl} />
+                                    ) : (
+                                      <a
+                                        href={msg.attachmentUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className={`
+                                          flex items-center gap-3 p-3 rounded-lg transition-colors
+                                          ${isFromCurrentUser
+                                            ? "bg-yellow-500/30 hover:bg-yellow-500/40"
+                                            : "bg-gray-100 hover:bg-gray-200"
+                                          }
+                                        `}
+                                      >
+                                        <File className="w-5 h-5 flex-shrink-0" />
+                                        <span className="text-sm font-medium truncate">Download File</span>
+                                      </a>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+
+                              <span className={`text-[11px] text-gray-400 mt-1 ${isFromCurrentUser ? "mr-1" : "ml-1"}`}>
+                                {formatTime(msg.createdAt)}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
-              )}
-              <button
-                onClick={removeFilePreview}
-                className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-600 transition-colors"
-              >
-                <X className="w-4 h-4" />
-              </button>
+              ))}
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gray-900 truncate">
-                {selectedFile.name}
-              </p>
-              <p className="text-xs text-gray-500">
-                {getFileSize(selectedFile.size)}
-              </p>
+          )}
+          <div ref={messagesEndRef} className="h-4" />
+        </div>
+      </main>
+
+      {/* File Preview */}
+      {selectedFile && (
+        <div className="flex-shrink-0 bg-white border-t border-gray-200 px-4 py-3">
+          <div className="max-w-3xl mx-auto">
+            <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+              <div className="relative flex-shrink-0">
+                {isImageFile(selectedFile) && filePreview ? (
+                  <img src={filePreview} alt="Preview" className="w-12 h-12 object-cover rounded-lg" />
+                ) : isVideoFile(selectedFile) && filePreview ? (
+                  <video src={filePreview} className="w-12 h-12 object-cover rounded-lg" muted />
+                ) : (
+                  <div className="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center">
+                    <File className="w-5 h-5 text-gray-500" />
+                  </div>
+                )}
+                <button
+                  onClick={removeFilePreview}
+                  className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-gray-800 text-white rounded-full flex items-center justify-center hover:bg-gray-900 transition-colors"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-gray-900 truncate">{selectedFile.name}</p>
+                <p className="text-xs text-gray-500">{getFileSize(selectedFile.size)}</p>
+              </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* Input */}
-      <div className="bg-white fixed bottom-0 w-full border-t border-gray-200 p-3 sm:p-4">
-        <div className="flex items-end gap-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => fileInputRef.current?.click()}
-            className="p-2 text-gray-600 hover:bg-gray-100 flex-shrink-0"
-            disabled={isSending}
-          >
-            <Paperclip className="w-5 h-5" />
-          </Button>
-          <div className="flex-1 min-w-0">
-            <Input
-              type="text"
-              placeholder="Type a message..."
-              value={messageInput}
-              onChange={(e) => setMessageInput(e.target.value)}
-              onKeyPress={handleKeyPress}
+      {/* Input Area */}
+      <div className="flex-shrink-0 bg-white border-t border-gray-200 px-4 py-3 safe-area-inset-bottom">
+        <div className="max-w-3xl mx-auto">
+          <div className="flex items-end gap-3">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => fileInputRef.current?.click()}
+              className="h-10 w-10 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-full flex-shrink-0"
               disabled={isSending}
-              className="py-6 rounded-full"
-            />
+            >
+              <Paperclip className="w-5 h-5" />
+            </Button>
+
+            <div className="flex-1">
+              <textarea
+                ref={inputRef}
+                placeholder="Type a message..."
+                value={messageInput}
+                onChange={(e) => {
+                  setMessageInput(e.target.value);
+                  e.target.style.height = "auto";
+                  e.target.style.height = Math.min(e.target.scrollHeight, 100) + "px";
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSendMessage();
+                  }
+                }}
+                disabled={isSending}
+                rows={1}
+                className="w-full px-4 py-2.5 text-[15px] bg-gray-100 border border-gray-200 rounded-2xl resize-none focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400 transition-all placeholder:text-gray-400 disabled:opacity-50"
+                style={{ minHeight: "44px", maxHeight: "100px" }}
+              />
+            </div>
+
+            <Button
+              onClick={handleSendMessage}
+              disabled={(!messageInput.trim() && !selectedFile) || isSending}
+              size="icon"
+              className={`
+                h-10 w-10 rounded-full flex-shrink-0 transition-all duration-200
+                ${(!messageInput.trim() && !selectedFile) || isSending
+                  ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                  : "bg-yellow-400 text-gray-900 hover:bg-yellow-500 active:scale-95"
+                }
+              `}
+            >
+              {isSending ? (
+                <div className="w-5 h-5 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <Send className="w-5 h-5" />
+              )}
+            </Button>
           </div>
-          <Button
-            onClick={handleSendMessage}
-            disabled={(!messageInput.trim() && !selectedFile) || isSending}
-            size="icon"
-            className="w-12 h-12 flex justify-center items-center rounded-full bg-gradient-to-r from-yellow-500 to-orange-400 hover:from-yellow-600 hover:to-orange-500 flex-shrink-0"
-          >
-            <Send className="w-5 h-5" />
-          </Button>
         </div>
+
         <input
           type="file"
           ref={fileInputRef}
           onChange={handleFileSelect}
           className="hidden"
-          accept="*/*"
+          accept="image/*,video/*,.pdf,.doc,.docx,.txt"
         />
       </div>
     </div>
   );
 };
 
-export default MessagesArea;
+export default ChatPage;
