@@ -128,6 +128,12 @@ export const useNotificationStore = create((set, get) => ({
         case "CONNECTION_REJECTED":
           toast.error("🚫 Your connection request was rejected.");
           break;
+        case "POST_LIKE":
+          toast(notification.message || "❤️ Someone liked your post!");
+          break;
+        case "POST_COMMENT":
+          toast(notification.message || "💬 Someone commented on your post!");
+          break;
         case "CUSTOM":
           toast(notification.message || "🔔 You have a new update!");
           break;

@@ -16,6 +16,7 @@ import {
   ExternalLink,
   Video,
   Drum,
+  UserPlus,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -186,9 +187,9 @@ export default function OnboardingSelection() {
           {userTypes.map((type) => {
             const IconComponent = type.icon;
             return (
-              <div key={type.id} className="relative">
+              <div key={type.id} className="relative h-full">
                 <Card
-                  className={`cursor-pointer transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 ${
+                  className={`h-full flex flex-col cursor-pointer transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 ${
                     type.comingSoon ? "opacity-60 cursor-not-allowed" : ""
                   }`}
                   onClick={() => handleCardClick(type)}
@@ -205,11 +206,11 @@ export default function OnboardingSelection() {
                       </div>
                     </div>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="flex-1 flex flex-col">
                     <p className="text-gray-600 text-sm mb-4">
                       {type.description}
                     </p>
-                    <div className="space-y-2">
+                    <div className="space-y-2 flex-1">
                       <p className="text-xs font-medium text-gray-700 mb-2">
                         Key Features:
                       </p>
@@ -226,16 +227,27 @@ export default function OnboardingSelection() {
                       </div>
                     </div>
                     {!type.comingSoon ? (
-                      <Button
-                        variant="outline"
-                        className="mt-4 w-full"
-                        onClick={(e) => handleDemoProfileClick(e, type)}
-                      >
-                        <ExternalLink className="mr-2 h-4 w-4" /> View Demo
-                        Profile
-                      </Button>
+                      <div className="mt-4 flex gap-2">
+                        <Button
+                          variant="default"
+                          className="flex-1"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            router.push(type.route);
+                          }}
+                        >
+                          <UserPlus className="mr-2 h-4 w-4" /> Create Profile
+                        </Button>
+                        <Button
+                          variant="outline"
+                          className="flex-1"
+                          onClick={(e) => handleDemoProfileClick(e, type)}
+                        >
+                          <ExternalLink className="mr-2 h-4 w-4" /> View Demo
+                        </Button>
+                      </div>
                     ) : (
-                      <div className="mt-6 text-center text-sm font-semibold text-gray-500">
+                      <div className="mt-4 text-center text-sm font-semibold text-gray-500 py-2">
                         🚧 Coming Soon
                       </div>
                     )}
