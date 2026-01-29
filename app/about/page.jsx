@@ -60,13 +60,13 @@ const ValueCard = ({ value }) => {
   return (
     <motion.div
       variants={item}
-      className="p-6 bg-white/5 backdrop-blur-sm border border-yellow-500/50 rounded-xl flex flex-col items-center text-center h-full transition-all duration-300 hover:border-yellow-500 hover:shadow-lg"
+      className="p-6 bg-white border border-gray-200 rounded-xl flex flex-col items-center text-center h-full transition-all duration-300 hover:border-yellow-400 hover:shadow-lg"
     >
-      <div className="p-3 rounded-full bg-yellow-500/10 border border-yellow-500 mb-4">
+      <div className="p-3 rounded-full bg-yellow-50 border border-yellow-400 mb-4">
         <Icon className="w-6 h-6 text-yellow-500" />
       </div>
-      <h3 className="text-xl font-bold text-white mb-2">{value.title}</h3>
-      <p className="text-gray-400 text-sm">{value.description}</p>
+      <h3 className="text-xl font-bold text-gray-900 mb-2">{value.title}</h3>
+      <p className="text-gray-600 text-sm">{value.description}</p>
     </motion.div>
   );
 };
@@ -74,7 +74,7 @@ const ValueCard = ({ value }) => {
 const AboutUs = () => {
   return (
     <>
-      <div className="bg-black text-white font-sans p-4 sm:p-8 md:p-12">
+      <div className="bg-gray-50 text-gray-900 font-sans p-4 sm:p-8 md:p-12">
         <div className="max-w-7xl mx-auto">
           <motion.header
             className="text-center mb-16 mt-8"
@@ -89,14 +89,14 @@ const AboutUs = () => {
               About PeerPop
             </motion.p>
             <motion.h1
-              className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight"
+              className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-gray-900"
               variants={item}
             >
               Building the future of{" "}
               <span className="text-yellow-500">creative collaboration</span>
             </motion.h1>
             <motion.p
-              className="mt-4 text-xl text-gray-400 max-w-4xl mx-auto"
+              className="mt-4 text-xl text-gray-600 max-w-4xl mx-auto"
               variants={item}
             >
               PeerPop was founded on the belief that authentic connections drive
@@ -115,13 +115,15 @@ const AboutUs = () => {
             {/* Our Mission */}
             <motion.div
               variants={item}
-              className="p-8 bg-white/5 backdrop-blur-sm rounded-xl shadow-lg border border-yellow-500/50 lg:col-span-1 transition-all duration-300 hover:border-yellow-500/70"
+              className="p-8 bg-white rounded-xl shadow-md border border-gray-100 lg:col-span-1 transition-all duration-300 hover:shadow-lg hover:border-yellow-400"
             >
-              <Target className="w-8 h-8 text-yellow-500 mb-3" />
-              <h2 className="text-2xl font-bold text-white mb-3">
+              <div className="p-3 rounded-full bg-yellow-50 border border-yellow-400 w-fit mb-4">
+                <Target className="w-6 h-6 text-yellow-500" />
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-3">
                 Our Mission
               </h2>
-              <p className="text-gray-300">
+              <p className="text-gray-600">
                 To empower creators, mentors, and brands to build meaningful
                 relationships that drive authentic collaboration and sustainable
                 creative careers.
@@ -132,12 +134,12 @@ const AboutUs = () => {
             <div className="lg:col-span-2 space-y-4">
               <motion.div
                 variants={item}
-                className="p-6 bg-white/5 backdrop-blur-sm rounded-xl border border-yellow-500/50 transition-all duration-300 hover:border-yellow-500/70"
+                className="p-6 bg-white rounded-xl shadow-md border border-gray-100 transition-all duration-300 hover:shadow-lg hover:border-yellow-400"
               >
                 <h3 className="flex items-center text-xl font-bold text-yellow-500 mb-2">
                   <Heart className="w-5 h-5 mr-2" /> Authenticity First
                 </h3>
-                <p className="text-gray-300">
+                <p className="text-gray-600">
                   We believe the best partnerships are built on genuine
                   connections, not just transactions. Every feature we build
                   prioritizes real relationships.
@@ -145,12 +147,12 @@ const AboutUs = () => {
               </motion.div>
               <motion.div
                 variants={item}
-                className="p-6 bg-white/5 backdrop-blur-sm rounded-xl border border-yellow-500/50 transition-all duration-300 hover:border-yellow-500/70"
+                className="p-6 bg-white rounded-xl shadow-md border border-gray-100 transition-all duration-300 hover:shadow-lg hover:border-yellow-400"
               >
                 <h3 className="flex items-center text-xl font-bold text-yellow-500 mb-2">
                   <Aperture className="w-5 h-5 mr-2" /> Community Driven
                 </h3>
-                <p className="text-gray-300">
+                <p className="text-gray-600">
                   Our platform is shaped by feedback from creators, mentors, and
                   brands. We're building this together with the people who use
                   it every day.
@@ -160,7 +162,7 @@ const AboutUs = () => {
           </motion.div>
 
           <motion.section
-            className="my-20 p-8 md:p-12 bg-white/5 backdrop-blur-sm rounded-xl border border-yellow-500/50 w-full transition-all duration-300 hover:border-yellow-500/70"
+            className="my-20 p-8 md:p-12 bg-white rounded-xl shadow-md border border-gray-100 w-full transition-all duration-300 hover:shadow-lg"
             variants={container}
             initial="hidden"
             whileInView="show"
@@ -172,7 +174,7 @@ const AboutUs = () => {
             >
               Our Story
             </motion.h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-gray-300">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-gray-600">
               <motion.div variants={item}>
                 <p className="mb-4">
                   PeerPop started in 2025 when our founders, both former
@@ -196,7 +198,7 @@ const AboutUs = () => {
                   collaborate with peers who share their vision, and partner
                   with brands that truly get them.
                 </p>
-                <p className="font-semibold text-white">
+                <p className="font-semibold text-gray-900">
                   Today, PeerPop serves thousands of creators, mentors, and
                   brands across every creative niche. We're proud to have
                   facilitated millions in brand deals and countless mentorship
@@ -207,17 +209,17 @@ const AboutUs = () => {
           </motion.section>
 
           <motion.section
-            className="mt-20"
+            className="mt-20 mb-12"
             variants={container}
             initial="hidden"
             whileInView="show"
             viewport={{ once: true, amount: 0.2 }}
           >
             <motion.div variants={item} className="text-center mb-12">
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-white">
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900">
                 Our <span className="text-yellow-500">Values</span>
               </h2>
-              <p className="mt-2 text-lg text-gray-400">
+              <p className="mt-2 text-lg text-gray-600">
                 The principles that guide everything we do.
               </p>
             </motion.div>

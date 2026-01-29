@@ -158,11 +158,11 @@ const CreativeFieldsSection = () => {
   }, [hoveredCardId]);
 
   return (
-    <section className="py-20 px-4 bg-black overflow-hidden relative">
+    <section className="py-20 px-4 bg-gray-50 overflow-hidden relative">
       <div className="container mx-auto relative z-10">
         <div className="text-center mb-16">
           <motion.h2
-            className="text-4xl sm:text-5xl font-extrabold text-white mb-4"
+            className="text-4xl sm:text-5xl font-extrabold text-gray-900 mb-4"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -172,7 +172,7 @@ const CreativeFieldsSection = () => {
             <span className="text-yellow-500">Represented</span>
           </motion.h2>
           <motion.p
-            className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto"
+            className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -199,16 +199,16 @@ const CreativeFieldsSection = () => {
             >
               <Card
                 className={`
-                  relative text-white border-white/10
-                  text-center flex flex-col justify-between items-center 
-                  rounded-3xl overflow-hidden shadow-xl shadow-black/50
-                  backdrop-blur-lg bg-white/5
+                  relative text-gray-900 border-gray-200
+                  text-center flex flex-col justify-between items-center
+                  rounded-3xl overflow-hidden shadow-lg
+                  bg-white
                   px-2 py-3 h-full
-                  transition-all duration-300 hover:bg-white/10 hover:scale-[1.03]
+                  transition-all duration-300 hover:shadow-xl hover:border-yellow-400 hover:scale-[1.03]
                 `}
               >
                 <CardHeader className="p-0 w-full">
-                  <div className="relative w-full h-32 mb-4 flex items-center justify-center overflow-hidden rounded-t-3xl">
+                  <div className="relative w-full h-32 mb-4 flex items-center justify-center overflow-hidden rounded-t-3xl bg-gray-100">
                     <video
                       ref={(el) => (videoRefs.current[field.id] = el)}
                       src={field.videoUrl}
@@ -222,7 +222,7 @@ const CreativeFieldsSection = () => {
                     />
 
                     <div
-                      className={`relative w-16 h-16 rounded-2xl flex items-center justify-center 
+                      className={`relative w-16 h-16 rounded-2xl flex items-center justify-center
                         text-white bg-gradient-to-br ${
                           field.accentColor
                         } shadow-xl transition-opacity duration-300 ${
@@ -234,20 +234,17 @@ const CreativeFieldsSection = () => {
                   </div>
                 </CardHeader>
                 <CardContent className="flex flex-col items-center p-6 pt-0 w-full">
-                  <CardTitle className="text-white text-lg md:text-xl">
+                  <CardTitle className="text-gray-900 text-lg md:text-xl">
                     {field.title}
                   </CardTitle>
-                  <CardDescription className="text-gray-300">
+                  <CardDescription className="text-gray-600">
                     {field.description}
                   </CardDescription>
                 </CardContent>
 
                 {field.comingSoon && (
                   <div className="absolute top-4 right-4">
-                    <Badge
-                      variant="outline"
-                      className="bg-white/20 text-white border border-white/30 backdrop-blur-sm"
-                    >
+                    <Badge className="bg-yellow-100 text-yellow-700 border border-yellow-300">
                       Coming Soon
                     </Badge>
                   </div>

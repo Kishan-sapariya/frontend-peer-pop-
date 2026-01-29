@@ -8,7 +8,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/useAuthStore";
 import LoadingSpinner from "@/component/LoadingSpinner";
 import socket from "@/lib/socket";
-import { ArrowLeft, Paperclip, Send, X, File, MoreVertical } from "lucide-react";
+import { ArrowLeft, Paperclip, Send, X, File } from "lucide-react";
 
 const ChatPage = () => {
   const [messageInput, setMessageInput] = useState("");
@@ -220,13 +220,6 @@ const ChatPage = () => {
             </div>
           </div>
 
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-9 w-9 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-full"
-          >
-            <MoreVertical className="w-5 h-5" />
-          </Button>
         </div>
       </div>
 

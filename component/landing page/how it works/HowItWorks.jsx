@@ -70,7 +70,7 @@ const steps = [
 ];
 
 const FeatureListItem = ({ children }) => (
-  <li className="flex items-start space-x-2 text-gray-400">
+  <li className="flex items-start space-x-2 text-gray-600">
     <Check className="w-4 h-4 text-yellow-500 mt-1 flex-shrink-0" />
     <span>{children}</span>
   </li>
@@ -92,11 +92,11 @@ const StepItem = ({ stepData, reverse }) => {
         <p className="text-yellow-500 font-semibold text-sm uppercase tracking-widest">
           Step {stepData.step}
         </p>
-        <h2 className="text-3xl sm:text-4xl font-extrabold text-white mt-1">
+        <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mt-1">
           {stepData.title}
         </h2>
       </div>
-      <p className="text-gray-300 text-lg mb-6">{stepData.description}</p>
+      <p className="text-gray-600 text-lg mb-6">{stepData.description}</p>
 
       <ul className="space-y-3">
         {stepData.features.map((feature, index) => (
@@ -114,14 +114,14 @@ const StepItem = ({ stepData, reverse }) => {
       viewport={{ once: true, amount: 0.4 }}
       transition={{ duration: 0.3, delay: 0.1 }}
     >
-      <div className="w-full max-w-md aspect-video bg-gray-900 border border-yellow-500/30 rounded-xl p-4 shadow-2xl">
+      <div className="w-full max-w-md aspect-video bg-white border border-gray-200 rounded-xl p-4 shadow-lg">
         {stepData.imageContent}
       </div>
     </motion.div>
   );
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-16 items-center py-12 md:py-20 border-b border-gray-700/50 last:border-b-0">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-16 items-center py-12 md:py-20 border-b border-gray-200 last:border-b-0">
       {content}
       {image}
     </div>
@@ -130,14 +130,14 @@ const StepItem = ({ stepData, reverse }) => {
 
 const HowItWorks = () => {
   return (
-    <div className="bg-black text-white p-4 sm:p-8 md:p-12">
+    <div className="bg-gray-50 text-gray-900 p-4 sm:p-8 md:p-12">
       <div className="max-w-7xl mx-auto">
         {/* Header Section */}
         <header className="text-center mb-16 mt-8">
-          <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight">
+          <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-gray-900">
             How PeerPop <span className="text-yellow-500">Works</span>
           </h1>
-          <p className="mt-3 text-lg text-gray-400 max-w-2xl mx-auto">
+          <p className="mt-3 text-lg text-gray-600 max-w-2xl mx-auto">
             Four simple steps to start building meaningful connections and
             growing your creative career.
           </p>

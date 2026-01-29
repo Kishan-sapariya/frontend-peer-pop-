@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { Sparkles, Instagram, Facebook, Twitter, Linkedin } from "lucide-react";
+import { Sparkles, Instagram, Facebook, Linkedin } from "lucide-react";
 import Image from "next/image";
 
 const DARK_TEXT = "text-[#041049]";
@@ -106,7 +106,9 @@ const Footer = () => {
             <h4 className={`font-bold mb-4 ${DARK_TEXT}`}>Follow Us</h4>
             <div className="flex space-x-4">
               <a
-                href="https://www.instagram.com/peer.pop"
+                href="https://www.instagram.com/officialpeerpop/"
+                target="_blank"
+                rel="noopener noreferrer"
                 className={`text-[#041049] hover:text-pink-600 transition-colors`}
                 aria-label="Instagram"
               >
@@ -114,20 +116,17 @@ const Footer = () => {
               </a>
               <a
                 href="https://www.facebook.com/people/Peer-pop/61581827147498/"
+                target="_blank"
+                rel="noopener noreferrer"
                 className={`text-[#041049] hover:text-blue-700 transition-colors`}
                 aria-label="Facebook"
               >
                 <Facebook className="w-6 h-6" />
               </a>
               <a
-                href="#"
-                className={`text-[#041049] hover:text-blue-500 transition-colors`}
-                aria-label="X / Twitter"
-              >
-                <Twitter className="w-6 h-6" />
-              </a>
-              <a
-                href="#"
+                href="https://www.linkedin.com/company/109996653/"
+                target="_blank"
+                rel="noopener noreferrer"
                 className={`text-[#041049] hover:text-blue-800 transition-colors`}
                 aria-label="LinkedIn"
               >

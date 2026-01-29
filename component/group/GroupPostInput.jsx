@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { useGroupStore } from "@/store/useGroupStore";
-import { ImageIcon, Video, X } from "lucide-react";
+import { ImageIcon, Images, Video, X } from "lucide-react";
 import toast from "react-hot-toast";
 
 const GroupPostInput = ({ groupId }) => {
@@ -142,20 +142,20 @@ const GroupPostInput = ({ groupId }) => {
         )}
 
         <div className="flex items-center justify-between mt-2">
-          <div className="flex gap-3">
-            <label className="cursor-pointer flex items-center gap-1 text-green-600 font-medium">
-              <ImageIcon size={18} />
+          <div className="flex gap-1 sm:gap-2">
+            <label className="cursor-pointer flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-green-50 hover:bg-green-100 text-green-700 font-medium text-sm transition-colors">
+              <ImageIcon size={16} />
               <input
                 type="file"
                 accept="image/*"
                 hidden
                 onChange={handleImageUpload}
               />
-              Image
+              <span className="hidden sm:inline">Photo</span>
             </label>
 
-            <label className="cursor-pointer flex items-center gap-1 text-green-600 font-medium">
-              <ImageIcon size={18} />
+            <label className="cursor-pointer flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-green-50 hover:bg-green-100 text-green-700 font-medium text-sm transition-colors">
+              <Images size={16} />
               <input
                 type="file"
                 accept="image/*"
@@ -163,18 +163,18 @@ const GroupPostInput = ({ groupId }) => {
                 hidden
                 onChange={handleMultiImageUpload}
               />
-              Images
+              <span className="hidden sm:inline">Gallery</span>
             </label>
 
-            <label className="cursor-pointer flex items-center gap-1 text-green-600 font-medium">
-              <Video size={18} />
+            <label className="cursor-pointer flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-green-50 hover:bg-green-100 text-green-700 font-medium text-sm transition-colors">
+              <Video size={16} />
               <input
                 type="file"
                 accept="video/*"
                 hidden
                 onChange={handleVideoUpload}
               />
-              Video
+              <span className="hidden sm:inline">Video</span>
             </label>
           </div>
 
