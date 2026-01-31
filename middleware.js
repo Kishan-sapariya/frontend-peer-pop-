@@ -16,7 +16,6 @@ export function middleware(request) {
     "/notification",
     "/search",
     "/groups",
-    "/admin",
     "/posts",
   ];
 
