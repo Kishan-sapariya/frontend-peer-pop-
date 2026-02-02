@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,7 +13,7 @@ import {
   MessageCircle,
   Clock,
   Trash2,
-  MoreVertical,
+  MoreHorizontal,
 } from "lucide-react";
 
 import { ImageCarousel } from "../feeds/ImageCarousel";
@@ -25,7 +24,7 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { useGroupStore } from "@/store/useGroupStore";
 import Link from "next/link";
 import GroupCommentSection from "./GroupCommentSection";
-import { Badge } from "@/components/ui/badge"; 
+import { Badge } from "@/components/ui/badge";
 
 const cleanDescription = (txt) => txt?.replace(/#\w+/g, "").trim();
 
@@ -36,8 +35,7 @@ const isVideo = (url) =>
 
 const GroupPostCard = ({ post, groupId }) => {
   const { user: currentUser } = useAuthStore();
-  const { toggleGroupPostLike, deleteGroupPost } =
-    useGroupStore();
+  const { toggleGroupPostLike, deleteGroupPost } = useGroupStore();
 
   const [openComments, setOpenComments] = useState(false);
 
@@ -52,31 +50,30 @@ const GroupPostCard = ({ post, groupId }) => {
   };
 
   return (
-    <Card className="rounded-2xl shadow-md bg-white/90 backdrop-blur-sm border border-gray-100 transition-all duration-300 hover:shadow-lg">
-      <CardContent className="py-3 px-4 md:px-5">
+    <div className="bg-white rounded-2xl shadow-sm border border-zinc-200 overflow-hidden hover:shadow-md transition-shadow duration-200">
+      <div className="p-4 sm:p-5">
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <Link
             href={`/profile/${post.user?.username}`}
-            passHref
-            className="flex items-center space-x-3 md:space-x-4 cursor-pointer"
+            className="flex items-center gap-3 group"
           >
-            <Avatar className="w-12 h-12 md:w-14 md:h-14 p-0.5">
+            <Avatar className="w-11 h-11 ring-2 ring-zinc-100">
               <AvatarImage
                 src={post.user?.image}
                 alt={post.user?.username}
-                className="object-cover rounded-full"
+                className="object-cover"
               />
-              <AvatarFallback className="bg-green-600 text-white font-semibold text-xl">
+              <AvatarFallback className="bg-gradient-to-br from-green-500 to-emerald-600 text-white font-semibold text-base">
                 {post.user?.username?.[0]?.toUpperCase() || "U"}
               </AvatarFallback>
             </Avatar>
             <div>
-              <h3 className="font-bold text-base md:text-lg text-gray-900">
+              <h3 className="font-semibold text-zinc-900 group-hover:text-green-600 transition-colors">
                 {post.user?.username || "Unknown User"}
               </h3>
-              <div className="flex items-center space-x-1 text-xs text-gray-500 font-medium mt-1">
-                <Clock className="w-3 h-3 text-blue-800" />
+              <div className="flex items-center gap-1.5 text-xs text-zinc-500 mt-0.5">
+                <Clock className="w-3 h-3" />
                 <span>{formatTimeAgo(post.createdAt)}</span>
               </div>
             </div>
@@ -88,34 +85,37 @@ const GroupPostCard = ({ post, groupId }) => {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="w-8 h-8 rounded-full hover:bg-gray-100 text-gray-500"
+                  className="w-8 h-8 rounded-full hover:bg-zinc-100 text-zinc-400"
                 >
-                  <MoreVertical className="w-4 h-4" />
+                  <MoreHorizontal className="w-5 h-5" />
                 </Button>
               </PopoverTrigger>
 
-              <PopoverContent className="w-40 p-1 rounded-xl">
+              <PopoverContent className="w-36 p-1.5 rounded-xl shadow-lg" align="end">
                 <Button
                   variant="ghost"
-                  className="w-full justify-start text-sm text-red-500 hover:text-red-600 hover:bg-red-50"
+                  size="sm"
+                  className="w-full justify-start text-sm text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg"
                   onClick={() => deleteGroupPost(groupId, post.id)}
                 >
                   <Trash2 className="w-4 h-4 mr-2" />
-                  Delete Post
+                  Delete
                 </Button>
               </PopoverContent>
             </Popover>
           )}
         </div>
 
+        {/* Content */}
         {post.description && (
-          <p className="text-sm lg:text-base text-gray-800 leading-relaxed mb-4">
+          <p className="text-sm sm:text-base text-zinc-700 leading-relaxed mb-4">
             {cleanDescription(post.description)}
           </p>
         )}
 
+        {/* Media */}
         {post.mediaUrls?.length > 0 && (
-          <div className="mb-4 rounded-lg overflow-hidden border border-gray-200">
+          <div className="mb-4 rounded-xl overflow-hidden border border-zinc-100">
             {post.mediaUrls.length > 1 ? (
               <ImageCarousel images={post.mediaUrls} altPrefix="Post content" />
             ) : isVideo(post.mediaUrls[0]) ? (
@@ -131,13 +131,14 @@ const GroupPostCard = ({ post, groupId }) => {
           </div>
         )}
 
+        {/* Hashtags */}
         {post.hashtags?.length > 0 && (
           <div className="mb-4 flex flex-wrap gap-2">
             {post.hashtags.map((tag, idx) => (
               <Badge
                 key={idx}
                 variant="outline"
-                className="text-xs md:text-sm font-medium border-black-300 text-yellow-600 bg-yellow-50 hover:bg-yellow-100 cursor-pointer"
+                className="text-xs font-medium text-green-600 bg-green-50 border-green-200 hover:bg-green-100 cursor-pointer transition-colors"
               >
                 {tag}
               </Badge>
@@ -145,43 +146,53 @@ const GroupPostCard = ({ post, groupId }) => {
           </div>
         )}
 
-        <div className="flex items-center justify-start pt-4 border-t border-gray-100">
-          <div className="flex items-center space-x-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="rounded-full px-2 py-1.5 hover:bg-red-50 text-gray-600 hover:text-red-600 transition-colors"
-              onClick={handleLike}
-            >
-              <Heart
-                className={`w-4 h-4 mr-1 ${
-                  hasLiked ? "text-red-500 fill-red-500" : "text-gray-500"
-                }`}
-              />
-              <span className="text-xs font-semibold">{likesCount}</span>
-            </Button>
+        {/* Actions */}
+        <div className="flex items-center gap-1 pt-3 border-t border-zinc-100">
+          <Button
+            variant="ghost"
+            size="sm"
+            className={`rounded-lg px-3 py-2 h-auto gap-1.5 transition-colors ${
+              hasLiked
+                ? "text-red-500 hover:bg-red-50"
+                : "text-zinc-500 hover:text-red-500 hover:bg-red-50"
+            }`}
+            onClick={handleLike}
+          >
+            <Heart
+              className={`w-[18px] h-[18px] ${hasLiked ? "fill-red-500" : ""}`}
+            />
+            <span className="text-sm font-medium">{likesCount}</span>
+          </Button>
 
-            <Button
-              variant="ghost"
-              size="sm"
-              className="rounded-full px-2 py-1.5 hover:bg-pink-50 text-gray-600 hover:text-pink-600 transition-colors"
-              onClick={toggleComments}
-            >
-              <MessageCircle className="w-4 h-4 mr-1 text-gray-500" />
-              <span className="text-xs font-semibold">{commentsCount}</span>
-            </Button>
-          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            className={`rounded-lg px-3 py-2 h-auto gap-1.5 transition-colors ${
+              openComments
+                ? "text-green-600 hover:bg-green-50"
+                : "text-zinc-500 hover:text-green-600 hover:bg-green-50"
+            }`}
+            onClick={toggleComments}
+          >
+            <MessageCircle
+              className={`w-[18px] h-[18px] ${openComments ? "fill-green-100" : ""}`}
+            />
+            <span className="text-sm font-medium">{commentsCount}</span>
+          </Button>
         </div>
 
+        {/* Comments Section */}
         {openComments && (
-          <GroupCommentSection
-            comments={post.comments}
-            postId={post.id}
-            groupId={groupId}
-          />
+          <div className="mt-4 pt-4 border-t border-zinc-100">
+            <GroupCommentSection
+              comments={post.comments}
+              postId={post.id}
+              groupId={groupId}
+            />
+          </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 };
 

@@ -10,7 +10,18 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useConnectionStore } from "../../store/useConnectionStore";
 import { useAuthStore } from "../../store/useAuthStore";
 import LoadingSpinner from "../../component/LoadingSpinner";
-import { Users, UserPlus, UserMinus, UserCheck, X } from "lucide-react";
+import {
+  Users,
+  UserPlus,
+  Send,
+  UserCheck,
+  X,
+  Inbox,
+  Search,
+  Sparkles,
+  ArrowRight,
+  Heart,
+} from "lucide-react";
 
 export default function ConnectionsPage() {
   const { user } = useAuthStore();
@@ -30,7 +41,7 @@ export default function ConnectionsPage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
         <LoadingSpinner />
       </div>
     );
@@ -56,87 +67,209 @@ export default function ConnectionsPage() {
   });
 
   const counts = getConnectionCounts();
+  const totalConnections = counts.ALL + counts.PENDING + counts.SENT;
+
+  const getEmptyState = () => {
+    if (filter === "PENDING") {
+      return {
+        icon: Inbox,
+        iconBg: "bg-gradient-to-br from-amber-100 to-yellow-100",
+        iconColor: "text-amber-500",
+        title: "No pending requests",
+        description:
+          "When someone wants to connect with you, their request will appear here.",
+        action: null,
+      };
+    }
+    if (filter === "ALL") {
+      return {
+        icon: Heart,
+        iconBg: "bg-gradient-to-br from-pink-100 to-rose-100",
+        iconColor: "text-pink-500",
+        title: "No connections yet",
+        description:
+          "Start building your network! Discover creators and send connection requests.",
+        action: (
+          <Link href="/">
+            <Button className="bg-yellow-500 hover:bg-yellow-600 text-zinc-900 font-semibold rounded-xl mt-4">
+              <Search className="h-4 w-4 mr-2" />
+              Discover Creators
+            </Button>
+          </Link>
+        ),
+      };
+    }
+    return {
+      icon: Send,
+      iconBg: "bg-gradient-to-br from-blue-100 to-indigo-100",
+      iconColor: "text-blue-500",
+      title: "No sent requests",
+      description:
+        "You haven't sent any connection requests yet. Find interesting people to connect with!",
+      action: (
+        <Link href="/">
+          <Button className="bg-yellow-500 hover:bg-yellow-600 text-zinc-900 font-semibold rounded-xl mt-4">
+            <Sparkles className="h-4 w-4 mr-2" />
+            Explore Peerpop
+          </Button>
+        </Link>
+      ),
+    };
+  };
+
+  const emptyState = getEmptyState();
+  const EmptyIcon = emptyState.icon;
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900">
-      <div className="max-w-4xl mx-auto p-3 sm:p-4">
-        <div className="mb-8 pt-8 text-center">
-          <h1 className="text-3xl sm:text-4xl font-bold bg-clip-text text-transparent mb-2 bg-gradient-to-r from-yellow-500 to-orange-500">
-            Your Network
-          </h1>
-          <p className="text-gray-500 text-sm sm:text-base">
-            Manage your professional connections and collaboration requests.
-          </p>
+    <div className="min-h-screen bg-gray-100 text-gray-900">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6">
+        {/* Header Card */}
+        <div className="bg-white rounded-2xl shadow-sm border border-zinc-200 overflow-hidden mb-6">
+          <div className="p-6 sm:p-8">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div>
+                <h1 className="text-2xl sm:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-yellow-500 via-orange-500 to-amber-500 mb-1">
+                  Your Network
+                </h1>
+                <p className="text-zinc-500 text-sm">
+                  Manage your connections and collaboration requests
+                </p>
+              </div>
+
+              {/* Stats */}
+              <div className="flex items-center gap-4">
+                <div className="text-center px-4 py-2 bg-zinc-50 rounded-xl">
+                  <p className="text-2xl font-bold text-yellow-600">
+                    {counts.ALL}
+                  </p>
+                  <p className="text-xs text-zinc-500">Connections</p>
+                </div>
+                {counts.PENDING > 0 && (
+                  <div className="text-center px-4 py-2 bg-amber-50 rounded-xl border border-amber-200">
+                    <p className="text-2xl font-bold text-amber-600">
+                      {counts.PENDING}
+                    </p>
+                    <p className="text-xs text-amber-600">Pending</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Tabs */}
+          <div className="px-6 sm:px-8 pb-6">
+            <Tabs value={filter} onValueChange={setFilter}>
+              <TabsList className="grid w-full grid-cols-3 h-auto p-1.5 rounded-xl bg-zinc-100">
+                {[
+                  {
+                    value: "PENDING",
+                    label: "Pending",
+                    count: counts.PENDING,
+                    icon: Inbox,
+                  },
+                  {
+                    value: "ALL",
+                    label: "Connections",
+                    count: counts.ALL,
+                    icon: Users,
+                  },
+                  {
+                    value: "SENT",
+                    label: "Sent",
+                    count: counts.SENT,
+                    icon: Send,
+                  },
+                ].map((tab) => {
+                  const Icon = tab.icon;
+                  return (
+                    <TabsTrigger
+                      key={tab.value}
+                      value={tab.value}
+                      className="flex items-center justify-center gap-2 py-2.5 px-3 text-sm font-medium rounded-lg
+                        data-[state=active]:text-zinc-900 data-[state=active]:bg-white data-[state=active]:shadow-sm
+                        text-zinc-500 data-[state=inactive]:hover:text-zinc-700 transition-all"
+                    >
+                      <Icon className="w-4 h-4" />
+                      <span className="hidden sm:inline">{tab.label}</span>
+                      {tab.count > 0 && (
+                        <Badge
+                          className={`text-xs px-1.5 py-0.5 min-w-[20px] justify-center rounded-full ${
+                            filter === tab.value
+                              ? "bg-yellow-500 text-zinc-900"
+                              : "bg-zinc-200 text-zinc-600"
+                          }`}
+                        >
+                          {tab.count}
+                        </Badge>
+                      )}
+                    </TabsTrigger>
+                  );
+                })}
+              </TabsList>
+            </Tabs>
+          </div>
         </div>
 
-        <div className="mb-6">
-          <Tabs value={filter} onValueChange={setFilter}>
-            <TabsList className="grid w-full grid-cols-3 h-auto p-1 rounded-xl bg-white border border-gray-200 shadow-md">
-              {[
-                {
-                  value: "PENDING",
-                  label: "Pending",
-                  count: counts.PENDING,
-                  icon: UserPlus,
-                },
-                {
-                  value: "ALL",
-                  label: "Connections",
-                  count: counts.ALL,
-                  icon: Users,
-                },
-                {
-                  value: "SENT",
-                  label: "Sent",
-                  count: counts.SENT,
-                  icon: UserMinus,
-                },
-              ].map((tab) => {
-                const Icon = tab.icon;
-                return (
-                  <TabsTrigger
-                    key={tab.value}
-                    value={tab.value}
-                    className="flex items-center gap-1 sm:gap-2 py-2 px-2 sm:px-3 text-xs sm:text-sm rounded-lg 
-                      data-[state=active]:text-gray-900 data-[state=active]:bg-yellow-400 data-[state=active]:shadow-lg 
-                      text-gray-600 data-[state=inactive]:hover:bg-gray-100 transition-all duration-300"
-                  >
-                    <Icon className="w-4 h-4" />
-                    <span>{tab.label}</span>
-                    {tab.count > 0 && (
-                      <Badge
-                        className="text-xs px-1.5 py-0.5 min-w-[20px] justify-center ml-1 
-                        bg-gray-200 text-gray-700 
-                        data-[state=active]:bg-gray-800 data-[state=active]:text-yellow-400"
-                      >
-                        {tab.count}
-                      </Badge>
-                    )}
-                  </TabsTrigger>
-                );
-              })}
-            </TabsList>
-          </Tabs>
-        </div>
-        <div className="space-y-4">
+        {/* Content */}
+        <div className="space-y-3">
           {filteredConnections.length === 0 ? (
-            <Card className="rounded-2xl border border-gray-200 bg-white shadow-lg">
-              <CardContent className="p-6 sm:p-8 text-center">
-                <div className="w-14 h-14 mx-auto mb-4 bg-yellow-100 rounded-full flex items-center justify-center">
-                  <Users className="w-7 h-7 text-yellow-500" />
+            <div className="bg-white rounded-2xl border border-zinc-200 shadow-sm overflow-hidden">
+              <div className="py-16 px-6 text-center relative">
+                {/* Decorative Elements */}
+                <div className="absolute top-8 left-1/4 w-3 h-3 bg-yellow-300 rounded-full opacity-60 animate-pulse" />
+                <div className="absolute top-16 right-1/4 w-2 h-2 bg-orange-300 rounded-full opacity-60 animate-pulse delay-300" />
+                <div className="absolute bottom-12 left-1/3 w-2 h-2 bg-amber-300 rounded-full opacity-60 animate-pulse delay-500" />
+
+                <div className="relative">
+                  {/* Icon */}
+                  <div className="relative inline-flex mb-6">
+                    <div
+                      className={`w-20 h-20 ${emptyState.iconBg} rounded-2xl flex items-center justify-center transform rotate-3`}
+                    >
+                      <EmptyIcon className={`w-10 h-10 ${emptyState.iconColor}`} />
+                    </div>
+                    <div className="absolute -bottom-1 -right-1 w-7 h-7 bg-yellow-400 rounded-lg flex items-center justify-center shadow-md transform -rotate-6">
+                      <Sparkles className="w-4 h-4 text-zinc-800" />
+                    </div>
+                  </div>
+
+                  <h3 className="text-xl font-bold text-zinc-800 mb-2">
+                    {emptyState.title}
+                  </h3>
+                  <p className="text-zinc-500 max-w-sm mx-auto leading-relaxed">
+                    {emptyState.description}
+                  </p>
+                  {emptyState.action}
                 </div>
-                <h3 className="text-xl font-medium text-gray-900 mb-2">
-                  No connections found
-                </h3>
-                <p className="text-gray-500 text-sm">
-                  {filter === "ALL"
-                    ? "You haven't connected with anyone yet. Explore and send a request!"
-                    : filter === "PENDING"
-                    ? "You have no incoming connection requests."
-                    : "You haven't sent any pending requests."}
-                </p>
-              </CardContent>
-            </Card>
+              </div>
+
+              {/* Helpful Tips */}
+              {filter === "ALL" && (
+                <div className="border-t border-zinc-100 bg-zinc-50/50 p-6">
+                  <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-3">
+                    Quick Tips
+                  </p>
+                  <div className="grid sm:grid-cols-3 gap-3">
+                    {[
+                      {
+                        icon: Search,
+                        text: "Search for creators by niche",
+                      },
+                      { icon: UserPlus, text: "Send personalized requests" },
+                      { icon: Heart, text: "Engage with their content" },
+                    ].map((tip, i) => (
+                      <div
+                        key={i}
+                        className="flex items-center gap-2 text-sm text-zinc-600"
+                      >
+                        <tip.icon className="w-4 h-4 text-yellow-500 flex-shrink-0" />
+                        <span>{tip.text}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           ) : (
             filteredConnections.map((conn) => {
               const isOutgoing = conn.senderId === user?.id;
@@ -151,18 +284,18 @@ export default function ConnectionsPage() {
               return (
                 <Card
                   key={conn.id}
-                  className="rounded-xl transition-colors p-4 bg-white border border-gray-200 shadow-sm"
+                  className="rounded-xl bg-white border border-zinc-200 shadow-sm hover:shadow-md hover:border-zinc-300 transition-all"
                 >
-                  <CardContent className="p-0">
+                  <CardContent className="p-4">
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                       <div className="flex items-center gap-4 flex-1">
-                        <Avatar className="h-14 w-14 border border-yellow-400">
+                        <Avatar className="h-12 w-12 ring-2 ring-zinc-100">
                           <AvatarImage
                             className="object-cover"
                             src={otherUser?.image}
                             alt={otherUser?.username}
                           />
-                          <AvatarFallback className="text-xl font-semibold bg-yellow-400 text-gray-900">
+                          <AvatarFallback className="text-lg font-semibold bg-gradient-to-br from-yellow-400 to-amber-500 text-zinc-900">
                             {otherUser?.username?.charAt(0)?.toUpperCase() ||
                               "?"}
                           </AvatarFallback>
@@ -170,64 +303,73 @@ export default function ConnectionsPage() {
 
                         <div className="flex-1 min-w-0">
                           <Link href={profileLink}>
-                            <h3 className="font-semibold text-lg truncate transition-colors cursor-pointer hover:text-yellow-600 text-gray-900">
+                            <h3 className="font-semibold text-base truncate transition-colors cursor-pointer hover:text-yellow-600 text-zinc-900">
                               {otherUser?.username || "Unknown User"}
                             </h3>
                           </Link>
                           {isAccepted ? (
-                            <p className="text-sm text-gray-500 flex items-center gap-1">
-                              <UserCheck className="w-4 h-4 text-green-600" />{" "}
+                            <p className="text-sm text-zinc-500 flex items-center gap-1">
+                              <UserCheck className="w-3.5 h-3.5 text-green-500" />
                               Connected
                             </p>
                           ) : (
-                            <p className="text-sm text-gray-500">
+                            <p className="text-sm text-zinc-500">
                               {isOutgoing
                                 ? "Request sent"
-                                : "Connection request"}
+                                : "Wants to connect"}
                             </p>
                           )}
                         </div>
                       </div>
 
-                      <div className="flex gap-2 mt-2 sm:mt-0">
+                      <div className="flex gap-2">
                         {isAccepted ? (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => deleteRequest(conn.id)}
-                            // Remove Button: Red text on light background
-                            className="text-xs sm:text-sm flex-1 sm:flex-none text-red-600 border-red-300 hover:bg-red-50 hover:text-red-700"
-                          >
-                            <X className="w-4 h-4 mr-1" /> Remove
-                          </Button>
+                          <>
+                            <Link href={profileLink}>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="text-sm border-zinc-200 hover:bg-zinc-50 rounded-lg"
+                              >
+                                View Profile
+                                <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
+                              </Button>
+                            </Link>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => deleteRequest(conn.id)}
+                              className="text-sm text-zinc-400 hover:text-red-600 hover:bg-red-50 rounded-lg"
+                            >
+                              <X className="w-4 h-4" />
+                            </Button>
+                          </>
                         ) : isOutgoing ? (
                           <Button
                             variant="outline"
                             size="sm"
                             onClick={() => deleteRequest(conn.id)}
-                            // Cancel Sent Request: Light grey/yellow outline
-                            className="text-xs sm:text-sm flex-1 sm:flex-none border-gray-300 text-gray-600 hover:bg-yellow-50 hover:text-yellow-600"
+                            className="text-sm border-zinc-200 text-zinc-600 hover:bg-zinc-50 rounded-lg"
                           >
-                            Cancel
+                            Cancel Request
                           </Button>
                         ) : (
                           <>
                             <Button
                               size="sm"
                               onClick={() => acceptRequest(conn.id)}
-                              // Accept Button: Solid yellow
-                              className="text-xs sm:text-sm flex-1 sm:flex-none bg-yellow-500 text-gray-900 hover:bg-yellow-600 font-semibold shadow-md"
+                              className="text-sm bg-yellow-500 text-zinc-900 hover:bg-yellow-600 font-semibold rounded-lg"
                             >
+                              <UserCheck className="w-4 h-4 mr-1.5" />
                               Accept
                             </Button>
                             <Button
                               variant="outline"
                               size="sm"
                               onClick={() => rejectRequest(conn.id)}
-                              // Reject Button: Light grey outline
-                              className="text-xs sm:text-sm border-gray-300 text-gray-600 hover:bg-gray-100 flex-1 sm:flex-none"
+                              className="text-sm border-zinc-200 text-zinc-600 hover:bg-zinc-50 rounded-lg"
                             >
-                              Reject
+                              Decline
                             </Button>
                           </>
                         )}
@@ -239,7 +381,6 @@ export default function ConnectionsPage() {
             })
           )}
         </div>
-        {/* --- End Connections List --- */}
       </div>
     </div>
   );

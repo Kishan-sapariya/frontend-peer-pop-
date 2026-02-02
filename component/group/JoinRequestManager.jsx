@@ -141,9 +141,12 @@ const JoinRequestManager = ({ groupId }) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-white border border-green-400 hover:bg-green-600 text-green-500 hover:text-white font-bold flex gap-2">
+        <Button
+          variant="outline"
+          className="border-green-200 bg-green-50 hover:bg-green-100 text-green-700 font-semibold gap-2 rounded-xl"
+        >
           <Users className="h-4 w-4" />
-          Requests
+          <span className="hidden sm:inline">Requests</span>
         </Button>
       </DialogTrigger>
 

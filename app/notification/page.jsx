@@ -98,7 +98,7 @@ export default function NotificationList() {
   const readCount = notifications.length - unreadCount;
 
   return (
-    <div className="min-h-screen bg-gray-50 py-10 px-4 sm:px-6 font-sans">
+    <div className="min-h-screen bg-gray-100 py-10 px-4 sm:px-6 font-sans">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 max-w-7xl mx-auto">
         {/* Sidebar */}
         <Card className="md:col-span-1 shadow-xl border-2 bg-white h-fit rounded-xl p-4 md:p-6">
