@@ -49,6 +49,29 @@ export const useNotificationStore = create((set, get) => ({
     }
   },
 
+  // ✅ Mark all notifications as read
+  markAllAsRead: async () => {
+    try {
+      const { notifications } = get();
+      const unreadIds = notifications.filter((n) => !n.isRead).map((n) => n.id);
+
+      // Mark all as read in parallel
+      await Promise.all(
+        unreadIds.map((id) => axios.patch(`${API_URL}/notification/read/${id}`))
+      );
+
+      set((state) => ({
+        notifications: state.notifications.map((n) => ({ ...n, isRead: true })),
+        unreadCount: 0,
+      }));
+
+      toast.success("All notifications marked as read");
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to mark all as read");
+    }
+  },
+
   // ✅ Delete one notification
   deleteNotification: async (id) => {
     try {

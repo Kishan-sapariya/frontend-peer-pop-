@@ -157,23 +157,36 @@ export const useAuthStore = create((set, get) => ({
   },
 
   logout: async () => {
+    // Get user ID BEFORE clearing state
+    const currentUserId = get().user?.id;
+
     try {
+      // Emit leave event FIRST so others get notified immediately
+      if (currentUserId && socket.connected) {
+        socket.emit("leave", currentUserId);
+        // Small delay to ensure the leave event is sent before disconnecting
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+      socket.disconnect();
+
       const res = await axios.post(
         `${API_URL}/auth/logout`,
         {},
         { withCredentials: true }
       );
       const parsedRes = res.data;
+
       set({ isAuthenticated: false, user: null, signedUpEmail: "" });
       // Clear from sessionStorage
       if (typeof window !== "undefined") {
         sessionStorage.removeItem("signedUpEmail");
       }
 
-      socket.disconnect();
-
       toast.success(parsedRes.message || "Logged out successfully!");
     } catch (error) {
+      // Still clear state even if API call fails
+      set({ isAuthenticated: false, user: null, signedUpEmail: "" });
+      socket.disconnect();
       toast.error(error?.response?.data?.message || "Logout failed");
     }
   },
@@ -368,18 +381,62 @@ export const useAuthStore = create((set, get) => ({
   },
 
   loadMore: async () => {
-    const { cursor, hasMore, query, creatorType, location, results } = get();
-    if (!hasMore || !cursor) return;
+    const { cursor, hasMore, query, creatorType, location, results, loading } = get();
+    if (!hasMore || !cursor || loading) return;
 
     try {
       set({ loading: true });
 
-      const res = await axios.get(`${API_URL}/search`, {
+      const res = await axios.get(`${API_URL}/auth/search`, {
         params: { q: query, creatorType, location, cursor, limit: 10 },
       });
 
+      const newResults = (res.data.users || [])
+        .map((user) => {
+          if (user.creatorProfile) {
+            const personalInfo = user.creatorProfile.data?.personalInfo || {};
+            const locationParts = [];
+
+            if (personalInfo.customCity) {
+              locationParts.push(personalInfo.customCity);
+            } else if (personalInfo.city) {
+              locationParts.push(personalInfo.city);
+            }
+
+            if (personalInfo.state) {
+              locationParts.push(personalInfo.state);
+            }
+
+            const locationString = locationParts.join(", ");
+
+            return {
+              type: "CREATOR",
+              id: user.id,
+              username: user.username,
+              image: user.image,
+              creatorType: user.creatorProfile.creatorType,
+              data: user.creatorProfile.data,
+              location: locationString || null,
+            };
+          }
+          if (user.businessProfile) {
+            return {
+              type: "BUSINESS",
+              id: user.id,
+              username: user.username,
+              image: user.image,
+              companyName: user.businessProfile.companyName,
+              industry: user.businessProfile.industry,
+              size: user.businessProfile.size,
+              headquarters: user.businessProfile.headquarters,
+            };
+          }
+          return null;
+        })
+        .filter(Boolean);
+
       set({
-        results: [...results, ...(res.data.users || [])],
+        results: [...results, ...newResults],
         cursor: res.data.nextCursor,
         hasMore: !!res.data.nextCursor,
       });

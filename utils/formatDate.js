@@ -46,21 +46,41 @@ export const formatNumber = (num) => {
 };
 
 export const formatTimeAgo = (dateString) => {
+  if (!dateString) return "";
+
   const date = new Date(dateString);
   const now = new Date();
   const seconds = Math.floor((now - date) / 1000);
 
-  let interval = seconds / 31536000;
-  if (interval > 1) return Math.floor(interval) + "y ago";
-  interval = seconds / 2592000;
-  if (interval > 1) return Math.floor(interval) + "m ago";
-  interval = seconds / 86400;
-  if (interval > 1) return Math.floor(interval) + "d ago";
-  interval = seconds / 3600;
-  if (interval > 1) return Math.floor(interval) + "h ago";
-  interval = seconds / 60;
-  if (interval > 1) return Math.floor(interval) + "m ago";
-  return "now";
+  // Handle future dates
+  if (seconds < 0) return "just now";
+
+  // Less than a minute
+  if (seconds < 60) return "just now";
+
+  // Minutes
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes}m ago`;
+
+  // Hours
+  const hours = Math.floor(seconds / 3600);
+  if (hours < 24) return `${hours}h ago`;
+
+  // Days
+  const days = Math.floor(seconds / 86400);
+  if (days < 7) return `${days}d ago`;
+
+  // Weeks
+  const weeks = Math.floor(days / 7);
+  if (weeks < 4) return `${weeks}w ago`;
+
+  // Months
+  const months = Math.floor(days / 30);
+  if (months < 12) return `${months}mo ago`;
+
+  // Years
+  const years = Math.floor(days / 365);
+  return `${years}y ago`;
 };
 
 export const getCategoryLabel = (category) => {

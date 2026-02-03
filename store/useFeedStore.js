@@ -168,13 +168,38 @@ export const useFeedStore = create((set, get) => ({
     }
   },
   toggleLike: async (postId) => {
+    // Get current state for rollback
+    const currentState = get();
+    const post = currentState.posts.find((p) => p.id === postId);
+    const singlePost = currentState.singlePost;
+
+    if (!post) return;
+
+    // Optimistic update - immediately update UI
+    const wasLiked = post.likedByMe;
+    const newLikedByMe = !wasLiked;
+    const newLikesCount = wasLiked ? post.likesCount - 1 : post.likesCount + 1;
+
+    set((state) => ({
+      posts: state.posts.map((p) =>
+        p.id === postId
+          ? { ...p, likesCount: newLikesCount, likedByMe: newLikedByMe }
+          : p
+      ),
+      singlePost:
+        state.singlePost?.id === postId
+          ? { ...state.singlePost, likesCount: newLikesCount, likedByMe: newLikedByMe }
+          : state.singlePost,
+    }));
+
     try {
       const res = await axios.post(`${API_URL}/feed/posts/${postId}/like`);
       const { likesCount, likedByMe } = res.data;
 
+      // Update with actual server response
       set((state) => ({
-        posts: state.posts.map((post) =>
-          post.id === postId ? { ...post, likesCount, likedByMe } : post
+        posts: state.posts.map((p) =>
+          p.id === postId ? { ...p, likesCount, likedByMe } : p
         ),
         singlePost:
           state.singlePost?.id === postId
@@ -183,24 +208,73 @@ export const useFeedStore = create((set, get) => ({
       }));
       return res.data.likesCount;
     } catch (error) {
+      // Rollback on error
+      set((state) => ({
+        posts: state.posts.map((p) =>
+          p.id === postId
+            ? { ...p, likesCount: post.likesCount, likedByMe: post.likedByMe }
+            : p
+        ),
+        singlePost:
+          state.singlePost?.id === postId && singlePost
+            ? { ...state.singlePost, likesCount: singlePost.likesCount, likedByMe: singlePost.likedByMe }
+            : state.singlePost,
+      }));
       console.error("Error liking post:", error);
       toast.error(error.response?.data?.message || "Failed to like post");
     }
   },
-  addComment: async (postId, comment) => {
+  addComment: async (postId, comment, currentUser) => {
+    // Generate temporary ID for optimistic update
+    const tempId = `temp-${Date.now()}`;
+    const tempComment = {
+      id: tempId,
+      content: comment,
+      createdAt: new Date().toISOString(),
+      user: currentUser ? {
+        id: currentUser.id,
+        username: currentUser.username,
+        image: currentUser.image,
+      } : null,
+      _isOptimistic: true,
+    };
+
+    // Optimistic update - immediately show comment
+    set((state) => ({
+      posts: state.posts.map((post) =>
+        post.id === postId
+          ? {
+              ...post,
+              comments: [...(post.comments || []), tempComment],
+              commentsCount: (post.commentsCount || 0) + 1,
+            }
+          : post
+      ),
+      singlePost:
+        state.singlePost?.id === postId
+          ? {
+              ...state.singlePost,
+              comments: [...(state.singlePost.comments || []), tempComment],
+              commentsCount: (state.singlePost.commentsCount || 0) + 1,
+            }
+          : state.singlePost,
+    }));
+
     try {
       const res = await axios.post(`${API_URL}/feed/posts/${postId}/comment`, {
         comment,
       });
       const newComment = res.data.comment;
 
+      // Replace temp comment with real comment
       set((state) => ({
         posts: state.posts.map((post) =>
           post.id === postId
             ? {
                 ...post,
-                comments: [...(post.comments || []), newComment],
-                commentsCount: (post.commentsCount || 0) + 1,
+                comments: post.comments.map((c) =>
+                  c.id === tempId ? newComment : c
+                ),
               }
             : post
         ),
@@ -208,13 +282,33 @@ export const useFeedStore = create((set, get) => ({
           state.singlePost?.id === postId
             ? {
                 ...state.singlePost,
-                comments: [...(state.singlePost.comments || []), newComment],
-                commentsCount: (state.singlePost.commentsCount || 0) + 1,
+                comments: state.singlePost.comments.map((c) =>
+                  c.id === tempId ? newComment : c
+                ),
               }
             : state.singlePost,
       }));
-      toast.success("Comment added!");
     } catch (error) {
+      // Rollback - remove temp comment
+      set((state) => ({
+        posts: state.posts.map((post) =>
+          post.id === postId
+            ? {
+                ...post,
+                comments: post.comments.filter((c) => c.id !== tempId),
+                commentsCount: Math.max(0, (post.commentsCount || 1) - 1),
+              }
+            : post
+        ),
+        singlePost:
+          state.singlePost?.id === postId
+            ? {
+                ...state.singlePost,
+                comments: state.singlePost.comments.filter((c) => c.id !== tempId),
+                commentsCount: Math.max(0, (state.singlePost.commentsCount || 1) - 1),
+              }
+            : state.singlePost,
+      }));
       console.error("Error commenting post:", error);
       toast.error(error.response?.data?.message || "Failed to comment on post");
     }

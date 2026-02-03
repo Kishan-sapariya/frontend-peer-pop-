@@ -263,7 +263,7 @@ export default function YouTuberProfile() {
   }, [imageSrc]);
 
   return (
-    <div className="min-h-screen bg-gray-100 relative -mt-16">
+    <div className="min-h-screen bg-gray-50 relative -mt-16">
       {/* Cover Image - extends behind navbar */}
       <div className="relative h-72 bg-gradient-to-b from-gray-900 to-gray-800">
         {imageSrc && !hasError && (

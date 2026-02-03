@@ -8,13 +8,23 @@ import { useParams, useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/useAuthStore";
 import LoadingSpinner from "@/component/LoadingSpinner";
 import socket from "@/lib/socket";
-import { ArrowLeft, Paperclip, Send, X, File } from "lucide-react";
+import { ArrowLeft, Paperclip, Send, X, File, Check, CheckCheck } from "lucide-react";
+import {
+  useOnlineStatus,
+  useTypingIndicator,
+  useReadReceipts,
+} from "@/hooks/useSocketFeatures";
+
+const MAX_MESSAGE_LENGTH = 1000;
 
 const ChatPage = () => {
   const [messageInput, setMessageInput] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
   const [filePreview, setFilePreview] = useState(null);
   const [isSending, setIsSending] = useState(false);
+
+  const messageCharCount = messageInput.length;
+  const isMessageOverLimit = messageCharCount > MAX_MESSAGE_LENGTH;
   const messagesEndRef = useRef(null);
   const messagesContainerRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -29,6 +39,9 @@ const ChatPage = () => {
     setMessages,
     isLoading,
     conversations,
+    clearUnreadCount,
+    setActiveConversation,
+    clearActiveConversation,
   } = useConversationStore();
   const { conversationId } = useParams();
 
@@ -36,6 +49,11 @@ const ChatPage = () => {
   const otherUser = currentConversation?.participants?.find(
     (p) => p.userId !== currentUser?.id
   )?.user;
+
+  // Online status, typing indicator, and read receipts
+  const { isOnline } = useOnlineStatus(otherUser?.id ? [otherUser.id] : []);
+  const { isOtherTyping, emitTyping } = useTypingIndicator(conversationId, otherUser?.id);
+  const { readStatus, markAsRead } = useReadReceipts(conversationId);
 
   const scrollToBottom = useCallback(() => {
     if (messagesContainerRef.current) {
@@ -49,11 +67,22 @@ const ChatPage = () => {
 
   useEffect(() => {
     setMessages([]);
-    if (conversationId) getMessages(conversationId);
-  }, [conversationId, getMessages, setMessages]);
+    if (conversationId) {
+      getMessages(conversationId);
+      // Clear unread count and set active conversation
+      clearUnreadCount(conversationId);
+      setActiveConversation(conversationId);
+    }
+
+    // Clear active conversation when leaving
+    return () => {
+      clearActiveConversation();
+    };
+  }, [conversationId, getMessages, setMessages, clearUnreadCount, setActiveConversation, clearActiveConversation]);
 
   useEffect(() => {
-    socket.on("receiveMessage", (msg) => {
+    // Use a named function so we can remove only THIS listener, not the store's listener
+    const handleReceiveMessage = (msg) => {
       setMessages((prev) => {
         if (prev.some((m) => m.id === msg.id)) return prev;
         return [...prev, msg];
@@ -66,10 +95,13 @@ const ChatPage = () => {
       }));
 
       setIsSending(false);
-    });
+    };
+
+    socket.on("receiveMessage", handleReceiveMessage);
 
     return () => {
-      socket.off("receiveMessage");
+      // Remove only this specific listener, not all receiveMessage listeners
+      socket.off("receiveMessage", handleReceiveMessage);
     };
   }, [setMessages]);
 
@@ -77,10 +109,51 @@ const ChatPage = () => {
     scrollToBottom();
   }, [messages, scrollToBottom]);
 
+  // Scroll when typing indicator appears
+  useEffect(() => {
+    if (isOtherTyping) {
+      scrollToBottom();
+    }
+  }, [isOtherTyping, scrollToBottom]);
+
   useEffect(() => {
     const timer = setTimeout(() => scrollToBottom(), 100);
     return () => clearTimeout(timer);
   }, [conversationId, isLoading, scrollToBottom]);
+
+  // Mark messages as read when viewing conversation
+  useEffect(() => {
+    if (conversationId && messages.length > 0 && !isLoading) {
+      markAsRead();
+    }
+  }, [conversationId, messages.length, isLoading, markAsRead]);
+
+  // Listen for read receipts and update local messages
+  useEffect(() => {
+    const handleMessagesRead = ({ conversationId: convId, userId, lastReadAt }) => {
+      if (convId === conversationId && userId !== currentUser?.id) {
+        // Update local messages to mark them as read by this user
+        setMessages((prev) =>
+          prev.map((msg) => {
+            // Only update messages sent by current user that were created before lastReadAt
+            if (msg.senderId === currentUser?.id && new Date(msg.createdAt) <= new Date(lastReadAt)) {
+              const readBy = msg.readBy || [];
+              if (!readBy.includes(userId)) {
+                return { ...msg, readBy: [...readBy, userId] };
+              }
+            }
+            return msg;
+          })
+        );
+      }
+    };
+
+    socket.on("messagesRead", handleMessagesRead);
+
+    return () => {
+      socket.off("messagesRead", handleMessagesRead);
+    };
+  }, [conversationId, currentUser?.id, setMessages]);
 
   const formatTime = (timestamp) =>
     new Date(timestamp).toLocaleTimeString("en-US", {
@@ -119,6 +192,7 @@ const ChatPage = () => {
     if (!messageInput.trim() && !selectedFile) return;
 
     setIsSending(true);
+    emitTyping(false); // Clear typing indicator
     const receiverId = otherUser?.id;
 
     try {
@@ -177,11 +251,11 @@ const ChatPage = () => {
   // Get profile link for the other user
   const getProfileLink = () => {
     if (!otherUser) return "/";
-    const userType = otherUser?.type;
-    if (userType === "BUSINESS") {
-      return `/profile/business/${otherUser?.username}`;
+    if (otherUser.role === "BUSINESS") {
+      return `/profile/business/${otherUser.username}`;
     }
-    return `/profile/${otherUser?.username}/${otherUser?.creatorType?.toLowerCase() || "creator"}`;
+    const creatorType = otherUser.creatorProfile?.creatorType?.toLowerCase() || "youtuber";
+    return `/profile/${otherUser.username}/${creatorType}`;
   };
 
   return (
@@ -203,19 +277,28 @@ const ChatPage = () => {
             className="flex items-center gap-3 flex-1 min-w-0 cursor-pointer hover:opacity-80 transition-opacity"
             onClick={() => router.push(getProfileLink())}
           >
-            <Avatar className="h-10 w-10 border-2 border-yellow-400">
-              <AvatarImage src={otherUser.image} alt={otherUser.username} className="object-cover" />
-              <AvatarFallback className="bg-yellow-400 text-gray-900 font-semibold">
-                {otherUser.username?.charAt(0).toUpperCase() || "?"}
-              </AvatarFallback>
-            </Avatar>
+            <div className="relative">
+              <Avatar className="h-10 w-10 border-2 border-yellow-400">
+                <AvatarImage src={otherUser.image} alt={otherUser.username} className="object-cover" />
+                <AvatarFallback className="bg-yellow-400 text-gray-900 font-semibold">
+                  {otherUser.username?.charAt(0).toUpperCase() || "?"}
+                </AvatarFallback>
+              </Avatar>
+              {isOnline(otherUser?.id) && (
+                <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full" />
+              )}
+            </div>
 
             <div className="flex-1 min-w-0">
               <h2 className="text-base font-semibold text-gray-900 truncate">
                 {otherUser.username}
               </h2>
               <p className="text-xs text-gray-500 truncate">
-                Tap to view profile
+                {isOnline(otherUser?.id) ? (
+                  <span className="text-green-600">Online</span>
+                ) : (
+                  "Tap to view profile"
+                )}
               </p>
             </div>
           </div>
@@ -342,8 +425,17 @@ const ChatPage = () => {
                                 )}
                               </div>
 
-                              <span className={`text-[11px] text-gray-400 mt-1 ${isFromCurrentUser ? "mr-1" : "ml-1"}`}>
+                              <span className={`text-[11px] text-gray-400 mt-1 flex items-center gap-1 ${isFromCurrentUser ? "mr-1" : "ml-1"}`}>
                                 {formatTime(msg.createdAt)}
+                                {isFromCurrentUser && (
+                                  // Check if message is read: either from backend readBy array or from socket readStatus
+                                  (msg.readBy?.includes(otherUser?.id)) ||
+                                  (readStatus[otherUser?.id] && new Date(readStatus[otherUser.id]) >= new Date(msg.createdAt)) ? (
+                                    <CheckCheck className="w-3.5 h-3.5 text-blue-500" />
+                                  ) : (
+                                    <Check className="w-3.5 h-3.5 text-gray-400" />
+                                  )
+                                )}
                               </span>
                             </div>
                           </div>
@@ -355,6 +447,26 @@ const ChatPage = () => {
               ))}
             </div>
           )}
+
+          {/* Typing Indicator */}
+          {isOtherTyping && (
+            <div className="flex items-end gap-2 px-3 py-2">
+              <Avatar className="h-8 w-8 flex-shrink-0">
+                <AvatarImage src={otherUser?.image} alt={otherUser?.username} className="object-cover" />
+                <AvatarFallback className="bg-gray-300 text-gray-700 text-xs">
+                  {otherUser?.username?.charAt(0).toUpperCase() || "?"}
+                </AvatarFallback>
+              </Avatar>
+              <div className="bg-white rounded-2xl rounded-bl-sm px-4 py-3 shadow-sm border border-gray-100">
+                <div className="flex items-center gap-1">
+                  <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
+                  <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
+                  <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></span>
+                </div>
+              </div>
+            </div>
+          )}
+
           <div ref={messagesEndRef} className="h-4" />
         </div>
       </main>
@@ -390,18 +502,18 @@ const ChatPage = () => {
 
       {/* Input Area */}
       <div className="flex-shrink-0 bg-white border-t border-gray-200 px-3 py-3 safe-area-inset-bottom">
-        <div className="flex items-end gap-2">
+        <div className="flex items-center gap-2">
           <Button
             variant="ghost"
             size="icon"
             onClick={() => fileInputRef.current?.click()}
-            className="h-10 w-10 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-full flex-shrink-0"
+            className="h-11 w-11 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-full flex-shrink-0"
             disabled={isSending}
           >
             <Paperclip className="w-5 h-5" />
           </Button>
 
-          <div className="flex-1">
+          <div className="flex-1 relative">
             <textarea
               ref={inputRef}
               placeholder="Type a message..."
@@ -410,27 +522,48 @@ const ChatPage = () => {
                 setMessageInput(e.target.value);
                 e.target.style.height = "auto";
                 e.target.style.height = Math.min(e.target.scrollHeight, 100) + "px";
+                // Emit typing event
+                emitTyping(e.target.value.length > 0);
               }}
               onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
+                if (e.key === "Enter" && !e.shiftKey && !isMessageOverLimit) {
                   e.preventDefault();
                   handleSendMessage();
                 }
               }}
+              onBlur={() => emitTyping(false)}
               disabled={isSending}
               rows={1}
-              className="w-full px-4 py-2.5 text-[15px] bg-gray-100 border border-gray-200 rounded-2xl resize-none focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400 transition-all placeholder:text-gray-400 disabled:opacity-50"
-              style={{ minHeight: "44px", maxHeight: "100px" }}
+              maxLength={MAX_MESSAGE_LENGTH + 50}
+              className={`w-full px-4 py-2.5 pr-12 text-[15px] bg-gray-100 border rounded-2xl resize-none focus:outline-none focus:ring-1 transition-all placeholder:text-gray-400 disabled:opacity-50 ${
+                isMessageOverLimit
+                  ? "border-red-400 focus:border-red-400 focus:ring-red-400"
+                  : "border-gray-200 focus:border-yellow-400 focus:ring-yellow-400"
+              }`}
+              style={{ minHeight: "44px", maxHeight: "100px", lineHeight: "1.4" }}
             />
+            {messageInput.length > 0 && (
+              <span
+                className={`absolute right-3 bottom-2.5 text-[10px] font-medium ${
+                  isMessageOverLimit
+                    ? "text-red-500"
+                    : messageCharCount > MAX_MESSAGE_LENGTH - 100
+                    ? "text-amber-500"
+                    : "text-gray-400"
+                }`}
+              >
+                {MAX_MESSAGE_LENGTH - messageCharCount}
+              </span>
+            )}
           </div>
 
           <Button
             onClick={handleSendMessage}
-            disabled={(!messageInput.trim() && !selectedFile) || isSending}
+            disabled={(!messageInput.trim() && !selectedFile) || isSending || isMessageOverLimit}
             size="icon"
             className={`
-              h-10 w-10 rounded-full flex-shrink-0 transition-all duration-200
-              ${(!messageInput.trim() && !selectedFile) || isSending
+              h-11 w-11 rounded-full flex-shrink-0 transition-all duration-200
+              ${(!messageInput.trim() && !selectedFile) || isSending || isMessageOverLimit
                 ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                 : "bg-yellow-400 text-gray-900 hover:bg-yellow-500 active:scale-95"
               }

@@ -25,6 +25,7 @@ import SharePostDialog from "../SharePostDialog";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useFeedStore } from "@/store/useFeedStore";
 import Link from "next/link";
+import ConfirmDialog from "@/components/ui/confirm-dialog";
 
 const cleanDescription = (text) => text.replace(/#\w+/g, "").trim();
 
@@ -96,14 +97,21 @@ const PostCard = ({ post }) => {
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-40 p-1 rounded-xl">
-                  <Button
-                    variant="ghost"
-                    className="w-full justify-start text-sm text-red-500 hover:text-red-600 hover:bg-red-50"
-                    onClick={() => deletePost(post.id)}
-                  >
-                    <Trash2 className="w-4 h-4 mr-2" />
-                    Delete Post
-                  </Button>
+                  <ConfirmDialog
+                    trigger={
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start text-sm text-red-500 hover:text-red-600 hover:bg-red-50"
+                      >
+                        <Trash2 className="w-4 h-4 mr-2" />
+                        Delete Post
+                      </Button>
+                    }
+                    title="Delete Post?"
+                    description="This post will be permanently deleted. This action cannot be undone."
+                    confirmText="Delete"
+                    onConfirm={() => deletePost(post.id)}
+                  />
                 </PopoverContent>
               </Popover>
             )}

@@ -1,13 +1,13 @@
 import { create } from "zustand";
 import axios from "axios";
 import { toast } from "react-hot-toast";
-import { io } from "socket.io-client";
+import socket from "@/lib/socket";
 import { useAuthStore } from "./useAuthStore";
 
 const API_URL = process.env.NEXT_PUBLIC_BASE_API_URL;
 axios.defaults.withCredentials = true;
 
-let socket;
+let socketInitialized = false;
 
 export const useConnectionStore = create((set, get) => ({
   connections: [],
@@ -129,9 +129,21 @@ export const useConnectionStore = create((set, get) => ({
   },
 
   listenForSocketEvents: () => {
-    if (socket) return; // don’t re-initialize
+    if (socketInitialized) return; // don't re-initialize
+    socketInitialized = true;
 
-    socket = io(API_URL, { withCredentials: true });
+    const user = useAuthStore.getState().user;
+    if (!user?.id) return;
+
+    // Connect socket if not connected
+    if (!socket.connected) {
+      socket.connect();
+    }
+
+    socket.emit("join", user.id);
+
+    // Remove existing listener to prevent duplicates
+    socket.off("connection:pendingUpdated");
 
     socket.on("connection:pendingUpdated", (data) => {
       const { type, request, connectionId } = data;
@@ -207,5 +219,11 @@ export const useConnectionStore = create((set, get) => ({
         }
       });
     });
+  },
+
+  // Reset socket initialization (call on logout)
+  resetSocketListener: () => {
+    socketInitialized = false;
+    socket.off("connection:pendingUpdated");
   },
 }));

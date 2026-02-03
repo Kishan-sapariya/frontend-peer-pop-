@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import axios from "axios";
 import { useAuthStore } from "./useAuthStore";
+import socket from "@/lib/socket";
 
 const API_URL = process.env.NEXT_PUBLIC_BASE_API_URL;
 axios.defaults.withCredentials = true;
@@ -13,6 +14,8 @@ export const useConversationStore = create((set, get) => ({
   publicUsersLoading: false,
   loading: false,
   error: null,
+  // Store read receipts per conversation: { conversationId: { odsverId: lastReadAt } }
+  readReceipts: {},
 
   getUnreadCount: () => {
     const { conversations } = get();
@@ -204,6 +207,45 @@ export const useConversationStore = create((set, get) => ({
     return conversations.filter((c) => (c.unreadCount || 0) > 0).length;
   },
 
+  // Clear unread count for a specific conversation
+  clearUnreadCount: (conversationId) => {
+    set((state) => ({
+      conversations: state.conversations.map((c) =>
+        c.id === conversationId ? { ...c, unreadCount: 0 } : c
+      ),
+    }));
+  },
+
+  // Set active conversation (used for tracking which conversation is currently open)
+  setActiveConversation: (conversationId) => {
+    const { conversations } = get();
+    const conversation = conversations.find((c) => c.id === conversationId);
+    set({ activeConversation: conversation || { id: conversationId } });
+  },
+
+  // Clear active conversation (when leaving chat)
+  clearActiveConversation: () => {
+    set({ activeConversation: null });
+  },
+
+  // Update read receipt for a conversation
+  updateReadReceipt: (conversationId, odsverId, lastReadAt) => {
+    set((state) => ({
+      readReceipts: {
+        ...state.readReceipts,
+        [conversationId]: {
+          ...(state.readReceipts[conversationId] || {}),
+          [odsverId]: lastReadAt,
+        },
+      },
+    }));
+  },
+
+  // Get read receipts for a conversation
+  getReadReceipts: (conversationId) => {
+    return get().readReceipts[conversationId] || {};
+  },
+
   getPublicUsersForChat: async (search = "") => {
     try {
       set({ publicUsersLoading: true, error: null });
@@ -228,4 +270,68 @@ export const useConversationStore = create((set, get) => ({
   },
 
   clearPublicUsers: () => set({ publicUsers: [], publicUsersLoading: false }),
+
+  // Initialize socket listeners for real-time conversation updates
+  initConversationSocket: () => {
+    const user = useAuthStore.getState().user;
+    if (!user?.id) return;
+
+    // Connect socket if not connected
+    if (!socket.connected) {
+      socket.connect();
+    }
+
+    socket.emit("join", user.id);
+
+    // Remove existing listeners to prevent duplicates
+    socket.off("conversationUpdated");
+    socket.off("receiveMessage");
+    socket.off("messagesRead");
+
+    // Listen for conversation updates (new messages, etc.)
+    socket.on("conversationUpdated", (update) => {
+      set((state) => {
+        const conversations = state.conversations.map((c) =>
+          c.id === update.conversationId
+            ? {
+                ...c,
+                lastMessage: update.lastMessage,
+                unreadCount:
+                  state.activeConversation?.id === update.conversationId
+                    ? 0
+                    : (c.unreadCount || 0) + 1,
+              }
+            : c
+        );
+        return { conversations };
+      });
+    });
+
+    // Also listen for new messages to update lastMessage and unread count
+    socket.on("receiveMessage", (message) => {
+      const { activeConversation } = get();
+      const isActiveConversation = activeConversation?.id === message.conversationId;
+
+      set((state) => ({
+        conversations: state.conversations.map((c) =>
+          c.id === message.conversationId
+            ? {
+                ...c,
+                lastMessage: message,
+                // Only increment unread if not in the active conversation
+                unreadCount: isActiveConversation ? 0 : (c.unreadCount || 0) + 1,
+              }
+            : c
+        ),
+      }));
+    });
+
+    // Listen for read receipts
+    socket.on("messagesRead", ({ conversationId, odsverId, lastReadAt }) => {
+      get().updateReadReceipt(conversationId, odsverId, lastReadAt);
+    });
+
+    // Fetch initial conversations
+    get().getAllConversation();
+  },
 }));

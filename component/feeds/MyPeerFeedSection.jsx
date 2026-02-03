@@ -1,19 +1,30 @@
 "use client";
 
-import React, { useEffect, useRef, useCallback } from "react";
+import React, { useEffect, useRef, useCallback, useState } from "react";
 import { useFeedStore } from "@/store/useFeedStore";
-import PostCard from "./PostCard"; 
+import PostCard from "./PostCard";
 import { Loader2 } from "lucide-react";
 import PostSkeleton from "./PostSkeleton";
+import PullToRefresh from "@/components/ui/pull-to-refresh";
 
 const MyPeerFeedSection = ({ activeFilter }) => {
   const { posts, fetchPostsForMyPeers, loading, loadingMore, hasMore } =
     useFeedStore();
 
   const observerRef = useRef(null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   useEffect(() => {
     fetchPostsForMyPeers(false);
+  }, [fetchPostsForMyPeers]);
+
+  const handleRefresh = useCallback(async () => {
+    setIsRefreshing(true);
+    try {
+      await fetchPostsForMyPeers(false);
+    } finally {
+      setIsRefreshing(false);
+    }
   }, [fetchPostsForMyPeers]);
 
   const lastPostRef = useCallback(
@@ -37,43 +48,47 @@ const MyPeerFeedSection = ({ activeFilter }) => {
       ? posts
       : posts.filter((post) => post.category === activeFilter);
 
-  if (loading && !posts.length) {
+  if (loading && !posts.length && !isRefreshing) {
     return <PostSkeleton />;
   }
 
-  if (!filteredPosts.length) {
+  if (!filteredPosts.length && !loading) {
     return (
-      <p className="text-center text-gray-500 font-medium mt-10">
-        No posts available. Your peers haven’t posted yet.
-      </p>
+      <PullToRefresh onRefresh={handleRefresh} disabled={isRefreshing}>
+        <p className="text-center text-gray-500 font-medium mt-10">
+          No posts available. Your peers haven't posted yet.
+        </p>
+      </PullToRefresh>
     );
   }
 
   return (
-    <div className="space-y-6">
-      {filteredPosts.map((post, idx) => {
-        const isLastPost = idx === filteredPosts.length - 1;
-        return (
-          <div key={post.id} ref={isLastPost ? lastPostRef : null}>
-            <PostCard post={post} />
+    <PullToRefresh onRefresh={handleRefresh} disabled={isRefreshing}>
+      <div className="space-y-6">
+        {filteredPosts.map((post, idx) => {
+          const isLastPost = idx === filteredPosts.length - 1;
+          return (
+            <div key={post.id} ref={isLastPost ? lastPostRef : null}>
+              <PostCard post={post} />
+            </div>
+          );
+        })}
+
+        {hasMore && (
+          <div className="flex justify-center p-6">
+            {loadingMore && (
+              <Loader2 className="h-6 w-6 text-gray-500 animate-spin" />
+            )}
           </div>
-        );
-      })}
+        )}
 
-      {hasMore && (
-        <div className="flex justify-center p-6">
-          {loadingMore && (
-            <Loader2 className="h-6 w-6 text-gray-500 animate-spin" />
-          )}
-        </div>
-      )}
-
-      {!hasMore && filteredPosts.length > 0 && (
-        <p className="text-center text-gray-500 py-4 font-medium">
-          You’ve reached the end 🎉
-        </p>
-      )}
-    </div>
+        {!hasMore && filteredPosts.length > 0 && (
+          <p className="text-center text-gray-500 py-4 font-medium">
+            You've reached the end
+          </p>
+        )}
+      </div>
+    </PullToRefresh>
   );
 };
 

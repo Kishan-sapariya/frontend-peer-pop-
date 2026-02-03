@@ -50,6 +50,7 @@ const Navbar = () => {
   const listenForSocketEvents = useConnectionStore((s) => s.listenForSocketEvents);
   const connections = useConnectionStore((s) => s.connections);
   const conversations = useConversationStore((state) => state.conversations);
+  const initConversationSocket = useConversationStore((state) => state.initConversationSocket);
 
   // Compute counts from state instead of calling methods (avoids re-renders)
   const pendingCount = useMemo(() => {
@@ -64,17 +65,18 @@ const Navbar = () => {
   }, [conversations]);
 
   useEffect(() => {
-    // Only initialize once when authenticated
-    if (isAuthenticated && !hasInitialized.current) {
+    // Only initialize once when authenticated AND user is available
+    if (isAuthenticated && user?.id && !hasInitialized.current) {
       hasInitialized.current = true;
       getConnections();
       listenForSocketEvents();
+      initConversationSocket();
     }
     // Reset when logged out
     if (!isAuthenticated) {
       hasInitialized.current = false;
     }
-  }, [isAuthenticated, getConnections, listenForSocketEvents]);
+  }, [isAuthenticated, user?.id, getConnections, listenForSocketEvents, initConversationSocket]);
 
   const handleLogout = async () => {
     try {

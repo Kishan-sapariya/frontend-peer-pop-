@@ -180,7 +180,7 @@ const GroupPostInput = ({ groupId }) => {
                 hidden
                 onChange={handleMultiImageUpload}
               />
-              <span className="hidden sm:inline">Gallery</span>
+              <span className="hidden sm:inline">Multiple</span>
             </label>
 
             <label className="cursor-pointer flex items-center gap-1.5 px-3 py-2 rounded-lg hover:bg-white text-zinc-600 hover:text-green-600 font-medium text-sm transition-colors border border-transparent hover:border-zinc-200">

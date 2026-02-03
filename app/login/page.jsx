@@ -86,7 +86,8 @@ const LoginPage = () => {
 
           <Button
             type="button"
-            disabled={isLoading}
+            loading={isLoading}
+            loadingText="Redirecting..."
             onClick={() => {
               setIsLoading(true);
               window.location.href = `${process.env.NEXT_PUBLIC_BASE_API_URL}/auth/google`;
@@ -138,19 +139,13 @@ const LoginPage = () => {
 
             <Button
               type="submit"
-              disabled={isLoading}
-              className="w-full py-6 font-bold text-lg rounded-xl shadow-lg transform transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none 
-                bg-yellow-400 hover:bg-yellow-500 text-gray-900 
+              loading={isLoading}
+              loadingText="Signing In..."
+              className="w-full py-6 font-bold text-lg rounded-xl shadow-lg transform transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none
+                bg-yellow-400 hover:bg-yellow-500 text-gray-900
                 hover:shadow-xl hover:scale-[1.01]"
             >
-              {isLoading ? (
-                <div className="flex items-center justify-center space-x-2">
-                  <div className="w-5 h-5 border-2 border-gray-900 border-t-transparent rounded-full animate-spin" />
-                  <span>Signing In...</span>
-                </div>
-              ) : (
-                "Sign In"
-              )}
+              Sign In
             </Button>
 
             <p className="text-gray-500 text-center text-sm mt-4">

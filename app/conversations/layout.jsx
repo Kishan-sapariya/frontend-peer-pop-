@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { usePathname } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 import { Search, MessageSquare, PlusCircle, MessageCircle } from "lucide-react";
 import Link from "next/link";
 import { NewChatModal } from "@/component/conversations/NewChatModal";
+import { useOnlineStatus } from "@/hooks/useSocketFeatures";
 
 // Sidebar component for conversation list
 function ConversationsSidebar({ onConversationSelect, selectedConversationId }) {
@@ -38,6 +39,15 @@ function ConversationsSidebar({ onConversationSelect, selectedConversationId }) 
       c.lastMessage?.content?.toLowerCase().includes(searchTerm.toLowerCase())
     );
   }) || [];
+
+  // Get all user IDs for online status tracking
+  const userIds = useMemo(() => {
+    return filteredConversations
+      .map((c) => getOtherUser(c, user?.id)?.id)
+      .filter(Boolean);
+  }, [filteredConversations, user?.id]);
+
+  const { isOnline } = useOnlineStatus(userIds);
 
   const formatTime = (timestamp) => {
     if (!timestamp) return "";
@@ -158,16 +168,21 @@ function ConversationsSidebar({ onConversationSelect, selectedConversationId }) 
                     }
                   `}
                 >
-                  <Avatar className="h-12 w-12 flex-shrink-0">
-                    <AvatarImage
-                      className="object-cover"
-                      src={otherUser.image}
-                      alt={otherUser.username}
-                    />
-                    <AvatarFallback className="bg-yellow-400 text-gray-900 font-semibold">
-                      {otherUser.username?.[0]?.toUpperCase() || "?"}
-                    </AvatarFallback>
-                  </Avatar>
+                  <div className="relative flex-shrink-0">
+                    <Avatar className="h-12 w-12">
+                      <AvatarImage
+                        className="object-cover"
+                        src={otherUser.image}
+                        alt={otherUser.username}
+                      />
+                      <AvatarFallback className="bg-yellow-400 text-gray-900 font-semibold">
+                        {otherUser.username?.[0]?.toUpperCase() || "?"}
+                      </AvatarFallback>
+                    </Avatar>
+                    {isOnline(otherUser.id) && (
+                      <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full" />
+                    )}
+                  </div>
 
                   <div className="flex-1 min-w-0">
                     <div className="flex justify-between items-center mb-0.5">

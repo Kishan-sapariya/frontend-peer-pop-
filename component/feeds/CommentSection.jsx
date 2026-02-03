@@ -20,7 +20,7 @@ export const CommentSection = ({ comments, postId }) => {
 
   const handleAddComment = async () => {
     if (!comment.trim()) return;
-    await addComment(postId, comment);
+    await addComment(postId, comment, currentUser);
     setComment("");
   };
 
@@ -39,7 +39,9 @@ export const CommentSection = ({ comments, postId }) => {
           {comments.map((c) => (
             <div
               key={c.id}
-              className="flex items-start space-x-3 group relative"
+              className={`flex items-start space-x-3 group relative ${
+                c._isOptimistic ? "opacity-70" : ""
+              }`}
             >
               <Avatar className="w-8 h-8 flex-shrink-0 border-2 border-blue-200">
                 <AvatarImage src={c.user?.image} alt={c.user?.username} className="object-cover" />
@@ -54,7 +56,7 @@ export const CommentSection = ({ comments, postId }) => {
                   </span>
                   <span className="text-xs text-gray-500">•</span>
                   <span className="text-xs text-gray-500">
-                    {formatTimeAgo(c.createdAt)}
+                    {c._isOptimistic ? "Posting..." : formatTimeAgo(c.createdAt)}
                   </span>
                 </div>
                 <p className="text-sm text-gray-700 mt-1">{c.content}</p>

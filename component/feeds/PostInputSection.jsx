@@ -13,10 +13,14 @@ import {
   Video,
   FileText,
   Send,
+  Loader2,
 } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useFeedStore } from "@/store/useFeedStore";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { compressImage, compressImages, formatFileSize } from "@/utils/imageCompression";
+
+const MAX_POST_LENGTH = 2000;
 
 const PostInputSection = () => {
   const { user: currentUser } = useAuthStore();
@@ -26,18 +30,71 @@ const PostInputSection = () => {
   const [newPost, setNewPost] = useState("");
   const [showPostOptions, setShowPostOptions] = useState(false);
   const [media, setMedia] = useState({});
+  const [isCompressing, setIsCompressing] = useState(false);
+  const [compressionInfo, setCompressionInfo] = useState(null);
 
-  const handleFileChange = (e, type) => {
-    if (!e.target.files) return;
+  const characterCount = newPost.length;
+  const isOverLimit = characterCount > MAX_POST_LENGTH;
+  const remainingChars = MAX_POST_LENGTH - characterCount;
+
+  const handleFileChange = async (e, type) => {
+    if (!e.target.files || e.target.files.length === 0) return;
 
     // Reset all other media types when a new one is selected
     const newMedia = {};
-    if (type === "images") {
-      newMedia.images = Array.from(e.target.files);
-    } else {
-      newMedia[type] = e.target.files[0];
+    setCompressionInfo(null);
+
+    // Videos don't need compression
+    if (type === "video") {
+      newMedia.video = e.target.files[0];
+      setMedia(newMedia);
+      return;
     }
-    setMedia(newMedia);
+
+    // Compress images
+    setIsCompressing(true);
+    try {
+      if (type === "images") {
+        const files = Array.from(e.target.files);
+        const originalSize = files.reduce((sum, f) => sum + f.size, 0);
+        const compressedFiles = await compressImages(files);
+        const compressedSize = compressedFiles.reduce((sum, f) => sum + f.size, 0);
+        newMedia.images = compressedFiles;
+
+        if (compressedSize < originalSize) {
+          setCompressionInfo({
+            original: formatFileSize(originalSize),
+            compressed: formatFileSize(compressedSize),
+            saved: Math.round((1 - compressedSize / originalSize) * 100),
+          });
+        }
+      } else if (type === "image") {
+        const file = e.target.files[0];
+        const originalSize = file.size;
+        const compressedFile = await compressImage(file);
+        newMedia.image = compressedFile;
+
+        if (compressedFile.size < originalSize) {
+          setCompressionInfo({
+            original: formatFileSize(originalSize),
+            compressed: formatFileSize(compressedFile.size),
+            saved: Math.round((1 - compressedFile.size / originalSize) * 100),
+          });
+        }
+      }
+      setMedia(newMedia);
+    } catch (error) {
+      console.error("Compression failed:", error);
+      // Fall back to original files
+      if (type === "images") {
+        newMedia.images = Array.from(e.target.files);
+      } else {
+        newMedia[type] = e.target.files[0];
+      }
+      setMedia(newMedia);
+    } finally {
+      setIsCompressing(false);
+    }
   };
 
   const extractHashtags = (text) => {
@@ -62,6 +119,7 @@ const PostInputSection = () => {
       setPostType("");
       setMedia({});
       setShowPostOptions(false);
+      setCompressionInfo(null);
     } catch (error) {
       console.error("Post creation failed", error);
     }
@@ -96,14 +154,34 @@ const PostInputSection = () => {
             </Avatar>
 
             <div className="flex-1">
-              <Textarea
-                placeholder="Share your creative work, find collaborators, or post opportunities..."
-                value={newPost}
-                onChange={(e) => setNewPost(e.target.value)}
-                className="border-gray-300 focus:border-yellow-500 focus:ring-yellow-500/20 resize-none text-base transition-colors duration-200"
-                rows={3}
-                onFocus={() => setShowPostOptions(true)}
-              />
+              <div className="relative">
+                <Textarea
+                  placeholder="Share your creative work, find collaborators, or post opportunities..."
+                  value={newPost}
+                  onChange={(e) => setNewPost(e.target.value)}
+                  maxLength={MAX_POST_LENGTH + 100}
+                  className={`border-gray-300 focus:border-yellow-500 focus:ring-yellow-500/20 resize-none text-base transition-colors duration-200 ${
+                    isOverLimit ? "border-red-500 focus:border-red-500" : ""
+                  }`}
+                  rows={3}
+                  onFocus={() => setShowPostOptions(true)}
+                />
+                {showPostOptions && (
+                  <div className="absolute bottom-2 right-2">
+                    <span
+                      className={`text-xs font-medium ${
+                        isOverLimit
+                          ? "text-red-500"
+                          : remainingChars <= 100
+                          ? "text-amber-500"
+                          : "text-gray-400"
+                      }`}
+                    >
+                      {remainingChars}
+                    </span>
+                  </div>
+                )}
+              </div>
 
               {showPostOptions && (
                 <div className="mt-4 space-y-4">
@@ -172,9 +250,20 @@ const PostInputSection = () => {
                         onChange={handleFileChange}
                       />
 
-                      {hasMedia && (
+                      {isCompressing && (
+                        <span className="text-xs text-yellow-600 font-medium ml-2 flex items-center">
+                          <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+                          Compressing...
+                        </span>
+                      )}
+                      {!isCompressing && hasMedia && (
                         <span className="text-xs text-green-600 font-medium ml-2">
                           {mediaCount} {mediaType} selected
+                          {compressionInfo && (
+                            <span className="text-gray-500 ml-1">
+                              ({compressionInfo.compressed}, saved {compressionInfo.saved}%)
+                            </span>
+                          )}
                         </span>
                       )}
                     </div>
@@ -188,6 +277,7 @@ const PostInputSection = () => {
                           setNewPost("");
                           setPostType("");
                           setMedia({});
+                          setCompressionInfo(null);
                         }}
                         className="border-gray-300 hover:bg-gray-100 text-gray-700"
                       >
@@ -195,16 +285,12 @@ const PostInputSection = () => {
                       </Button>
                       <Button
                         onClick={handlePostSubmit}
-                        disabled={!newPost.trim() || loading || postType === ""}
+                        disabled={!newPost.trim() || postType === "" || isOverLimit || isCompressing}
+                        loading={loading}
+                        loadingText="Posting..."
                         className="bg-yellow-500 hover:bg-yellow-500 text-black font-semibold shadow-md transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        {loading ? (
-                          "Posting..."
-                        ) : (
-                          <>
-                            <Send className="w-4 h-4 mr-2" /> Post
-                          </>
-                        )}
+                        <Send className="w-4 h-4 mr-2" /> Post
                       </Button>
                     </div>
                   </div>
