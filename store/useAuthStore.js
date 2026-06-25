@@ -109,12 +109,16 @@ export const useAuthStore = create((set, get) => ({
 
       return parsedRes;
     } catch (error) {
-      console.error("getCurrentUser error:", error);
-      if (error?.response?.status === 401 || error?.response?.status === 403) {
+      const status = error?.response?.status;
+      // 401/403 just means "not logged in" on initial load — expected, not an error.
+      if (status === 401 || status === 403) {
         set({
           isAuthenticated: false,
           user: null,
         });
+      } else {
+        // Only log genuinely unexpected failures (network errors, 500s, etc.)
+        console.error("getCurrentUser error:", error);
       }
       return {
         success: false,

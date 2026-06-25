@@ -17,6 +17,111 @@ export const useAdminStore = create((set, get) => ({
     limit: 10,
   },
 
+  // Dashboard stats state
+  waitlistStats: null,
+  userStats: null,
+  statsMonths: 6,
+
+  // Registered users state
+  users: [],
+  usersPagination: null,
+  usersLoading: false,
+  usersFilters: {
+    role: "",
+    search: "",
+    page: 1,
+    limit: 10,
+  },
+
+  // Fetch waitlist aggregated stats
+  fetchWaitlistStats: async (months) => {
+    try {
+      const m = months ?? get().statsMonths;
+      const response = await axios.get(
+        `${API_URL}/admin/waitlist/stats?months=${m}`,
+        { withCredentials: true }
+      );
+      if (response.data.success) {
+        set({ waitlistStats: response.data.stats });
+      }
+    } catch (error) {
+      console.error("Error fetching waitlist stats:", error);
+    }
+  },
+
+  // Fetch registered-user aggregated stats
+  fetchUserStats: async (months) => {
+    try {
+      const m = months ?? get().statsMonths;
+      const response = await axios.get(
+        `${API_URL}/admin/users/stats?months=${m}`,
+        { withCredentials: true }
+      );
+      if (response.data.success) {
+        set({ userStats: response.data.stats });
+      }
+    } catch (error) {
+      console.error("Error fetching user stats:", error);
+    }
+  },
+
+  // Set the month window for charts and refetch both stat sets
+  setStatsMonths: (months) => {
+    set({ statsMonths: months });
+    get().fetchWaitlistStats(months);
+    get().fetchUserStats(months);
+  },
+
+  // Fetch paginated registered users
+  fetchUsers: async (customFilters = {}) => {
+    try {
+      set({ usersLoading: true });
+      const usersFilters = { ...get().usersFilters, ...customFilters };
+      set({ usersFilters });
+
+      const params = new URLSearchParams();
+      if (usersFilters.role) params.append("role", usersFilters.role);
+      if (usersFilters.search) params.append("search", usersFilters.search);
+      params.append("page", usersFilters.page);
+      params.append("limit", usersFilters.limit);
+
+      const response = await axios.get(
+        `${API_URL}/admin/users?${params.toString()}`,
+        { withCredentials: true }
+      );
+
+      if (response.data.success) {
+        set({
+          users: response.data.users,
+          usersPagination: response.data.pagination,
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      if (error.response?.status === 403) {
+        toast.error("Access denied. Admin only.");
+      } else {
+        toast.error("Failed to fetch users");
+      }
+    } finally {
+      set({ usersLoading: false });
+    }
+  },
+
+  // Set registered-user filters (resets to page 1)
+  setUsersFilters: (newFilters) => {
+    set((state) => ({
+      usersFilters: { ...state.usersFilters, ...newFilters, page: 1 },
+    }));
+  },
+
+  // Set registered-user page
+  setUsersPage: (page) => {
+    set((state) => ({
+      usersFilters: { ...state.usersFilters, page },
+    }));
+  },
+
   // Fetch waitlist
   fetchWaitlist: async (customFilters = {}) => {
     try {
