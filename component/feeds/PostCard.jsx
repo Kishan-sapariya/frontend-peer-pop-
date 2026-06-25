@@ -53,9 +53,13 @@ const PostCard = ({ post }) => {
         {/* Post Header */}
         <div className="flex items-center justify-between mb-4">
           <Link
-            href={`/profile/${
-              post.user?.username
-            }/${post.user?.creatorType?.toLowerCase()}`}
+            href={
+              post.user?.isFounder
+                ? `/profile/${post.user?.username}/founder`
+                : post.user?.creatorType
+                ? `/profile/${post.user?.username}/${post.user.creatorType.toLowerCase()}`
+                : `/profile/business/${post.user?.username}`
+            }
             passHref
             className="flex items-center space-x-3 md:space-x-4 cursor-pointer"
           >

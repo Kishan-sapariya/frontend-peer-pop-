@@ -30,6 +30,7 @@ import {
   UserCheck,
   Building2,
   MailCheck,
+  Crown,
 } from "lucide-react";
 import StatCard from "./StatCard";
 import SignupChart from "./SignupChart";
@@ -62,6 +63,7 @@ export default function RegisteredUsersTab() {
     fetchUsers,
     setUsersFilters,
     setUsersPage,
+    setFounder,
     userStats,
     fetchUserStats,
     statsMonths,
@@ -236,6 +238,7 @@ export default function RegisteredUsersTab() {
                       <TableHead className="font-semibold text-gray-600 text-xs uppercase tracking-wider py-3 px-6 text-center">Role</TableHead>
                       <TableHead className="font-semibold text-gray-600 text-xs uppercase tracking-wider py-3 px-6 text-center">Status</TableHead>
                       <TableHead className="font-semibold text-gray-600 text-xs uppercase tracking-wider py-3 px-6">Joined At</TableHead>
+                      <TableHead className="font-semibold text-gray-600 text-xs uppercase tracking-wider py-3 px-6 text-center">Founder</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -273,6 +276,28 @@ export default function RegisteredUsersTab() {
                           )}
                         </TableCell>
                         <TableCell className="text-gray-500 text-sm py-4 px-6">{formatDate(u.createdAt)}</TableCell>
+                        <TableCell className="py-4 px-6 text-center">
+                          {u.isFounder ? (
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => setFounder(u.id, false)}
+                              className="text-amber-600 hover:text-amber-700 hover:bg-amber-50 h-8"
+                              title="Click to remove founder status"
+                            >
+                              <Crown className="w-4 h-4 mr-1" /> Founder
+                            </Button>
+                          ) : (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => setFounder(u.id, true)}
+                              className="h-8 border-amber-200 text-amber-600 hover:bg-amber-50"
+                            >
+                              Make Founder
+                            </Button>
+                          )}
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>

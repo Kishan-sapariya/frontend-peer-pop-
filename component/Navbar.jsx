@@ -248,7 +248,9 @@ const Navbar = () => {
                   </PopoverLinkItem>
                   <PopoverLinkItem
                     href={
-                      user.role === "BUSINESS"
+                      user.isFounder
+                        ? `/profile/${user.username}/founder`
+                        : user.role === "BUSINESS"
                         ? `/profile/business/${user.username}`
                         : !user.creatorType
                         ? "/onboarding"

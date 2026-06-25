@@ -325,6 +325,16 @@ export const useAuthStore = create((set, get) => ({
 
       const results = (res.data.users || [])
         .map((user) => {
+          if (user.isFounder) {
+            return {
+              type: "FOUNDER",
+              id: user.id,
+              username: user.username,
+              image: user.image,
+              headline: user.founderProfile?.headline || null,
+              location: user.founderProfile?.location || null,
+            };
+          }
           if (user.creatorProfile) {
             // Extract location information from the new structure
             const personalInfo = user.creatorProfile.data?.personalInfo || {};
@@ -397,6 +407,16 @@ export const useAuthStore = create((set, get) => ({
 
       const newResults = (res.data.users || [])
         .map((user) => {
+          if (user.isFounder) {
+            return {
+              type: "FOUNDER",
+              id: user.id,
+              username: user.username,
+              image: user.image,
+              headline: user.founderProfile?.headline || null,
+              location: user.founderProfile?.location || null,
+            };
+          }
           if (user.creatorProfile) {
             const personalInfo = user.creatorProfile.data?.personalInfo || {};
             const locationParts = [];

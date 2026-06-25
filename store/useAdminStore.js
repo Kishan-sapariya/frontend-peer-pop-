@@ -122,6 +122,32 @@ export const useAdminStore = create((set, get) => ({
     }));
   },
 
+  // Promote/demote the singleton founder (admin only)
+  setFounder: async (userId, isFounder) => {
+    try {
+      const response = await axios.patch(
+        `${API_URL}/admin/users/${userId}/founder`,
+        { isFounder },
+        { withCredentials: true }
+      );
+      if (response.data.success) {
+        // Reflect singleton semantics locally: only the target is founder
+        set((state) => ({
+          users: state.users.map((u) => ({
+            ...u,
+            isFounder: u.id === userId ? isFounder : isFounder ? false : u.isFounder,
+          })),
+        }));
+        toast.success(response.data.message);
+      }
+      return response.data;
+    } catch (error) {
+      console.error("Error setting founder:", error);
+      toast.error(error.response?.data?.message || "Failed to update founder");
+      return error.response?.data || { success: false };
+    }
+  },
+
   // Fetch waitlist
   fetchWaitlist: async (customFilters = {}) => {
     try {

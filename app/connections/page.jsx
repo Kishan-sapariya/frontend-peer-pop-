@@ -451,6 +451,8 @@ export default function ConnectionsPage() {
                 const profileLink =
                   creator.type === "BUSINESS"
                     ? `/profile/business/${creator.username}`
+                    : creator.type === "FOUNDER"
+                    ? `/profile/${creator.username}/founder`
                     : `/profile/${creator.username}/${creator.creatorType?.toLowerCase()}`;
 
                 return (
@@ -471,6 +473,8 @@ export default function ConnectionsPage() {
                         <Badge className="absolute top-3 right-3 bg-yellow-500 text-black font-semibold px-3 py-1 text-xs">
                           {creator.type === "BUSINESS"
                             ? "Business"
+                            : creator.type === "FOUNDER"
+                            ? "Founder"
                             : creator.creatorType.charAt(0) +
                               creator.creatorType.slice(1).toLowerCase()}
                         </Badge>

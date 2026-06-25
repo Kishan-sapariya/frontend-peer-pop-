@@ -430,6 +430,8 @@ export default function SearchPage() {
                 href={
                   user.type === "BUSINESS"
                     ? `/profile/business/${user.username}`
+                    : user.type === "FOUNDER"
+                    ? `/profile/${user.username}/founder`
                     : `/profile/${user.username}/${user.creatorType?.toLowerCase()}`
                 }
               >
@@ -446,6 +448,8 @@ export default function SearchPage() {
                     <Badge className="absolute top-3 right-3 bg-yellow-500 text-black font-semibold px-3 py-1 text-xs">
                       {user.type === "BUSINESS"
                         ? "Business"
+                        : user.type === "FOUNDER"
+                        ? "Founder"
                         : user.creatorType.charAt(0) +
                           user.creatorType.slice(1).toLowerCase()}
                     </Badge>

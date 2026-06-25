@@ -101,7 +101,9 @@ const SuggestedUsers = () => {
           const isSending = sendingRequests[user.id];
           const isSent = sentRequests[user.id];
 
-          const profileLink = user.creatorType
+          const profileLink = user.isFounder
+            ? `/profile/${user.username}/founder`
+            : user.creatorType
             ? `/profile/${user.username}/${user.creatorType.toLowerCase()}`
             : `/profile/business/${user.username}`;
 
@@ -142,7 +144,9 @@ const SuggestedUsers = () => {
                     )}
                   </div>
                   <p className="text-sm text-gray-500 truncate mt-0.5">
-                    {user.creatorType
+                    {user.isFounder
+                      ? "Founder"
+                      : user.creatorType
                       ? capitalizeInitials(user.creatorType.toLowerCase())
                       : "Business Account"}
                   </p>
