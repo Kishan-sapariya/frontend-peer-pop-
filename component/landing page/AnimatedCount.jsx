@@ -3,12 +3,17 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, useInView } from "framer-motion";
 
-const AnimatedCount = ({ to, duration = 1500, suffix = "" }) => {
+const AnimatedCount = ({
+  to,
+  duration = 1500,
+  suffix = "",
+  className = "text-yellow-500 font-extrabold text-3xl md:text-5xl",
+}) => {
   const [value, setValue] = useState(0);
   const ref = useRef(null);
 
   // Detect when the element enters viewport
-  const inView = useInView(ref, { once: true, amount: 0.6 });
+  const inView = useInView(ref, { once: true, amount: 0.3 });
 
   useEffect(() => {
     if (!inView) return; // Start only when visible
@@ -36,7 +41,7 @@ const AnimatedCount = ({ to, duration = 1500, suffix = "" }) => {
       initial={{ opacity: 0, y: 10 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.4 }}
-      className="text-yellow-500 font-extrabold text-3xl md:text-5xl"
+      className={className}
     >
       {value.toLocaleString()}
       {suffix}

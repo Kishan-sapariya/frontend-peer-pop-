@@ -38,6 +38,8 @@ import Image from "next/image";
 
 const Navbar = () => {
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const router = useRouter();
   const hasInitialized = useRef(false);
 
@@ -52,6 +54,13 @@ const Navbar = () => {
   const conversations = useConversationStore((state) => state.conversations);
   const initConversationSocket = useConversationStore((state) => state.initConversationSocket);
 
+  // Auth state isn't known during SSR (it's fetched client-side after mount).
+  // Render the guest shell on the server AND the first client paint so the
+  // markup matches exactly — otherwise the two different Radix <Popover> trees
+  // make useId() diverge and React throws a hydration mismatch.
+  const authed = mounted && isAuthenticated;
+  const navUser = mounted ? user : null;
+
   // Compute counts from state instead of calling methods (avoids re-renders)
   const pendingCount = useMemo(() => {
     if (!connections || !user) return 0;
@@ -63,6 +72,18 @@ const Navbar = () => {
   const unreadConversations = useMemo(() => {
     return conversations?.filter((c) => c.unreadCount > 0)?.length || 0;
   }, [conversations]);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Sticky bar: solid yellow at top, frosted-white transparent once scrolled.
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 10);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   useEffect(() => {
     // Only initialize once when authenticated AND user is available
@@ -129,11 +150,15 @@ const Navbar = () => {
   );
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 flex justify-center p-2 sm:p-3">
-      <div className="max-w-7xl w-[98%] sm:w-[95%] bg-yellow-500 backdrop-blur-sm rounded-xl sm:rounded-2xl shadow-lg shadow-black/10 px-3 sm:px-6 py-2 sm:py-2.5 flex items-center justify-between gap-2">
+    <header
+      className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${
+        scrolled ? "bg-white/70 backdrop-blur-md shadow-sm" : "bg-yellow-500"
+      }`}
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-8 h-16 flex items-center justify-between gap-2">
         {/* Logo Section */}
         <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-          <Link href={user ? "/feed" : "/"} className="flex items-center gap-2 shrink-0">
+          <Link href={navUser ? "/feed" : "/"} className="flex items-center gap-2 shrink-0">
             <div className="bg-black rounded-md">
               <Image
                 src="/logo.png"
@@ -147,11 +172,11 @@ const Navbar = () => {
               Peerpop
             </h1>
           </Link>
-          {user && <NavbarSearch />}
+          {navUser && <NavbarSearch />}
         </div>
 
         {/* Desktop Links (Non-Authenticated) */}
-        {!isAuthenticated && (
+        {!authed && (
           <div className="hidden md:flex items-center gap-1">
             <NavItem href="/about" icon={Info}>
               About
@@ -167,7 +192,7 @@ const Navbar = () => {
 
         {/* Right Section */}
         <div className="flex items-center gap-1 sm:gap-2">
-          {isAuthenticated ? (
+          {authed ? (
             <>
               <div className="hidden md:flex items-center space-x-1">
                 <NavItem href="/feed" icon={HomeIcon}>
@@ -281,16 +306,7 @@ const Navbar = () => {
               </Popover>
             </>
           ) : (
-            <div className="flex items-center gap-1 sm:gap-2">
-              <Link href="/home" className="hidden sm:block">
-                <Button
-                  variant="ghost"
-                  className="text-black/80 hover:text-black hover:bg-black/10 font-medium text-sm px-3 sm:px-4 transition-all duration-200"
-                >
-                  <Home className="h-4 w-4 mr-1" /> Home
-                </Button>
-              </Link>
-
+            <div className="flex items-center gap-2 sm:gap-3">
               {/* Mobile Menu for Guest Users */}
               <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
                 <PopoverTrigger asChild>
@@ -315,7 +331,7 @@ const Navbar = () => {
                     Opportunities
                   </PopoverLinkItem>
                   <div className="border-t my-2"></div>
-                  <PopoverLinkItem href="/business/login" icon={Briefcase}>
+                  <PopoverLinkItem href="/login/business" icon={Briefcase}>
                     Business Login
                   </PopoverLinkItem>
                   <Link href="/login" className="block mt-2">
@@ -326,9 +342,15 @@ const Navbar = () => {
                 </PopoverContent>
               </Popover>
 
-              <Link href="/login" className="hidden sm:block">
-                <Button className="bg-black text-yellow-500 hover:bg-zinc-800 hover:scale-105 transition-all duration-200 shadow-md">
-                  Login
+              <Link
+                href="/login"
+                className="hidden sm:inline text-sm font-semibold text-black/80 hover:text-black transition-colors"
+              >
+                Log in
+              </Link>
+              <Link href="/signup" className="hidden sm:block">
+                <Button className="bg-black text-yellow-500 hover:bg-zinc-800 rounded-full px-5 shadow-md transition-all duration-200">
+                  Get Started
                 </Button>
               </Link>
             </div>

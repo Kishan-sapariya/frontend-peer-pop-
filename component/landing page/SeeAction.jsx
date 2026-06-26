@@ -66,7 +66,7 @@ const SeeAction = () => {
   };
 
   return (
-    <section className="py-24 px-6 md:px-16 w-full bg-amber-300/40">
+    <section className="py-20 sm:py-24 px-6 md:px-16 w-full bg-gray-50">
       <motion.div
         variants={container}
         initial="hidden"
@@ -76,7 +76,7 @@ const SeeAction = () => {
       >
         <motion.h1
           variants={fadeUp}
-          className="text-gray-900 font-extrabold text-4xl md:text-5xl"
+          className="text-gray-900 font-bold tracking-tight text-3xl sm:text-4xl"
         >
           See Peer Pop in <span className="text-yellow-500">Action</span>
         </motion.h1>

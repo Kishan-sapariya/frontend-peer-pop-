@@ -2,7 +2,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import AnimatedCount from "./waitlist page/AnimatedCount";
+import AnimatedCount from "./AnimatedCount";
 
 const Stats = () => {
   const container = {
