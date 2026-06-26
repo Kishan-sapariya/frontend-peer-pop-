@@ -66,7 +66,7 @@ const SeeAction = () => {
   };
 
   return (
-    <section className="py-20 sm:py-24 px-6 md:px-16 w-full bg-gray-50">
+    <section className="py-20 sm:py-24 px-6 md:px-16 w-full bg-white">
       <motion.div
         variants={container}
         initial="hidden"

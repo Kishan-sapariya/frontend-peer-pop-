@@ -171,14 +171,17 @@ export default function OnboardingSelection() {
       <div className="max-w-6xl mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Welcome to Peerpop!
+          <span className="inline-flex items-center gap-2 rounded-full border border-yellow-200 bg-white px-3 py-1 text-xs font-semibold uppercase tracking-wider text-yellow-700 shadow-sm">
+            <span className="h-2 w-2 rounded-full bg-yellow-400" /> Get started
+          </span>
+          <h1 className="mt-5 text-4xl sm:text-5xl font-bold tracking-tight text-gray-900 mb-4">
+            Welcome to <span className="text-yellow-500">PeerPop!</span>
           </h1>
           <p className="text-xl text-gray-600 mb-2">
             Choose your creative profession to get started
           </p>
           <p className="text-gray-500">
-            We'll customize your experience based on your creative field
+            We&apos;ll customize your experience based on your creative field
           </p>
         </div>
 

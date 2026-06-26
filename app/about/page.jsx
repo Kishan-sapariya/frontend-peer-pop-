@@ -74,22 +74,22 @@ const ValueCard = ({ value }) => {
 const AboutUs = () => {
   return (
     <>
-      <div className="bg-gray-50 text-gray-900 font-sans p-4 sm:p-8 md:p-12">
+      <div className="bg-gradient-to-b from-[#FFF8EC] via-white to-gray-50 text-gray-900 font-sans px-4 sm:px-8 md:px-12 py-16">
         <div className="max-w-7xl mx-auto">
           <motion.header
-            className="text-center mb-16 mt-8"
+            className="text-center mb-16 mt-4"
             variants={container}
             initial="hidden"
             animate="show"
           >
-            <motion.p
-              className="text-yellow-500 font-semibold text-sm uppercase tracking-widest mb-2"
+            <motion.span
+              className="inline-flex items-center gap-2 rounded-full border border-yellow-200 bg-white px-3 py-1 text-xs font-semibold uppercase tracking-wider text-yellow-700 shadow-sm"
               variants={item}
             >
-              About PeerPop
-            </motion.p>
+              <span className="h-2 w-2 rounded-full bg-yellow-400" /> About PeerPop
+            </motion.span>
             <motion.h1
-              className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-gray-900"
+              className="mt-5 text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-gray-900"
               variants={item}
             >
               Building the future of{" "}
@@ -169,7 +169,7 @@ const AboutUs = () => {
             viewport={{ once: true, amount: 0.2 }}
           >
             <motion.h2
-              className="text-3xl sm:text-4xl font-extrabold text-yellow-500 mb-4"
+              className="text-3xl sm:text-4xl font-bold tracking-tight text-yellow-500 mb-4"
               variants={item}
             >
               Our Story
@@ -216,7 +216,7 @@ const AboutUs = () => {
             viewport={{ once: true, amount: 0.2 }}
           >
             <motion.div variants={item} className="text-center mb-12">
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900">
+              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-gray-900">
                 Our <span className="text-yellow-500">Values</span>
               </h2>
               <p className="mt-2 text-lg text-gray-600">

@@ -23,7 +23,7 @@ const fadeUp = {
 
 export default function BrandConnectionSection() {
   return (
-    <section className="relative w-full py-20 px-6 md:px-16 overflow-hidden bg-white">
+    <section className="relative w-full py-20 sm:py-24 px-6 md:px-16 overflow-hidden bg-gray-50">
       {/* BACKGROUND RINGS */}
       <Rings position="top-right" />
       <Rings position="bottom-left" />
@@ -36,7 +36,7 @@ export default function BrandConnectionSection() {
           whileInView="visible"
           variants={fadeUp}
           viewport={{ once: true }}
-          className="text-center text-3xl md:text-4xl font-extrabold text-black mb-12"
+          className="text-center text-3xl sm:text-4xl font-bold tracking-tight text-gray-900 mb-12"
         >
           Connecting Your Brand with the{" "}
           <span className="text-yellow-500">Right Influencers</span>
@@ -89,7 +89,7 @@ export default function BrandConnectionSection() {
           whileInView="visible"
           variants={fadeUp}
           viewport={{ once: true }}
-          className="text-center text-3xl md:text-4xl font-extrabold text-black mt-24 mb-12"
+          className="text-center text-3xl sm:text-4xl font-bold tracking-tight text-gray-900 mt-24 mb-12"
         >
           Simple Steps to Get Started on{" "}
           <span className="text-yellow-500">Peerpop</span>

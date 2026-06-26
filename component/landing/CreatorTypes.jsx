@@ -51,9 +51,10 @@ function CardInner({ t }) {
 
 export default function CreatorTypes() {
   const reduce = useReducedMotion();
+  // Fade-only stagger (no vertical movement) so cards never appear mis-aligned.
   const item = {
-    hidden: { opacity: 0, y: reduce ? 0 : 24 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: "easeOut" } },
+    hidden: { opacity: 0 },
+    show: { opacity: 1, transition: { duration: 0.4, ease: "easeOut" } },
   };
   const base =
     "group relative aspect-[2/3] overflow-hidden rounded-2xl shadow-lg ring-1 ring-black/10";
@@ -68,11 +69,9 @@ export default function CreatorTypes() {
           transition={{ duration: 0.5, ease: "easeOut" }}
           className="text-center"
         >
-          <span className="text-xs font-semibold uppercase tracking-wider text-yellow-700">
-            Built for every creator
-          </span>
-          <h2 className="mt-3 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-            Whatever You Create, You Belong Here.
+          <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+            Whatever You Create,{" "}
+            <span className="text-yellow-500">You Belong Here.</span>
           </h2>
           <p className="mx-auto mt-3 max-w-2xl text-gray-600">
             Connect with your community and discover endless opportunities.
@@ -84,7 +83,7 @@ export default function CreatorTypes() {
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, amount: 0.15 }}
-          className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6"
+          className="mt-12 grid grid-cols-2 items-start gap-4 sm:grid-cols-3 lg:grid-cols-6"
         >
           {TYPES.map((t) =>
             t.comingSoon ? (

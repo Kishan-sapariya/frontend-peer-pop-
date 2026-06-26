@@ -68,7 +68,7 @@ const fadeUp = {
 
 export default function CompanyMarquee() {
   return (
-    <section className="w-full py-20 bg-white overflow-hidden relative">
+    <section className="w-full py-20 sm:py-24 bg-white overflow-hidden relative">
       {/* Section Header */}
       <motion.div
         variants={container}
@@ -79,7 +79,7 @@ export default function CompanyMarquee() {
       >
         <motion.h2
           variants={fadeUp}
-          className="text-gray-900 font-extrabold text-4xl md:text-5xl mb-3"
+          className="text-gray-900 font-bold tracking-tight text-3xl sm:text-4xl mb-3"
         >
           Trusted by Top Creators{" "}
           <span className="text-yellow-500">& Brands</span>
@@ -87,7 +87,7 @@ export default function CompanyMarquee() {
 
         <motion.p
           variants={fadeUp}
-          className="text-gray-800 text-lg md:text-xl max-w-2xl mx-auto"
+          className="text-gray-600 text-lg max-w-2xl mx-auto"
         >
           We partner with leading platforms and global brands empowering
           creators worldwide.

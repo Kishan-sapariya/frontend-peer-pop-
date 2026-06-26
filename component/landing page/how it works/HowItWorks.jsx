@@ -92,7 +92,7 @@ const StepItem = ({ stepData, reverse }) => {
         <p className="text-yellow-500 font-semibold text-sm uppercase tracking-widest">
           Step {stepData.step}
         </p>
-        <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mt-1">
+        <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-gray-900 mt-1">
           {stepData.title}
         </h2>
       </div>
@@ -130,29 +130,30 @@ const StepItem = ({ stepData, reverse }) => {
 
 const HowItWorks = () => {
   return (
-    <div className="bg-gray-50 text-gray-900 p-4 sm:p-8 md:p-12">
-      <div className="max-w-7xl mx-auto">
-        {/* Header Section */}
-        <header className="text-center mb-16 mt-8">
-          <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-gray-900">
-            How PeerPop <span className="text-yellow-500">Works</span>
-          </h1>
-          <p className="mt-3 text-lg text-gray-600 max-w-2xl mx-auto">
-            Four simple steps to start building meaningful connections and
-            growing your creative career.
-          </p>
-        </header>
+    <div className="bg-white text-gray-900">
+      {/* Hero header */}
+      <header className="bg-gradient-to-b from-[#FFF8EC] via-[#FFFDF8] to-white px-4 pt-20 pb-16 text-center">
+        <span className="inline-flex items-center gap-2 rounded-full border border-yellow-200 bg-white px-3 py-1 text-xs font-semibold uppercase tracking-wider text-yellow-700 shadow-sm">
+          <span className="h-2 w-2 rounded-full bg-yellow-400" /> How it works
+        </span>
+        <h1 className="mt-5 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
+          How PeerPop <span className="text-yellow-500">Works</span>
+        </h1>
+        <p className="mx-auto mt-4 max-w-2xl text-lg text-gray-600">
+          Four simple steps to start building meaningful connections and growing
+          your creative career.
+        </p>
+      </header>
 
-        {/* Steps Grid */}
-        <main>
-          {steps.map((stepData, index) => (
-            <StepItem
-              key={stepData.step}
-              stepData={stepData}
-              reverse={index % 2 !== 0}
-            />
-          ))}
-        </main>
+      {/* Steps */}
+      <div className="mx-auto max-w-7xl px-4 pb-16 sm:px-8">
+        {steps.map((stepData, index) => (
+          <StepItem
+            key={stepData.step}
+            stepData={stepData}
+            reverse={index % 2 !== 0}
+          />
+        ))}
       </div>
     </div>
   );

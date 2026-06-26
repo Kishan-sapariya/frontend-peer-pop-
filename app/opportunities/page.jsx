@@ -95,9 +95,12 @@ const HowItWorks = () => {
 
   return (
     <div className="bg-gray-50 text-gray-900">
-      <section className="py-10 md:py-20 flex flex-col items-center justify-center text-center px-4">
+      <section className="bg-gradient-to-b from-[#FFF8EC] via-[#FFFDF8] to-gray-50 py-16 md:py-20 flex flex-col items-center justify-center text-center px-4">
         <div className="mx-auto max-w-3xl">
-          <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900">
+          <span className="inline-flex items-center gap-2 rounded-full border border-yellow-200 bg-white px-3 py-1 text-xs font-semibold uppercase tracking-wider text-yellow-700 shadow-sm">
+            <span className="h-2 w-2 rounded-full bg-yellow-400" /> Opportunities
+          </span>
+          <h2 className="mt-5 text-4xl md:text-5xl font-bold tracking-tight text-gray-900">
             Featured <span className="text-yellow-500">Opportunities</span>
           </h2>
           <p className="mt-4 text-lg text-gray-600">
@@ -219,7 +222,7 @@ const HowItWorks = () => {
       {/* How It Works Section */}
       <section className="py-20 md:py-32 border-t border-gray-200 flex flex-col items-center justify-center text-center bg-gray-50 px-4">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900">
+          <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-gray-900">
             How Brand Partnerships <span className="text-yellow-500">Work</span>
           </h2>
           <p className="text-lg text-gray-600 mt-4 max-w-2xl mx-auto">
@@ -262,7 +265,7 @@ const HowItWorks = () => {
           <div className="w-14 h-14 inline-flex items-center justify-center rounded-full bg-yellow-500 text-black mb-4">
             <Briefcase className="h-7 w-7" />
           </div>
-          <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900">
+          <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-gray-900">
             Why Work With Brands on{" "}
             <span className="text-yellow-500">PeerPop?</span>
           </h2>

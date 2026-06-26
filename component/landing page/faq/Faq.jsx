@@ -15,7 +15,7 @@ const Faq = () => {
     <MotionSection className="py-20 md:py-28 bg-white relative">
       <div className="px-4 md:px-10 max-w-4xl mx-auto">
         {/* Heading */}
-        <h3 className="text-3xl md:text-5xl font-extrabold text-center mb-14 text-black">
+        <h3 className="text-3xl sm:text-4xl font-bold tracking-tight text-center mb-14 text-gray-900">
           Questions? <span className="text-yellow-500">We Have Answers.</span>
         </h3>
 
