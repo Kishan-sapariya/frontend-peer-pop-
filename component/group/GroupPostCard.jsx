@@ -126,7 +126,7 @@ const GroupPostCard = ({ post, groupId }) => {
                 src={post.mediaUrls[0]}
                 alt="Post content"
                 loading="lazy"
-                className="w-full h-auto max-h-[500px] object-cover"
+                className="w-full h-auto max-h-[600px] object-contain bg-gray-50"
               />
             )}
           </div>

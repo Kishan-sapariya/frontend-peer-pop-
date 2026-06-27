@@ -22,12 +22,12 @@ export function ImageCarousel({ images, altPrefix }) {
   const showNextButton = images.length > 1 && currentIndex < images.length - 1;
 
   return (
-    <div className="relative w-full h-auto max-h-96 aspect-video rounded-lg overflow-hidden flex items-center justify-center">
+    <div className="relative w-full h-[420px] rounded-lg overflow-hidden flex items-center justify-center bg-gray-50">
       <img
         src={images[currentIndex]}
         alt={`${altPrefix} - Image ${currentIndex + 1}`}
         loading="lazy"
-        className="w-full h-full object-contain bg-gray-200 transition-opacity duration-300"
+        className="w-full h-full object-contain transition-opacity duration-300"
       />
 
       {/* Left Navigation Button */}

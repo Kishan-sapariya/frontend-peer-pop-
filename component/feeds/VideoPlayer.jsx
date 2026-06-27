@@ -51,7 +51,7 @@ export function VideoPlayer({ src }) {
 
   return (
     <div
-      className="relative w-full h-auto max-h-96 aspect-video rounded-lg overflow-hidden group"
+      className="relative w-full h-auto max-h-96 aspect-video rounded-lg overflow-hidden group bg-black"
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
       onClick={togglePlayPause}
@@ -60,7 +60,7 @@ export function VideoPlayer({ src }) {
         ref={videoRef}
         src={src}
         muted={isMuted}
-        className="w-full h-full object-cover transition-filter duration-300"
+        className="w-full h-full object-contain transition-filter duration-300"
         preload="metadata"
         loop
       >
