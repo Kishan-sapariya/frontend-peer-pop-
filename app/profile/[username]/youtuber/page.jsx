@@ -288,6 +288,7 @@ export default function YouTuberProfile() {
                     <Avatar className="relative w-40 h-40 border-4 border-white shadow-xl cursor-pointer hover:opacity-90 transition-opacity">
                       <AvatarImage
                         className="object-cover"
+                        alt={creator.name}
                         src={
                           isOwnProfile
                             ? user?.image
@@ -310,6 +311,7 @@ export default function YouTuberProfile() {
                     <Avatar className="w-64 h-64 sm:w-96 sm:h-96 border-4 border-white shadow-2xl">
                       <AvatarImage
                         className="object-cover"
+                        alt={creator.name}
                         src={
                           isOwnProfile
                             ? user?.image

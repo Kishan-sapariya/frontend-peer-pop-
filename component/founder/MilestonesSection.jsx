@@ -112,6 +112,7 @@ export default function MilestonesSection({ milestones = [], isOwnProfile }) {
                     <Button
                       size="icon"
                       variant="ghost"
+                      aria-label="Delete milestone"
                       onClick={() => handleDelete(i)}
                       className="h-8 w-8 text-red-500 hover:text-red-600"
                     >

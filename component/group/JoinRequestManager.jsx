@@ -63,6 +63,8 @@ const JoinRequestManager = ({ groupId }) => {
                 {req.user.image ? (
                   <img
                     src={req.user.image}
+                    alt={`${req.user.username}'s avatar`}
+                    loading="lazy"
                     className="h-full w-full object-cover"
                   />
                 ) : (

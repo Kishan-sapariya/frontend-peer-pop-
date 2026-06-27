@@ -82,7 +82,7 @@ export default function FounderProfilePage() {
             <div className="flex flex-col lg:flex-row items-start lg:items-center gap-6 lg:gap-8">
               <div className="relative">
                 <Avatar className="w-40 h-40 border-4 border-white shadow-xl ring-4 ring-amber-200">
-                  <AvatarImage className="object-cover" src={image} />
+                  <AvatarImage className="object-cover" src={image} alt={founder.username || "Founder"} />
                   <AvatarFallback className="text-3xl bg-amber-100 text-amber-700">
                     {founder.username?.charAt(0)?.toUpperCase() || "F"}
                   </AvatarFallback>

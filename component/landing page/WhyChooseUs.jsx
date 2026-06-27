@@ -20,7 +20,8 @@ const ImagePlaceholder = ({ imageQuery }) => (
   >
     <img
       src={imageQuery}
-      alt="Feature"
+      alt="Feature illustration"
+      loading="lazy"
       className="w-full h-[250%] object-contain transition-transform duration-500 hover:scale-[1.05] mb-30"
     />
   </div>

@@ -198,7 +198,7 @@ export default function InfluencerProfile() {
             <div className="flex flex-col md:flex-row items-start md:items-center space-y-4 md:space-y-0 md:space-x-6">
               <div className="relative">
                 <Avatar className="w-32 h-32 border-4 border-white shadow-lg">
-                  <AvatarImage src={influencer.avatar || "/placeholder.svg"} />
+                  <AvatarImage src={influencer.avatar || "/placeholder.svg"} alt={influencer.name} />
                   <AvatarFallback className="text-2xl">ER</AvatarFallback>
                 </Avatar>
                 {influencer.verified && (
@@ -247,7 +247,7 @@ export default function InfluencerProfile() {
                       <MessageCircle className="w-4 h-4 mr-2" />
                       Message
                     </Button>
-                    <Button variant="outline" size="icon">
+                    <Button variant="outline" size="icon" aria-label="Share profile">
                       <Share2 className="w-4 h-4" />
                     </Button>
                   </div>

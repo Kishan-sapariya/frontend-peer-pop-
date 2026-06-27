@@ -59,6 +59,7 @@ const SeeAction = () => {
         <img
           src={item.img}
           alt={item.title}
+          loading="lazy"
           className="w-full h-auto object-cover rounded-[32px]"
         />
       </div>

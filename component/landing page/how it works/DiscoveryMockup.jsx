@@ -62,6 +62,7 @@ export function DiscoveryMockup() {
                   alt="Alex Chen"
                   width={48}
                   height={48}
+                  loading="lazy"
                   className="h-12 w-12 rounded-full object-cover"
                 />
                 <div className="flex-1">
@@ -85,6 +86,7 @@ export function DiscoveryMockup() {
                   alt="Maria Garcia"
                   width={48}
                   height={48}
+                  loading="lazy"
                   className="h-12 w-12 rounded-full object-cover"
                 />
                 <div className="flex-1">

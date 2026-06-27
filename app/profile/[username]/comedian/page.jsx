@@ -220,6 +220,7 @@ export default function ComedianProfile() {
                 <Avatar className="relative w-40 h-40 border-4 border-white shadow-xl">
                   <AvatarImage
                     className="object-cover"
+                    alt={profile?.userProfile?.username || "Comedian"}
                     src={
                       isOwnProfile ? user?.image : profile?.userProfile?.image
                     }

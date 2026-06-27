@@ -268,6 +268,7 @@ const ChatPage = () => {
             variant="ghost"
             size="icon"
             onClick={() => router.push("/conversations")}
+            aria-label="Back to conversations"
             className="md:hidden h-9 w-9 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full"
           >
             <ArrowLeft className="w-5 h-5" />
@@ -397,7 +398,7 @@ const ChatPage = () => {
                                       <a href={msg.attachmentUrl} target="_blank" rel="noopener noreferrer" className="block">
                                         <img
                                           src={msg.attachmentUrl}
-                                          alt="attachment"
+                                          alt="Shared image"
                                           className="max-w-full sm:max-w-[280px] rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
                                           loading="lazy"
                                         />
@@ -487,6 +488,7 @@ const ChatPage = () => {
               )}
               <button
                 onClick={removeFilePreview}
+                aria-label="Remove file"
                 className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-gray-800 text-white rounded-full flex items-center justify-center hover:bg-gray-900 transition-colors"
               >
                 <X className="w-3 h-3" />
@@ -507,6 +509,7 @@ const ChatPage = () => {
             variant="ghost"
             size="icon"
             onClick={() => fileInputRef.current?.click()}
+            aria-label="Attach file"
             className="h-11 w-11 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-full flex-shrink-0"
             disabled={isSending}
           >
@@ -561,6 +564,7 @@ const ChatPage = () => {
             onClick={handleSendMessage}
             disabled={(!messageInput.trim() && !selectedFile) || isSending || isMessageOverLimit}
             size="icon"
+            aria-label="Send message"
             className={`
               h-11 w-11 rounded-full flex-shrink-0 transition-all duration-200
               ${(!messageInput.trim() && !selectedFile) || isSending || isMessageOverLimit

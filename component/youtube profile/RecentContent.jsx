@@ -91,6 +91,7 @@ export default function RecentContent({ contents = [], isOwnProfile }) {
                     <img
                       src={content.mediaUrls[0]}
                       alt={content.title || "Content image"}
+                      loading="lazy"
                       className="w-full h-56 object-contain bg-gray-200 rounded-t-lg"
                     />
                   )}

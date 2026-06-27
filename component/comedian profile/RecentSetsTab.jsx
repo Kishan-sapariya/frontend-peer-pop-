@@ -47,7 +47,7 @@ export default function RecentSetsTab({ isOwnProfile }) {
                 <div className="absolute top-4 right-4">
                   <Popover>
                     <PopoverTrigger asChild>
-                      <Button variant="ghost" size="icon">
+                      <Button variant="ghost" size="icon" aria-label="Set options">
                         <MoreVertical className="h-5 w-5 text-muted-foreground" />
                       </Button>
                     </PopoverTrigger>

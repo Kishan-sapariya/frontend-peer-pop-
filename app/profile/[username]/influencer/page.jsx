@@ -228,6 +228,7 @@ export default function InfluencerProfile() {
                 <Avatar className="relative w-40 h-40 border-4 border-white shadow-xl">
                   <AvatarImage
                     className="object-cover"
+                    alt={influencer.name}
                     src={
                       isOwnProfile ? user?.image : profile?.userProfile?.image
                     }

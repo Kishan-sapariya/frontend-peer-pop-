@@ -117,6 +117,7 @@ const GroupPostInput = ({ groupId }) => {
                       src={URL.createObjectURL(image)}
                       className="w-full h-full object-cover"
                       alt="Upload preview"
+                      loading="lazy"
                     />
                   </div>
                 )}
@@ -131,6 +132,7 @@ const GroupPostInput = ({ groupId }) => {
                         src={URL.createObjectURL(img)}
                         className="w-full h-full object-cover"
                         alt={`Upload preview ${i + 1}`}
+                        loading="lazy"
                       />
                     </div>
                   ))}
@@ -148,6 +150,7 @@ const GroupPostInput = ({ groupId }) => {
                 type="button"
                 variant="destructive"
                 size="sm"
+                aria-label="Remove media"
                 className="absolute -top-2 -right-2 h-7 w-7 p-0 rounded-full shadow-md"
                 onClick={clearMedia}
               >

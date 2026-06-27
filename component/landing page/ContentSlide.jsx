@@ -170,6 +170,7 @@ const BrandCollabMockup = () => (
     <img
       src="https://res.cloudinary.com/dvzqfb2z3/image/upload/v1765888134/connecting_your_brand_with_the_right_influencers_p4n3pu.png"
       alt="Brand workflow"
+      loading="lazy"
       className="w-full h-auto drop-shadow-2xl"
     />
   </motion.div>
@@ -185,6 +186,7 @@ const PortfolioMockup = () => (
       <img
         src="https://res.cloudinary.com/dvzqfb2z3/image/upload/v1765888137/Simple_Steps_to_Get_Started_on_Peerpop_ntllgx.png"
         alt="Influencer profile"
+        loading="lazy"
         className="w-full h-auto drop-shadow-2xl"
       />
     </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -71,8 +72,7 @@ const LoginPage = () => {
           {/* Logo */}
           <Link href="/home" className="mb-10 inline-flex items-center gap-2">
             <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-black">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/logo.png" alt="PeerPop" className="h-5 w-5 object-contain" />
+              <Image src="/logo.png" alt="PeerPop" width={20} height={20} className="h-5 w-5 object-contain" />
             </span>
             <span className="text-xl font-bold text-gray-900">PeerPop</span>
           </Link>

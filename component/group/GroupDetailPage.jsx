@@ -83,6 +83,7 @@ const GroupDetailPage = () => {
                     <img
                       src={group.image}
                       alt={group.name}
+                      loading="lazy"
                       className="object-cover w-full h-full rounded-full"
                     />
                   ) : (
@@ -144,6 +145,7 @@ const GroupDetailPage = () => {
                         <Button
                           variant="outline"
                           size="icon"
+                          aria-label="Group settings"
                           className="rounded-xl border-zinc-200 hover:bg-zinc-50"
                         >
                           <Settings className="h-5 w-5 text-zinc-600" />

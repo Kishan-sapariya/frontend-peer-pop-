@@ -26,6 +26,7 @@ export function ImageCarousel({ images, altPrefix }) {
       <img
         src={images[currentIndex]}
         alt={`${altPrefix} - Image ${currentIndex + 1}`}
+        loading="lazy"
         className="w-full h-full object-contain bg-gray-200 transition-opacity duration-300"
       />
 

@@ -57,7 +57,7 @@ export function MessagingMockup() {
                 <p className="text-xs text-green-600">Active now</p>
               </div>
             </div>
-            <button className="rounded-full p-2 hover:bg-gray-100 transition-colors">
+            <button aria-label="More options" className="rounded-full p-2 hover:bg-gray-100 transition-colors">
               <MoreVertical className="h-5 w-5 text-gray-500" />
             </button>
           </div>
@@ -114,7 +114,7 @@ export function MessagingMockup() {
           {/* Input Area */}
           <div className="border-t border-gray-200 p-3 sm:p-4 flex-shrink-0 bg-white">
             <div className="flex items-center gap-3 rounded-xl border border-gray-300 bg-gray-50 px-3 py-2">
-              <button className="rounded-full p-1.5 hover:bg-gray-100 transition-colors">
+              <button aria-label="Attach file" className="rounded-full p-1.5 hover:bg-gray-100 transition-colors">
                 <Paperclip className="h-5 w-5 text-gray-500" />
               </button>
               <input
@@ -123,12 +123,12 @@ export function MessagingMockup() {
                 className="flex-1 bg-transparent text-sm outline-none placeholder:text-gray-400 text-gray-800"
                 disabled
               />
-              <button className="rounded-full p-1.5 hover:bg-gray-100 transition-colors">
+              <button aria-label="Add emoji" className="rounded-full p-1.5 hover:bg-gray-100 transition-colors">
                 <Smile className="h-5 w-5 text-gray-500" />
               </button>
               
               {/* Send Button (Yellow Accent) */}
-              <button className="rounded-full bg-yellow-500 p-2 text-white hover:bg-yellow-600 transition-colors shadow-md">
+              <button aria-label="Send message" className="rounded-full bg-yellow-500 p-2 text-white hover:bg-yellow-600 transition-colors shadow-md">
                 <Send className="h-4 w-4" />
               </button>
             </div>

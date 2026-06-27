@@ -147,7 +147,7 @@ const PostInputSection = () => {
         <CardContent className="p-4">
           <div className="flex items-start space-x-3">
             <Avatar className="w-10 h-10 border-2">
-              <AvatarImage src={currentUser?.image} className="object-cover" />
+              <AvatarImage src={currentUser?.image} alt={currentUser?.username} className="object-cover" />
               <AvatarFallback className="bg-yellow-500 text-white font-medium text-sm">
                 {currentUser?.username?.[0]?.toUpperCase() || "U"}
               </AvatarFallback>

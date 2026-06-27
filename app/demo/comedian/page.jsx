@@ -227,7 +227,7 @@ export default function ComedianProfile() {
             <div className="flex flex-col lg:flex-row items-start lg:items-center space-y-6 lg:space-y-0 lg:space-x-8">
               <div className="relative">
                 <Avatar className="w-40 h-40 border-4 border-white shadow-xl">
-                  <AvatarImage src={comedian.avatar || "/placeholder.svg"} />
+                  <AvatarImage src={comedian.avatar || "/placeholder.svg"} alt={comedian.name} />
                   <AvatarFallback className="text-3xl">MS</AvatarFallback>
                 </Avatar>
                 {comedian.verified && (
@@ -322,7 +322,7 @@ export default function ComedianProfile() {
                       <Ticket className="w-4 h-4 mr-2" />
                       Book Show
                     </Button>
-                    <Button variant="outline" size="lg">
+                    <Button variant="outline" size="lg" aria-label="Share profile">
                       <Share2 className="w-4 h-4" />
                     </Button>
                   </div>

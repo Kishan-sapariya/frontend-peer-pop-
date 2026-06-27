@@ -86,6 +86,7 @@ const GroupCommentSection = ({ comments, groupId, postId }) => {
                     <Button
                       variant="ghost"
                       size="icon"
+                      aria-label="Comment options"
                       className="absolute top-1 right-3 h-6 w-6  transition-opacity"
                     >
                       <MoreVertical className="h-4 w-4 text-black" />

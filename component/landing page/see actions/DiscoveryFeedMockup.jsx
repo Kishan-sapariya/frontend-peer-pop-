@@ -72,6 +72,7 @@ export function DiscoveryFeedMockup() {
               <img
                 src={creator.img}
                 alt={creator.name}
+                loading="lazy"
                 className="h-14 w-14 sm:h-16 sm:w-16 flex-shrink-0 rounded-full object-cover mx-auto sm:mx-0 shadow-sm"
               />
               <div className="flex-1 text-center sm:text-left">

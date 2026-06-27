@@ -96,6 +96,7 @@ function ConversationsSidebar({ onConversationSelect, selectedConversationId }) 
             onClick={() => setIsNewChatModalOpen(true)}
             size="icon"
             variant="ghost"
+            aria-label="Start new conversation"
             className="h-9 w-9 rounded-full hover:bg-yellow-50 text-gray-600 hover:text-yellow-600"
           >
             <PlusCircle className="w-5 h-5" />

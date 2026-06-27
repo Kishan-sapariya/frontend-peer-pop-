@@ -85,6 +85,7 @@ const GroupPostCard = ({ post, groupId }) => {
                 <Button
                   variant="ghost"
                   size="icon"
+                  aria-label="More options"
                   className="w-8 h-8 rounded-full hover:bg-zinc-100 text-zinc-400"
                 >
                   <MoreHorizontal className="w-5 h-5" />

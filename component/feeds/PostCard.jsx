@@ -95,6 +95,7 @@ const PostCard = ({ post }) => {
                   <Button
                     variant="ghost"
                     size="icon"
+                    aria-label="Post options"
                     className="w-8 h-8 rounded-full hover:bg-gray-100 text-gray-500"
                   >
                     <MoreVertical className="w-4 h-4" />

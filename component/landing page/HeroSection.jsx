@@ -127,6 +127,7 @@ const TopHero = () => (
             <img
               src={mockProfileData.profilePic}
               alt=""
+              loading="lazy"
               className="w-16 h-16 rounded-full object-cover"
             />
             <div className="text-left">
@@ -184,6 +185,7 @@ const DashboardPreview = () => (
         className="w-full h-auto rounded-3xl shadow-xl object-cover"
         src="https://res.cloudinary.com/dvzqfb2z3/image/upload/v1764912675/Frame_48_rsh292.png"
         alt="Dashboard Preview"
+        loading="lazy"
       />
     </motion.div>
   </section>

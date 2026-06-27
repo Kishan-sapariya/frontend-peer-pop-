@@ -138,6 +138,7 @@ const GroupSettingsPage = () => {
               <Button
                 variant="ghost"
                 size="icon"
+                aria-label="Back to group"
                 className="rounded-xl hover:bg-zinc-200"
               >
                 <ChevronLeft className="h-5 w-5" />
@@ -180,6 +181,7 @@ const GroupSettingsPage = () => {
                       <img
                         src={formData.image}
                         alt={formData.name}
+                        loading="lazy"
                         className="object-cover w-full h-full rounded-full"
                       />
                     ) : (
@@ -189,7 +191,10 @@ const GroupSettingsPage = () => {
                     )}
                   </Avatar>
 
-                  <label className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity">
+                  <label
+                    aria-label="Upload group image"
+                    className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity"
+                  >
                     {isUploadingImage ? (
                       <Loader2 className="h-6 w-6 animate-spin text-white" />
                     ) : uploadSuccess ? (

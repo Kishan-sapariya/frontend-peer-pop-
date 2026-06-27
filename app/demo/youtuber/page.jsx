@@ -212,7 +212,7 @@ export default function YouTuberProfile() {
             <div className="flex flex-col lg:flex-row items-start lg:items-center space-y-6 lg:space-y-0 lg:space-x-8">
               <div className="relative">
                 <Avatar className="w-40 h-40 border-4 border-white shadow-xl">
-                  <AvatarImage src={creator.avatar || "/placeholder.svg"} />
+                  <AvatarImage src={creator.avatar || "/placeholder.svg"} alt={creator.name} />
                   <AvatarFallback className="text-3xl">AR</AvatarFallback>
                 </Avatar>
                 {creator.verified && (
@@ -295,7 +295,7 @@ export default function YouTuberProfile() {
                       <MessageCircle className="w-4 h-4 mr-2" />
                       Collaborate
                     </Button>
-                    <Button variant="outline" size="lg">
+                    <Button variant="outline" size="lg" aria-label="Share profile">
                       <Share2 className="w-4 h-4" />
                     </Button>
                   </div>
@@ -569,6 +569,7 @@ export default function YouTuberProfile() {
                         <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                           <Button
                             size="lg"
+                            aria-label="Play video"
                             className="rounded-full w-16 h-16 bg-red-600 hover:bg-red-700"
                           >
                             <Play className="w-6 h-6 fill-white" />

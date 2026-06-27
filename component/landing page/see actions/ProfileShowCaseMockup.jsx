@@ -14,6 +14,7 @@ export function ProfileShowcaseMockup() {
             <img
               src="https://res.cloudinary.com/dvzqfb2z3/image/upload/v1761552299/profile_pic_for_men_zpsmcl.jpg"
               alt="Rohan Verma"
+              loading="lazy"
               className="h-full w-full object-cover"
             />
           </div>

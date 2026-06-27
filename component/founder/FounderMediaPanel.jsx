@@ -87,7 +87,7 @@ export default function FounderMediaPanel({ type, media = [], isOwnProfile }) {
                   <video src={m.url} controls className="w-full h-44 object-cover bg-black" />
                 ) : (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={m.url} alt={m.caption || "founder media"} className="w-full h-40 object-cover" />
+                  <img src={m.url} alt={m.caption || "founder media"} loading="lazy" className="w-full h-40 object-cover" />
                 )}
                 {m.caption && (
                   <div className="px-3 py-2 text-xs text-gray-600 truncate">{m.caption}</div>
@@ -96,6 +96,7 @@ export default function FounderMediaPanel({ type, media = [], isOwnProfile }) {
                   <Button
                     size="icon"
                     variant="ghost"
+                    aria-label="Delete media"
                     onClick={() => deleteFounderMedia(m.id)}
                     className="absolute top-2 right-2 h-8 w-8 bg-white/90 text-red-500 hover:text-red-600 hover:bg-white opacity-0 group-hover:opacity-100 transition"
                   >

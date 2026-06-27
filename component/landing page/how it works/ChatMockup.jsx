@@ -4,6 +4,7 @@ const Avatar = ({ src, alt, className }) => (
   <img
     src={src}
     alt={alt}
+    loading="lazy"
     className={`rounded-full object-cover ${className}`}
   />
 );
@@ -57,7 +58,7 @@ export function ChatMockup() {
                 </h4>
               </div>
             </div>
-            <button className="rounded-full p-2 text-gray-400 hover:bg-gray-800 transition-colors">
+            <button aria-label="More options" className="rounded-full p-2 text-gray-400 hover:bg-gray-800 transition-colors">
               <MoreVertical className="h-5 w-5" />
             </button>
           </div>
@@ -138,7 +139,7 @@ export function ChatMockup() {
           <div className="border-t border-yellow-500/10 p-4 flex-shrink-0 bg-gray-950">
             <div className="flex items-center gap-3">
               {/* Attachment Button */}
-              <button className="p-2 rounded-full text-gray-400 hover:text-yellow-500 hover:bg-gray-800 transition-colors">
+              <button aria-label="Attach file" className="p-2 rounded-full text-gray-400 hover:text-yellow-500 hover:bg-gray-800 transition-colors">
                 <Paperclip className="h-5 w-5" />
               </button>
 
@@ -149,13 +150,13 @@ export function ChatMockup() {
                   placeholder="Type a message..."
                   className="flex-1 bg-transparent text-sm text-white outline-none placeholder:text-gray-500"
                 />
-                <button className="p-1 rounded-full text-gray-400 hover:text-yellow-500 transition-colors">
+                <button aria-label="Add emoji" className="p-1 rounded-full text-gray-400 hover:text-yellow-500 transition-colors">
                   <Smile className="h-5 w-5" />
                 </button>
               </div>
 
               {/* Send Button */}
-              <button className="p-3 rounded-full bg-yellow-500 text-black cursor-pointer hover:bg-yellow-400 transition-colors flex-shrink-0">
+              <button aria-label="Send message" className="p-3 rounded-full bg-yellow-500 text-black cursor-pointer hover:bg-yellow-400 transition-colors flex-shrink-0">
                 <Send className="h-5 w-5" />
               </button>
             </div>

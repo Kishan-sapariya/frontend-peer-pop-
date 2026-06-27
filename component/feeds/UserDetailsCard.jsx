@@ -90,6 +90,7 @@ const UserDetailsCard = () => {
                   <AvatarImage
                     className="object-cover rounded-full"
                     src={userDetails.image}
+                    alt={userDetails.username}
                   />
                   <AvatarFallback className="bg-yellow-500 text-white font-bold text-4xl">
                     {userDetails.username?.[0]?.toUpperCase() || "U"}
@@ -103,6 +104,7 @@ const UserDetailsCard = () => {
                   <AvatarImage
                     className="object-cover rounded-full"
                     src={userDetails.image}
+                    alt={userDetails.username}
                   />
                   <AvatarFallback className="bg-yellow-500 text-white font-bold text-6xl">
                     {userDetails.username?.[0]?.toUpperCase() || "U"}

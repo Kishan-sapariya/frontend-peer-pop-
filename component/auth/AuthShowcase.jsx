@@ -133,7 +133,8 @@ export default function AuthShowcase({
               <img
                 key={n}
                 src={`https://i.pravatar.cc/80?img=${n}`}
-                alt="creator"
+                alt="Creator avatar"
+                loading="lazy"
                 className={`h-9 w-9 rounded-full border-2 object-cover ${
                   light ? "border-white/70" : "border-white"
                 }`}

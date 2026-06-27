@@ -72,6 +72,7 @@ export function VideoPlayer({ src }) {
         <Button
           variant="ghost"
           size="icon"
+          aria-label={isPlaying ? "Pause video" : "Play video"}
           className={`w-12 h-12 rounded-full bg-black/50 text-white transition-opacity duration-300 ${
             isPlaying && !isHovering ? "opacity-0" : "opacity-100"
           } pointer-events-auto`}
@@ -88,6 +89,7 @@ export function VideoPlayer({ src }) {
       {/* Mute/Unmute Button (positioned bottom-right) */}
       <Button
         size="icon"
+        aria-label={isMuted ? "Unmute video" : "Mute video"}
         className={`absolute bottom-2 right-2 text-white rounded-full p-1 z-10 transition-opacity duration-300 ${
           isHovering || !isMuted ? "opacity-100" : "opacity-0"
         }`}

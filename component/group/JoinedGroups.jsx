@@ -111,6 +111,7 @@ const JoinedGroups = () => {
                         <img
                           src={g.image}
                           alt={g.name}
+                          loading="lazy"
                           className="h-full w-full object-cover rounded-full"
                         />
                       ) : (
@@ -179,6 +180,7 @@ const JoinedGroups = () => {
                       <Button
                         onClick={() => handleLeaveGroup(g.id)}
                         variant="outline"
+                        aria-label="Leave group"
                         className="border-zinc-200 hover:border-red-300 hover:bg-red-50 text-zinc-500 hover:text-red-600 h-10 w-10 p-0 rounded-xl transition-colors"
                         disabled={isLoading}
                         title="Leave Group"

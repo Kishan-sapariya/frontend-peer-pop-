@@ -90,8 +90,7 @@ export default function CTASection() {
             <Image src="/creator-images/comedian.webp" alt="Comedian creator" fill sizes="160px" className="object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
             <div className="absolute bottom-2 right-2 flex h-8 w-8 items-center justify-center rounded-lg bg-black/70 ring-1 ring-white/10">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/logo.png" alt="PeerPop" className="h-5 w-5 object-contain" />
+              <Image src="/logo.png" alt="PeerPop" width={20} height={20} className="h-5 w-5 object-contain" />
             </div>
           </motion.div>
         </div>

@@ -140,6 +140,7 @@ const SuggestedGroups = () => {
                         <img
                           src={g.image}
                           alt={g.name}
+                          loading="lazy"
                           className="h-full w-full object-cover rounded-full"
                         />
                       ) : (

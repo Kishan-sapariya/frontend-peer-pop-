@@ -68,6 +68,7 @@ export const CommentSection = ({ comments, postId }) => {
                     <Button
                       variant="ghost"
                       size="icon"
+                      aria-label="Comment options"
                       className="absolute top-1 right-3 h-6 w-6"
                     >
                       <MoreVertical className="h-4 w-4 text-gray-500" />

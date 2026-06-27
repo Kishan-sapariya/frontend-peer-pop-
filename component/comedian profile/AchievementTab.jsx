@@ -54,7 +54,7 @@ export default function AchievementTab({ isOwnProfile }) {
                 <div className="absolute top-2 right-2">
                   <Popover>
                     <PopoverTrigger asChild>
-                      <Button variant="ghost" size="icon" className="w-8 h-8">
+                      <Button variant="ghost" size="icon" className="w-8 h-8" aria-label="Achievement options">
                         <MoreVertical className="h-4 w-4 text-muted-foreground" />
                       </Button>
                     </PopoverTrigger>

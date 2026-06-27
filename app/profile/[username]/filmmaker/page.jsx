@@ -140,6 +140,7 @@ export default function FilmmakerProfile() {
                 <Avatar className="w-40 h-40 border-4 border-white shadow-xl">
                   <AvatarImage
                     src={profileData?.avatar || "/placeholder.svg"}
+                    alt={userDetails.username || "Filmmaker"}
                   />
                   <AvatarFallback className="text-3xl">AR</AvatarFallback>
                 </Avatar>
@@ -655,7 +656,8 @@ export default function FilmmakerProfile() {
                             project.coverImage ||
                             "/placeholder.svg"
                           }
-                          alt={project.title}
+                          alt={`${project.title} project poster`}
+                          loading="lazy"
                           className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
                         />
                         <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300" />

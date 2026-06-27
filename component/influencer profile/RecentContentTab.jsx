@@ -62,6 +62,7 @@ export default function RecentContent({ isOwnProfile }) {
                     <img
                       src={content.mediaUrls[0]}
                       alt={content.title || "Content image"}
+                      loading="lazy"
                       className="w-full h-56 object-contain bg-gray-200 rounded-t-lg"
                     />
                   )}
@@ -209,6 +210,7 @@ function VideoPlayer({ src, duration }) {
             variant="ghost"
             size="icon"
             className="w-10 h-10 rounded-full bg-black/50 hover:bg-black/70 text-white"
+            aria-label="Play video"
           >
             <Play className="w-10 h-10 fill-current" />
           </Button>
@@ -228,6 +230,7 @@ function VideoPlayer({ src, duration }) {
         size="icon"
         className="absolute bottom-2 left-2 bg-black/70 hover:bg-black/90 text-white rounded-full p-1 z-10"
         onClick={toggleMute}
+        aria-label={isMuted ? "Unmute video" : "Mute video"}
       >
         {isMuted ? (
           <VolumeX className="w-5 h-5" />
@@ -260,6 +263,7 @@ function ImageCarousel({ images, altPrefix }) {
       <img
         src={images[currentIndex]}
         alt={`${altPrefix} - Image ${currentIndex + 1}`}
+        loading="lazy"
         className="w-full h-full object-contain bg-gray-200 transition-opacity duration-300"
       />
 

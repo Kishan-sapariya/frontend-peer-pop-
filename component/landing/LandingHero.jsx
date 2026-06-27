@@ -59,7 +59,8 @@ export default function LandingHero() {
                 <img
                   key={n}
                   src={`https://i.pravatar.cc/80?img=${n + 1}`}
-                  alt="member"
+                  alt="Community member avatar"
+                  loading="lazy"
                   className="h-8 w-8 rounded-full border-2 border-yellow-400 object-cover"
                 />
               ))}
@@ -123,7 +124,8 @@ export default function LandingHero() {
                   <img
                     key={n}
                     src={`https://i.pravatar.cc/80?img=${n}`}
-                    alt="creator"
+                    alt="Creator avatar"
+                    loading="lazy"
                     className="h-9 w-9 rounded-full border-2 border-white object-cover"
                   />
                 ))}
