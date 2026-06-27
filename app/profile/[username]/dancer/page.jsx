@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { useParams } from "next/navigation"
 import { useDancerStore } from "@/store/useDancerStore"
+import { useAuthStore } from "@/store/useAuthStore"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -30,7 +31,10 @@ import {
 
 export default function DancerProfile() {
   const { getDancerProfileByUsername, profile } = useDancerStore();
+  const { user } = useAuthStore();
   const params = useParams();
+  const isOwnProfile = profile?.userProfile?.id === user?.id;
+  const preferences = profile?.data?.preferences || {};
   const [isFollowing, setIsFollowing] = useState(false)
   const [activeTab, setActiveTab] = useState("performances")
   const [loading, setLoading] = useState(true);
@@ -153,10 +157,12 @@ export default function DancerProfile() {
                         <MapPin className="w-4 h-4 mr-1" />
                         {dancer.location}
                       </div>
-                      <div className="flex items-center">
-                        <Calendar className="w-4 h-4 mr-1" />
-                        {dancer.stats.yearsExperience} years experience
-                      </div>
+                      {dancer.stats.yearsExperience ? (
+                        <div className="flex items-center">
+                          <Calendar className="w-4 h-4 mr-1" />
+                          {dancer.stats.yearsExperience} years experience
+                        </div>
+                      ) : null}
                     </div>
                   </div>
 
@@ -176,24 +182,34 @@ export default function DancerProfile() {
                 </div>
 
                 {/* Dance Stats */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
-                  <div className="text-center p-3 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg">
-                    <div className="text-2xl font-bold text-purple-600">{dancer.stats.performancesCompleted}</div>
-                    <div className="text-sm text-gray-600">Performances</div>
+                {(isOwnProfile || preferences?.publicStats) && (
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+                    {dancer.stats.performancesCompleted > 0 && (
+                      <div className="text-center p-3 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg">
+                        <div className="text-2xl font-bold text-purple-600">{dancer.stats.performancesCompleted}</div>
+                        <div className="text-sm text-gray-600">Performances</div>
+                      </div>
+                    )}
+                    {dancer.stats.choreographyPieces > 0 && (
+                      <div className="text-center p-3 bg-gradient-to-br from-pink-50 to-red-50 rounded-lg">
+                        <div className="text-2xl font-bold text-pink-600">{dancer.stats.choreographyPieces}</div>
+                        <div className="text-sm text-gray-600">Choreographies</div>
+                      </div>
+                    )}
+                    {dancer.stats.studentsTeaching > 0 && (
+                      <div className="text-center p-3 bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg">
+                        <div className="text-2xl font-bold text-blue-600">{dancer.stats.studentsTeaching}</div>
+                        <div className="text-sm text-gray-600">Students</div>
+                      </div>
+                    )}
+                    {dancer.stats.competitionsWon > 0 && (
+                      <div className="text-center p-3 bg-gradient-to-br from-green-50 to-blue-50 rounded-lg">
+                        <div className="text-2xl font-bold text-green-600">{dancer.stats.competitionsWon}</div>
+                        <div className="text-sm text-gray-600">Competitions</div>
+                      </div>
+                    )}
                   </div>
-                  <div className="text-center p-3 bg-gradient-to-br from-pink-50 to-red-50 rounded-lg">
-                    <div className="text-2xl font-bold text-pink-600">{dancer.stats.choreographyPieces}</div>
-                    <div className="text-sm text-gray-600">Choreographies</div>
-                  </div>
-                  <div className="text-center p-3 bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg">
-                    <div className="text-2xl font-bold text-blue-600">{dancer.stats.studentsTeaching}</div>
-                    <div className="text-sm text-gray-600">Students</div>
-                  </div>
-                  <div className="text-center p-3 bg-gradient-to-br from-green-50 to-blue-50 rounded-lg">
-                    <div className="text-2xl font-bold text-green-600">{dancer.stats.competitionsWon}</div>
-                    <div className="text-sm text-gray-600">Awards</div>
-                  </div>
-                </div>
+                )}
               </div>
             </div>
           </CardContent>
@@ -210,20 +226,31 @@ export default function DancerProfile() {
               <CardContent>
                 <p className="text-gray-700 text-sm leading-relaxed">{dancer.bio}</p>
                 <div className="mt-4 space-y-2">
-                  <div className="flex items-center text-sm">
-                    <Globe className="w-4 h-4 mr-2 text-gray-400" />
-                    <a href="#" className="text-blue-600 hover:underline">
-                      {dancer.website}
-                    </a>
-                  </div>
-                  <div className="flex items-center text-sm">
-                    <Mail className="w-4 h-4 mr-2 text-gray-400" />
-                    <span className="text-gray-600">{dancer.email}</span>
-                  </div>
-                  <div className="flex items-center text-sm">
-                    <Phone className="w-4 h-4 mr-2 text-gray-400" />
-                    <span className="text-gray-600">{dancer.phone}</span>
-                  </div>
+                  {dancer.website && (
+                    <div className="flex items-center text-sm">
+                      <Globe className="w-4 h-4 mr-2 text-gray-400" />
+                      <a
+                        href={dancer.website.startsWith("http") ? dancer.website : `https://${dancer.website}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:underline"
+                      >
+                        {dancer.website}
+                      </a>
+                    </div>
+                  )}
+                  {(isOwnProfile || preferences?.showContact) && dancer.email && (
+                    <div className="flex items-center text-sm">
+                      <Mail className="w-4 h-4 mr-2 text-gray-400" />
+                      <span className="text-gray-600">{dancer.email}</span>
+                    </div>
+                  )}
+                  {(isOwnProfile || preferences?.showContact) && dancer.phone && (
+                    <div className="flex items-center text-sm">
+                      <Phone className="w-4 h-4 mr-2 text-gray-400" />
+                      <span className="text-gray-600">{dancer.phone}</span>
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -235,21 +262,32 @@ export default function DancerProfile() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {dancer.danceStyles.map((style, index) => (
-                    <div key={index}>
-                      <div className="flex justify-between items-center mb-1">
-                        <span className="text-sm font-medium">{style.name}</span>
-                        <Badge variant="outline" className="text-xs">
-                          {style.level}
-                        </Badge>
+                  {dancer.danceStyles.map((style, index) => {
+                    const levelPercent =
+                      style.level === "Expert"
+                        ? 95
+                        : style.level === "Advanced"
+                          ? 80
+                          : style.level === "Intermediate"
+                            ? 65
+                            : null
+                    return (
+                      <div key={index}>
+                        <div className="flex justify-between items-center mb-1">
+                          <span className="text-sm font-medium">{style.name}</span>
+                          {style.level && (
+                            <Badge variant="outline" className="text-xs">
+                              {style.level}
+                            </Badge>
+                          )}
+                        </div>
+                        {style.years && (
+                          <div className="text-xs text-gray-500 mb-2">{style.years} years experience</div>
+                        )}
+                        {levelPercent !== null && <Progress value={levelPercent} className="h-2" />}
                       </div>
-                      <div className="text-xs text-gray-500 mb-2">{style.years} years experience</div>
-                      <Progress
-                        value={style.level === "Expert" ? 95 : style.level === "Advanced" ? 80 : 65}
-                        className="h-2"
-                      />
-                    </div>
-                  ))}
+                    )
+                  })}
                 </div>
               </CardContent>
             </Card>
@@ -326,27 +364,37 @@ export default function DancerProfile() {
                   ))}
                 </div>
 
-                <div className="mt-4 pt-4 border-t">
-                  <h4 className="font-medium text-sm mb-3">Starting Rates</h4>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Performance:</span>
-                      <span className="font-medium">{dancer.rates.performance}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Choreography:</span>
-                      <span className="font-medium">{dancer.rates.choreography}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Private Lesson:</span>
-                      <span className="font-medium">{dancer.rates.privateLesson}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Workshop:</span>
-                      <span className="font-medium">{dancer.rates.workshop}</span>
+                {(isOwnProfile || preferences?.showRates) && (
+                  <div className="mt-4 pt-4 border-t">
+                    <h4 className="font-medium text-sm mb-3">Starting Rates</h4>
+                    <div className="space-y-2 text-sm">
+                      {dancer.rates.performance && (
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Performance:</span>
+                          <span className="font-medium">{dancer.rates.performance}</span>
+                        </div>
+                      )}
+                      {dancer.rates.choreography && (
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Choreography:</span>
+                          <span className="font-medium">{dancer.rates.choreography}</span>
+                        </div>
+                      )}
+                      {dancer.rates.privateLesson && (
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Private Lesson:</span>
+                          <span className="font-medium">{dancer.rates.privateLesson}</span>
+                        </div>
+                      )}
+                      {dancer.rates.workshop && (
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Workshop:</span>
+                          <span className="font-medium">{dancer.rates.workshop}</span>
+                        </div>
+                      )}
                     </div>
                   </div>
-                </div>
+                )}
               </CardContent>
             </Card>
           </div>
@@ -368,6 +416,9 @@ export default function DancerProfile() {
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
+                      {dancer.recentPerformances.length === 0 && (
+                        <p className="text-sm text-gray-500">Nothing here yet</p>
+                      )}
                       {dancer.recentPerformances.map((performance, index) => (
                         <div key={index} className="p-4 border rounded-lg hover:shadow-md transition-shadow">
                           <div className="flex items-center justify-between mb-2">
@@ -402,6 +453,9 @@ export default function DancerProfile() {
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
+                      {dancer.choreographyWork.length === 0 && (
+                        <p className="text-sm text-gray-500">Nothing here yet</p>
+                      )}
                       {dancer.choreographyWork.map((piece, index) => (
                         <div key={index} className="p-4 border rounded-lg">
                           <div className="flex items-center justify-between mb-2">
@@ -436,22 +490,21 @@ export default function DancerProfile() {
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-6">
-                      {dancer.training.map((education, index) => (
-                        <div key={index} className="flex items-start space-x-4">
-                          <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                            <Award className="w-6 h-6 text-purple-600" />
-                          </div>
-                          <div className="flex-1">
-                            <h3 className="font-semibold text-lg">{education.institution}</h3>
-                            <p className="text-purple-600 font-medium">{education.program}</p>
-                            <div className="flex items-center space-x-4 mt-1 text-sm text-gray-500">
-                              <span>{education.period}</span>
-                              <span>•</span>
-                              <span>{education.degree}</span>
+                      {dancer.training.length === 0 && (
+                        <p className="text-sm text-gray-500">Nothing here yet</p>
+                      )}
+                      {dancer.training
+                        .filter((item) => item && item.trim())
+                        .map((item, index) => (
+                          <div key={index} className="flex items-start space-x-4">
+                            <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                              <Award className="w-6 h-6 text-purple-600" />
+                            </div>
+                            <div className="flex-1">
+                              <h3 className="font-semibold text-lg">{item}</h3>
                             </div>
                           </div>
-                        </div>
-                      ))}
+                        ))}
                     </div>
                   </CardContent>
                 </Card>
@@ -464,7 +517,7 @@ export default function DancerProfile() {
                     <div className="flex flex-wrap gap-2">
                       {dancer.languages.map((lang, index) => (
                         <Badge key={index} variant="outline" className="px-3 py-1">
-                          {lang.name} - {lang.level}
+                          {lang.language} - {lang.level}
                         </Badge>
                       ))}
                     </div>
@@ -479,6 +532,9 @@ export default function DancerProfile() {
                   </CardHeader>
                   <CardContent>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {dancer.achievements.length === 0 && (
+                        <p className="text-sm text-gray-500">Nothing here yet</p>
+                      )}
                       {dancer.achievements.map((achievement, index) => (
                         <div key={index} className="p-4 border rounded-lg">
                           <div className="flex items-center space-x-3">

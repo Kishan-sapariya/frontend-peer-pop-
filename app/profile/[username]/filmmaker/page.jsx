@@ -41,6 +41,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { useFilmMakerStore } from "@/store/useFilmMakerStore";
+import { useAuthStore } from "@/store/useAuthStore";
 import { useParams } from "next/navigation";
 import { formatDate } from "@/utils/formatDate";
 
@@ -48,6 +49,7 @@ export default function FilmmakerProfile() {
   const [isFollowing, setIsFollowing] = useState(false);
   const [activeTab, setActiveTab] = useState("filmography");
   const { getFilmMakerProfileByUsername, profile } = useFilmMakerStore();
+  const { user } = useAuthStore();
   const { username } = useParams();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -86,6 +88,22 @@ export default function FilmmakerProfile() {
   const availability = profileData.availability || {};
   // Use actual profile data instead of mock data
   // All mock data removed. Use profileData, userDetails, and their nested properties for all sections.
+
+  const isOwnProfile = profile?.userProfile?.id === user?.id;
+
+  const displayName =
+    [profileData.firstName, profileData.lastName].filter(Boolean).join(" ") ||
+    profileData.stageName ||
+    userDetails.username ||
+    "";
+  const initials =
+    displayName
+      .split(" ")
+      .filter(Boolean)
+      .map((n) => n[0])
+      .join("")
+      .slice(0, 2)
+      .toUpperCase() || "?";
 
   const getCategoryIcon = (category) => {
     switch (category) {
@@ -139,10 +157,16 @@ export default function FilmmakerProfile() {
               <div className="relative">
                 <Avatar className="w-40 h-40 border-4 border-white shadow-xl">
                   <AvatarImage
-                    src={profileData?.avatar || "/placeholder.svg"}
+                    src={
+                      profileData?.profileImage ||
+                      (isOwnProfile ? user?.image : undefined) ||
+                      "/placeholder.svg"
+                    }
                     alt={userDetails.username || "Filmmaker"}
                   />
-                  <AvatarFallback className="text-3xl">AR</AvatarFallback>
+                  <AvatarFallback className="text-3xl">
+                    {initials}
+                  </AvatarFallback>
                 </Avatar>
                 {profileData?.verified && (
                   <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
@@ -320,31 +344,41 @@ export default function FilmmakerProfile() {
                 </p>
 
                 <div className="space-y-3">
-                  <div className="flex items-center text-sm">
-                    <Globe className="w-4 h-4 mr-2 text-gray-400" />
-                    <a
-                      href={
-                        profileData.website
-                          ? profileData.website.startsWith("http")
+                  {profileData.website && (
+                    <div className="flex items-center text-sm">
+                      <Globe className="w-4 h-4 mr-2 text-gray-400" />
+                      <a
+                        href={
+                          profileData.website.startsWith("http")
                             ? profileData.website
                             : `https://${profileData.website}`
-                          : "#"
-                      }
-                      className="text-blue-600 hover:underline"
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      {profileData.website}
-                    </a>
-                  </div>
-                  <div className="flex items-center text-sm">
-                    <Mail className="w-4 h-4 mr-2 text-gray-400" />
-                    <span className="text-gray-600">{profileData.email}</span>
-                  </div>
-                  <div className="flex items-center text-sm">
-                    <Phone className="w-4 h-4 mr-2 text-gray-400" />
-                    <span className="text-gray-600">{profileData.phone}</span>
-                  </div>
+                        }
+                        className="text-blue-600 hover:underline"
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        {profileData.website}
+                      </a>
+                    </div>
+                  )}
+                  {(isOwnProfile || preferences?.showEmail) &&
+                    profileData.email && (
+                      <div className="flex items-center text-sm">
+                        <Mail className="w-4 h-4 mr-2 text-gray-400" />
+                        <span className="text-gray-600">
+                          {profileData.email}
+                        </span>
+                      </div>
+                    )}
+                  {(isOwnProfile || preferences?.showPhone) &&
+                    profileData.phone && (
+                      <div className="flex items-center text-sm">
+                        <Phone className="w-4 h-4 mr-2 text-gray-400" />
+                        <span className="text-gray-600">
+                          {profileData.phone}
+                        </span>
+                      </div>
+                    )}
                 </div>
 
                 <Separator className="my-4" />
@@ -380,60 +414,72 @@ export default function FilmmakerProfile() {
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between p-2 rounded-lg bg-pink-50">
-                      <div className="flex items-center space-x-2">
-                        <Instagram className="w-4 h-4 text-pink-600" />
-                        <span className="text-sm font-medium">Instagram</span>
-                        {profileData.socialLinks?.instagram && (
-                          <Star className="w-3 h-3 text-pink-500 fill-pink-500" />
-                        )}
-                      </div>
-                      <div className="text-right">
-                        <div className="text-sm font-semibold text-pink-600">
-                          {profileData.socialLinks?.instagram?.followers?.toLocaleString?.() ||
-                            0}
+                    {profileData.socialLinks?.instagram && (
+                      <div className="flex items-center justify-between p-2 rounded-lg bg-pink-50">
+                        <div className="flex items-center space-x-2">
+                          <Instagram className="w-4 h-4 text-pink-600" />
+                          <span className="text-sm font-medium">Instagram</span>
                         </div>
-                        <div className="text-xs text-gray-500">followers</div>
+                        <a
+                          href={
+                            profileData.socialLinks.instagram.startsWith("http")
+                              ? profileData.socialLinks.instagram
+                              : `https://${profileData.socialLinks.instagram}`
+                          }
+                          className="text-sm font-medium text-pink-600 hover:underline"
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          View Profile
+                        </a>
                       </div>
-                    </div>
+                    )}
 
-                    <div className="flex items-center justify-between p-2 rounded-lg bg-red-50">
-                      <div className="flex items-center space-x-2">
-                        <div className="w-4 h-4 bg-red-500 rounded flex items-center justify-center">
-                          <Play className="w-2 h-2 text-white fill-white" />
+                    {profileData.socialLinks?.youtube && (
+                      <div className="flex items-center justify-between p-2 rounded-lg bg-red-50">
+                        <div className="flex items-center space-x-2">
+                          <div className="w-4 h-4 bg-red-500 rounded flex items-center justify-center">
+                            <Play className="w-2 h-2 text-white fill-white" />
+                          </div>
+                          <span className="text-sm font-medium">YouTube</span>
                         </div>
-                        <span className="text-sm font-medium">YouTube</span>
-                        {profileData.socialLinks?.youtube?.verified && (
-                          <Star className="w-3 h-3 text-red-500 fill-red-500" />
-                        )}
+                        <a
+                          href={
+                            profileData.socialLinks.youtube.startsWith("http")
+                              ? profileData.socialLinks.youtube
+                              : `https://${profileData.socialLinks.youtube}`
+                          }
+                          className="text-sm font-medium text-red-600 hover:underline"
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          View Channel
+                        </a>
                       </div>
-                      <div className="text-right">
-                        <div className="text-sm font-semibold text-red-600">
-                          {profileData.socialLinks?.youtube?.subscribers?.toLocaleString?.() ||
-                            0}
-                        </div>
-                        <div className="text-xs text-gray-500">subscribers</div>
-                      </div>
-                    </div>
+                    )}
 
-                    <div className="flex items-center justify-between p-2 rounded-lg bg-cyan-50">
-                      <div className="flex items-center space-x-2">
-                        <div className="w-4 h-4 bg-cyan-500 rounded flex items-center justify-center">
-                          <Play className="w-2 h-2 text-white fill-white" />
+                    {profileData.socialLinks?.vimeo && (
+                      <div className="flex items-center justify-between p-2 rounded-lg bg-cyan-50">
+                        <div className="flex items-center space-x-2">
+                          <div className="w-4 h-4 bg-cyan-500 rounded flex items-center justify-center">
+                            <Play className="w-2 h-2 text-white fill-white" />
+                          </div>
+                          <span className="text-sm font-medium">Vimeo</span>
                         </div>
-                        <span className="text-sm font-medium">Vimeo</span>
-                        {profileData.socialLinks?.vimeo?.verified && (
-                          <Star className="w-3 h-3 text-cyan-500 fill-cyan-500" />
-                        )}
+                        <a
+                          href={
+                            profileData.socialLinks.vimeo.startsWith("http")
+                              ? profileData.socialLinks.vimeo
+                              : `https://${profileData.socialLinks.vimeo}`
+                          }
+                          className="text-sm font-medium text-cyan-600 hover:underline"
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          View Profile
+                        </a>
                       </div>
-                      <div className="text-right">
-                        <div className="text-sm font-semibold text-cyan-600">
-                          {profileData.socialLinks?.vimeo?.followers?.toLocaleString?.() ||
-                            0}
-                        </div>
-                        <div className="text-xs text-gray-500">followers</div>
-                      </div>
-                    </div>
+                    )}
                   </div>
 
                   <div className="mt-4 p-3 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg">
@@ -525,39 +571,55 @@ export default function FilmmakerProfile() {
                   </div>
                 </div>
 
-                <Separator className="my-4" />
+                {(isOwnProfile || preferences?.showRates) && (
+                  <>
+                    <Separator className="my-4" />
 
-                <div>
-                  <h4 className="font-medium text-sm mb-3">Rates</h4>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Directing:</span>
-                      <span className="font-medium">
-                        ${profileData.rates?.directingMin || 0} - $
-                        {profileData.rates?.directingMax || 0}
-                      </span>
+                    <div>
+                      <h4 className="font-medium text-sm mb-3">Rates</h4>
+                      <div className="space-y-2 text-sm">
+                        {(profileData.rates?.directingMin ||
+                          profileData.rates?.directingMax) && (
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">Directing:</span>
+                            <span className="font-medium">
+                              ${profileData.rates?.directingMin || 0} - $
+                              {profileData.rates?.directingMax || 0}
+                            </span>
+                          </div>
+                        )}
+                        {(profileData.rates?.cinematographyMin ||
+                          profileData.rates?.cinematographyMax) && (
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">
+                              Cinematography:
+                            </span>
+                            <span className="font-medium">
+                              ${profileData.rates?.cinematographyMin || 0} - $
+                              {profileData.rates?.cinematographyMax || 0}/day
+                            </span>
+                          </div>
+                        )}
+                        {profileData.rates?.consulting && (
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">Consulting:</span>
+                            <span className="font-medium">
+                              ${profileData.rates.consulting}/hr
+                            </span>
+                          </div>
+                        )}
+                        {profileData.rates?.workshops && (
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">Workshops:</span>
+                            <span className="font-medium">
+                              ${profileData.rates.workshops}/hr
+                            </span>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Cinematography:</span>
-                      <span className="font-medium">
-                        ${profileData.rates?.cinematographyMin || 0} - $
-                        {profileData.rates?.cinematographyMax || 0}/day
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Consulting:</span>
-                      <span className="font-medium">
-                        ${profileData.rates?.consulting || 0}/hr
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Workshops:</span>
-                      <span className="font-medium">
-                        ${profileData.rates?.workshops || 0}/hr
-                      </span>
-                    </div>
-                  </div>
-                </div>
+                  </>
+                )}
 
                 <Button className="w-full mt-4" size="sm">
                   <Calendar className="w-4 h-4 mr-2" />
@@ -580,26 +642,16 @@ export default function FilmmakerProfile() {
                     .slice(0, 6)
                     .map((skill, index) => (
                       <div key={index}>
-                        <div className="flex justify-between items-center mb-2">
-                          <div className="flex items-center space-x-2">
-                            <span className="text-sm font-medium">
-                              {skill.name}
-                            </span>
-                            {skill.trending && (
-                              <TrendingUp className="w-3 h-3 text-orange-500" />
-                            )}
-                          </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm font-medium">
+                            {skill.name}
+                          </span>
                           <Badge
                             variant="outline"
-                            className="text-xs flex items-center"
+                            className="text-xs capitalize"
                           >
-                            {getCategoryIcon(skill.category)}
-                            <span className="ml-1">{skill.category}</span>
+                            {skill.level}
                           </Badge>
-                        </div>
-                        <Progress value={skill.proficiency} className="h-2" />
-                        <div className="text-xs text-gray-500 mt-1">
-                          {skill.proficiency}% proficiency
                         </div>
                       </div>
                     ))}
@@ -643,8 +695,13 @@ export default function FilmmakerProfile() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                  {(profileData.portfolioItems || []).map((project, idx) => (
+                {(profileData.portfolioItems || []).length === 0 ? (
+                  <div className="text-gray-500 text-center py-8">
+                    Nothing here yet.
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                    {(profileData.portfolioItems || []).map((project, idx) => (
                     <Card
                       key={project.id || idx}
                       className="overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group"
@@ -736,8 +793,9 @@ export default function FilmmakerProfile() {
                         </div>
                       </CardContent>
                     </Card>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                )}
               </TabsContent>
 
               <TabsContent value="equipment">
@@ -748,55 +806,56 @@ export default function FilmmakerProfile() {
                   </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {["cameras", "lenses", "lighting", "audio"].map(
-                    (cat, index) =>
-                      profileData.equipment?.[cat]?.length > 0 && (
-                        <Card key={cat}>
-                          <CardHeader>
-                            <CardTitle className="flex items-center">
-                              {cat === "cameras" && (
-                                <Camera className="w-5 h-5 mr-2" />
-                              )}
-                              {cat === "lenses" && (
-                                <Eye className="w-5 h-5 mr-2" />
-                              )}
-                              {cat === "lighting" && (
-                                <Lightbulb className="w-5 h-5 mr-2" />
-                              )}
-                              {cat === "audio" && (
-                                <Mic className="w-5 h-5 mr-2" />
-                              )}
-                              {cat.charAt(0).toUpperCase() + cat.slice(1)}
-                            </CardTitle>
-                          </CardHeader>
-                          <CardContent>
-                            <div className="space-y-3">
-                              {profileData.equipment[cat].map(
-                                (item, itemIndex) => (
-                                  <div
-                                    key={itemIndex}
-                                    className="flex items-center justify-between p-2 rounded-lg bg-gray-50"
-                                  >
-                                    <span className="text-sm font-medium">
-                                      {item.name}
-                                    </span>
-                                    <Badge
-                                      variant={
-                                        item.owned ? "default" : "outline"
-                                      }
+                {!["cameras", "lenses", "lighting", "audio"].some(
+                  (cat) => profileData.equipment?.[cat]?.length > 0
+                ) ? (
+                  <div className="text-gray-500 text-center py-8">
+                    Nothing here yet.
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {["cameras", "lenses", "lighting", "audio"].map(
+                      (cat, index) =>
+                        profileData.equipment?.[cat]?.length > 0 && (
+                          <Card key={cat}>
+                            <CardHeader>
+                              <CardTitle className="flex items-center">
+                                {cat === "cameras" && (
+                                  <Camera className="w-5 h-5 mr-2" />
+                                )}
+                                {cat === "lenses" && (
+                                  <Eye className="w-5 h-5 mr-2" />
+                                )}
+                                {cat === "lighting" && (
+                                  <Lightbulb className="w-5 h-5 mr-2" />
+                                )}
+                                {cat === "audio" && (
+                                  <Mic className="w-5 h-5 mr-2" />
+                                )}
+                                {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                              </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                              <div className="space-y-3">
+                                {profileData.equipment[cat].map(
+                                  (item, itemIndex) => (
+                                    <div
+                                      key={itemIndex}
+                                      className="flex items-center justify-between p-2 rounded-lg bg-gray-50"
                                     >
-                                      {item.owned ? "Owned" : "Available"}
-                                    </Badge>
-                                  </div>
-                                )
-                              )}
-                            </div>
-                          </CardContent>
-                        </Card>
-                      )
-                  )}
-                </div>
+                                      <span className="text-sm font-medium">
+                                        {item}
+                                      </span>
+                                    </div>
+                                  )
+                                )}
+                              </div>
+                            </CardContent>
+                          </Card>
+                        )
+                    )}
+                  </div>
+                )}
               </TabsContent>
 
               <TabsContent value="awards">
@@ -864,44 +923,53 @@ export default function FilmmakerProfile() {
                   </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {(profileData.software || []).map((tool, index) => (
-                    <Card key={index}>
-                      <CardContent className="p-6">
-                        <div className="flex items-center justify-between mb-3">
-                          <div className="flex items-center space-x-3">
-                            <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                              <Edit className="w-5 h-5 text-purple-600" />
+                {(profileData.software || []).length === 0 ? (
+                  <div className="text-gray-500 text-center py-8">
+                    Nothing here yet.
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {(profileData.software || []).map((tool, index) => (
+                      <Card key={index}>
+                        <CardContent className="p-6">
+                          <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center space-x-3">
+                              <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                                <Edit className="w-5 h-5 text-purple-600" />
+                              </div>
+                              <div>
+                                <h3 className="font-semibold">
+                                  {tool.name || tool}
+                                </h3>
+                                {tool.category && (
+                                  <Badge variant="outline" className="text-xs">
+                                    {tool.category}
+                                  </Badge>
+                                )}
+                              </div>
                             </div>
-                            <div>
-                              <h3 className="font-semibold">
-                                {tool.name || tool}
-                              </h3>
-                              {tool.category && (
-                                <Badge variant="outline" className="text-xs">
-                                  {tool.category}
-                                </Badge>
-                              )}
-                            </div>
+                            {tool.proficiency && (
+                              <div className="text-right">
+                                <div className="text-lg font-bold text-purple-600">
+                                  {tool.proficiency}%
+                                </div>
+                                <div className="text-xs text-gray-500">
+                                  proficiency
+                                </div>
+                              </div>
+                            )}
                           </div>
                           {tool.proficiency && (
-                            <div className="text-right">
-                              <div className="text-lg font-bold text-purple-600">
-                                {tool.proficiency}%
-                              </div>
-                              <div className="text-xs text-gray-500">
-                                proficiency
-                              </div>
-                            </div>
+                            <Progress
+                              value={tool.proficiency}
+                              className="h-2"
+                            />
                           )}
-                        </div>
-                        {tool.proficiency && (
-                          <Progress value={tool.proficiency} className="h-2" />
-                        )}
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                )}
               </TabsContent>
             </Tabs>
           </div>

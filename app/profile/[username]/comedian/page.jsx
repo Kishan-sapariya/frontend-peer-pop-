@@ -144,7 +144,7 @@ export default function ComedianProfile() {
           level:
             typeof lang === "object" && lang?.level ? lang.level : "Fluent",
         }))
-      : [{ name: "English", level: "Native" }],
+      : [],
     availability: {
       standup: availability.standup || false,
       corporate: availability.corporate || false,
@@ -184,9 +184,9 @@ export default function ComedianProfile() {
   const accountRestricted = profile?.restricted;
   const [hasError, setHasError] = useState(false);
 
-  const imageSrc = isOwnProfile
-    ? user?.coverImage
-    : profile?.userProfile?.coverImage;
+  const imageSrc =
+    (isOwnProfile ? user?.coverImage : profile?.userProfile?.coverImage) ||
+    profile?.data?.personalInfo?.coverImage;
 
   useEffect(() => {
     setHasError(false);
@@ -222,7 +222,10 @@ export default function ComedianProfile() {
                     className="object-cover"
                     alt={profile?.userProfile?.username || "Comedian"}
                     src={
-                      isOwnProfile ? user?.image : profile?.userProfile?.image
+                      (isOwnProfile
+                        ? user?.image
+                        : profile?.userProfile?.image) ||
+                      profile?.data?.personalInfo?.profileImage
                     }
                   />
                   <AvatarFallback className="text-3xl">
@@ -265,14 +268,19 @@ export default function ComedianProfile() {
                         <MapPin className="w-4 h-4 mr-1" />
                         {comedian.location}
                       </div>
-                      <div className="flex items-center">
-                        <Calendar className="w-4 h-4 mr-1" />
-                        {comedian.stats.yearsActive} years performing
-                      </div>
-                      <div className="flex items-center">
-                        <Mic className="w-4 h-4 mr-1" />
-                        {comedian.stats.showsPerformed}+ shows
-                      </div>
+                      {comedian.stats.yearsActive &&
+                        comedian.stats.yearsActive !== "Not specified" && (
+                          <div className="flex items-center">
+                            <Calendar className="w-4 h-4 mr-1" />
+                            {comedian.stats.yearsActive} years performing
+                          </div>
+                        )}
+                      {comedian.stats.showsPerformed > 0 && (
+                        <div className="flex items-center">
+                          <Mic className="w-4 h-4 mr-1" />
+                          {comedian.stats.showsPerformed}+ shows
+                        </div>
+                      )}
                     </div>
 
                     {/* Comedy Style */}
@@ -289,25 +297,27 @@ export default function ComedianProfile() {
                     </div>
 
                     {/* Languages */}
-                    <div className="mb-4">
-                      <div className="flex items-center space-x-2 mb-2">
-                        <Globe className="w-4 h-4 text-gray-500" />
-                        <span className="text-sm font-medium text-gray-700">
-                          Performs in:
-                        </span>
+                    {comedian.languages.length > 0 && (
+                      <div className="mb-4">
+                        <div className="flex items-center space-x-2 mb-2">
+                          <Globe className="w-4 h-4 text-gray-500" />
+                          <span className="text-sm font-medium text-gray-700">
+                            Performs in:
+                          </span>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          {comedian.languages.map((lang, index) => (
+                            <Badge
+                              key={index}
+                              variant="outline"
+                              className="bg-orange-50 text-orange-700 border-orange-200"
+                            >
+                              {lang.name} ({lang.level})
+                            </Badge>
+                          ))}
+                        </div>
                       </div>
-                      <div className="flex flex-wrap gap-2">
-                        {comedian.languages.map((lang, index) => (
-                          <Badge
-                            key={index}
-                            variant="outline"
-                            className="bg-orange-50 text-orange-700 border-orange-200"
-                          >
-                            {lang.name} ({lang.level})
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
+                    )}
 
                     {/* Profile Completion Notice */}
                     {isOwnProfile &&
@@ -351,36 +361,45 @@ export default function ComedianProfile() {
                 </div>
 
                 {/* Comedy Stats */}
-                {!accountRestricted && (
+                {!accountRestricted &&
+                  (isOwnProfile || profileData?.preferences?.publicStats) && (
                   <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mt-8 pt-6 border-t">
-                    <div className="text-center">
-                      <div className="text-3xl font-bold text-yellow-600">
-                        {comedian.stats.showsPerformed}+
+                    {comedian.stats.showsPerformed > 0 && (
+                      <div className="text-center">
+                        <div className="text-3xl font-bold text-yellow-600">
+                          {comedian.stats.showsPerformed}+
+                        </div>
+                        <div className="text-sm text-gray-600">
+                          Shows Performed
+                        </div>
                       </div>
-                      <div className="text-sm text-gray-600">
-                        Shows Performed
+                    )}
+                    {comedian.stats.totalAudience > 0 && (
+                      <div className="text-center">
+                        <div className="text-3xl font-bold text-yellow-600">
+                          {(comedian.stats.totalAudience / 1000).toFixed(0)}K
+                        </div>
+                        <div className="text-sm text-gray-600">
+                          Total Audience
+                        </div>
                       </div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-3xl font-bold text-yellow-600">
-                        {(comedian.stats.totalAudience / 1000).toFixed(0)}K
+                    )}
+                    {comedian.stats.clubsPerformed > 0 && (
+                      <div className="text-center">
+                        <div className="text-3xl font-bold text-yellow-600">
+                          {comedian.stats.clubsPerformed}
+                        </div>
+                        <div className="text-sm text-gray-600">Venues</div>
                       </div>
-                      <div className="text-sm text-gray-600">
-                        Total Audience
+                    )}
+                    {comedian.stats.specialsReleased > 0 && (
+                      <div className="text-center">
+                        <div className="text-3xl font-bold text-yellow-600">
+                          {comedian.stats.specialsReleased}
+                        </div>
+                        <div className="text-sm text-gray-600">Specials</div>
                       </div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-3xl font-bold text-yellow-600">
-                        {comedian.stats.clubsPerformed}
-                      </div>
-                      <div className="text-sm text-gray-600">Venues</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-3xl font-bold text-yellow-600">
-                        {comedian.stats.specialsReleased}
-                      </div>
-                      <div className="text-sm text-gray-600">Specials</div>
-                    </div>
+                    )}
                   </div>
                 )}
               </div>
@@ -405,30 +424,36 @@ export default function ComedianProfile() {
                     {comedian.bio}
                   </p>
                   <div className="space-y-3">
-                    <div className="flex items-center text-sm">
-                      <Globe className="w-4 h-4 mr-2 text-gray-400" />
-                      <a
-                        href={`https://${comedian.website}`}
-                        className="text-blue-600 hover:underline"
-                      >
-                        {comedian.website}
-                      </a>
-                    </div>
+                    {comedian.website && (
+                      <div className="flex items-center text-sm">
+                        <Globe className="w-4 h-4 mr-2 text-gray-400" />
+                        <a
+                          href={`https://${comedian.website}`}
+                          className="text-blue-600 hover:underline"
+                        >
+                          {comedian.website}
+                        </a>
+                      </div>
+                    )}
                     {(isOwnProfile ||
                       profileData?.preferences?.showContact) && (
                       <>
-                        <div className="flex items-center text-sm">
-                          <Mail className="w-4 h-4 mr-2 text-gray-400" />
-                          <span className="text-gray-600">
-                            {comedian.email}
-                          </span>
-                        </div>
-                        <div className="flex items-center text-sm">
-                          <Phone className="w-4 h-4 mr-2 text-gray-400" />
-                          <span className="text-gray-600">
-                            {comedian.phone}
-                          </span>
-                        </div>
+                        {comedian.email && (
+                          <div className="flex items-center text-sm">
+                            <Mail className="w-4 h-4 mr-2 text-gray-400" />
+                            <span className="text-gray-600">
+                              {comedian.email}
+                            </span>
+                          </div>
+                        )}
+                        {comedian.phone && (
+                          <div className="flex items-center text-sm">
+                            <Phone className="w-4 h-4 mr-2 text-gray-400" />
+                            <span className="text-gray-600">
+                              {comedian.phone}
+                            </span>
+                          </div>
+                        )}
                       </>
                     )}
                   </div>
@@ -515,27 +540,29 @@ export default function ComedianProfile() {
               </Card>
 
               {/* Regular Venues */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <LocationIcon className="w-5 h-5 mr-2" />
-                    Regular Venues
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    {comedian.venues.map((venue, index) => (
-                      <div
-                        key={index}
-                        className="text-sm text-gray-700 flex items-center"
-                      >
-                        <span className="w-1.5 h-1.5 bg-yellow-500 rounded-full mr-2"></span>
-                        {venue}
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
+              {comedian.venues.length > 0 && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center">
+                      <LocationIcon className="w-5 h-5 mr-2" />
+                      Regular Venues
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      {comedian.venues.map((venue, index) => (
+                        <div
+                          key={index}
+                          className="text-sm text-gray-700 flex items-center"
+                        >
+                          <span className="w-1.5 h-1.5 bg-yellow-500 rounded-full mr-2"></span>
+                          {venue}
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
 
               {/* Booking & Rates */}
               <Card>

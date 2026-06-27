@@ -81,16 +81,6 @@ export default function InfluencerProfile() {
   const contentCreation = profileData.contentCreation || {};
   const preferences = profileData.preferences || {};
 
-  const genderSplitFromString = (gender) => {
-    if (!gender) return { female: 0, male: 0, other: 0 };
-    if (gender === "mostly-female") return { female: 80, male: 18, other: 2 };
-    if (gender === "mostly-male") return { female: 18, male: 80, other: 2 };
-    if (gender === "balanced") return { female: 50, male: 48, other: 2 };
-    if (gender === "female-majority") return { female: 65, male: 33, other: 2 };
-    if (gender === "male-majority") return { female: 33, male: 65, other: 2 };
-    return { female: 0, male: 0, other: 0 };
-  };
-
   const platform = profile?.data?.socialMedia?.platforms;
 
   const influencer = {
@@ -120,7 +110,11 @@ export default function InfluencerProfile() {
       personalInfo.profileImage || "/placeholder.svg?height=120&width=120",
     coverImage:
       personalInfo.coverImage || "/placeholder.svg?height=300&width=1200",
-    verified: personalInfo.verified || false,
+    verified:
+      platforms?.instagram?.verified ||
+      platforms?.youtube?.verified ||
+      platforms?.twitter?.verified ||
+      false,
     stats: {
       totalFollowers:
         (parseInt(platforms.instagram?.followers) || 0) +
@@ -146,9 +140,7 @@ export default function InfluencerProfile() {
             typeof range === "object" ? range : { range, percentage: 0 }
           )
         : [],
-      genderSplit: audience.genderSplit
-        ? audience.genderSplit
-        : genderSplitFromString(audience.gender),
+      genderSplit: audience.genderSplit || null,
       topLocations: Array.isArray(audience.topLocations)
         ? audience.topLocations
         : [],
@@ -172,9 +164,17 @@ export default function InfluencerProfile() {
   };
 
   const monthlyReach = Object.values(platforms)
-    .filter((platform) => platform.handle)
-    .map((platform) => Number(platform.followers) || 0)
+    .filter((platform) => platform.link)
+    .map(
+      (platform) =>
+        Number(platform.followers) || Number(platform.subscribers) || 0
+    )
     .reduce((sum, count) => sum + count, 0);
+
+  const hasSocialPresence =
+    !!influencer.socialStats.instagram.followers ||
+    !!influencer.socialStats.youtube.subscribers ||
+    !!influencer.socialStats.twitter.followers;
 
   const formatNumber = (num) => {
     if (num === undefined || num === null || isNaN(num)) {
@@ -193,9 +193,9 @@ export default function InfluencerProfile() {
   const style = getCompletionCateogryStyle(profile?.completion?.category);
   const [hasError, setHasError] = useState(false);
 
-  const imageSrc = isOwnProfile
-    ? user?.coverImage
-    : profile?.userProfile?.coverImage;
+  const imageSrc =
+    (isOwnProfile ? user?.coverImage : profile?.userProfile?.coverImage) ||
+    profile?.data?.personalInfo?.coverImage;
 
   useEffect(() => {
     setHasError(false);
@@ -230,7 +230,10 @@ export default function InfluencerProfile() {
                     className="object-cover"
                     alt={influencer.name}
                     src={
-                      isOwnProfile ? user?.image : profile?.userProfile?.image
+                      (isOwnProfile
+                        ? user?.image
+                        : profile?.userProfile?.image) ||
+                      profile?.data?.personalInfo?.profileImage
                     }
                     onError={(e) => {
                       e.target.src = "";
@@ -323,15 +326,15 @@ export default function InfluencerProfile() {
                   </div>
                 </div>
                 {isOwnProfile &&
-                  profile?.completion?.percentage < 70 &&
-                  profile?.completion?.percentage > 99 && (
+                  profile?.completion?.percentage >= 70 &&
+                  profile?.completion?.percentage < 100 && (
                     <div className="mt-4 p-3 bg-yellow-50 text-sm rounded-lg">
                       🚀 Your profile is {profile.completion.percentage}%
                       complete. Fill in the missing details to unlock{" "}
                       <b>Elite</b> status.
                     </div>
                   )}
-                {isOwnProfile && profile?.completion?.percentage < 100 && (
+                {isOwnProfile && profile?.completion?.percentage < 70 && (
                   <div className="mt-4 p-3 bg-yellow-50 text-sm rounded-lg">
                     🚀 Your profile is {profile.completion.percentage}%
                     complete. Fill in the missing details to unlock <b>Pro</b>{" "}
@@ -340,7 +343,8 @@ export default function InfluencerProfile() {
                 )}
 
                 {/* Key Stats */}
-                {!accountRestricted && (
+                {!accountRestricted &&
+                  (isOwnProfile || preferences?.publicStats) && (
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
                     <div className="text-center p-3 bg-gradient-to-br from-pink-50 to-purple-50 rounded-lg">
                       <div className="text-2xl font-bold text-purple-600">
@@ -393,25 +397,45 @@ export default function InfluencerProfile() {
                     {influencer.bio}
                   </p>
                   <div className="mt-4 space-y-2">
-                    <div className="flex items-center text-sm">
-                      <Globe className="w-4 h-4 mr-2 text-gray-400" />
-                      <a href="#" className="text-blue-600 hover:underline">
-                        {influencer.website}
-                      </a>
-                    </div>
-                    <div className="flex items-center text-sm">
-                      <Mail className="w-4 h-4 mr-2 text-gray-400" />
-                      <span className="text-gray-600">{influencer.email}</span>
-                    </div>
-                    <div className="flex items-center text-sm">
-                      <Phone className="w-4 h-4 mr-2 text-gray-400" />
-                      <span className="text-gray-600">{influencer.phone}</span>
-                    </div>
+                    {influencer.website && (
+                      <div className="flex items-center text-sm">
+                        <Globe className="w-4 h-4 mr-2 text-gray-400" />
+                        <a
+                          href={influencer.website}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 hover:underline"
+                        >
+                          {influencer.website}
+                        </a>
+                      </div>
+                    )}
+                    {(isOwnProfile || preferences?.showContact) && (
+                      <>
+                        {influencer.email && (
+                          <div className="flex items-center text-sm">
+                            <Mail className="w-4 h-4 mr-2 text-gray-400" />
+                            <span className="text-gray-600">
+                              {influencer.email}
+                            </span>
+                          </div>
+                        )}
+                        {influencer.phone && (
+                          <div className="flex items-center text-sm">
+                            <Phone className="w-4 h-4 mr-2 text-gray-400" />
+                            <span className="text-gray-600">
+                              {influencer.phone}
+                            </span>
+                          </div>
+                        )}
+                      </>
+                    )}
                   </div>
                 </CardContent>
               </Card>
 
               {/* Social Media Stats */}
+              {hasSocialPresence && (
               <Card>
                 <CardHeader>
                   <CardTitle>Social Media Presence</CardTitle>
@@ -513,6 +537,7 @@ export default function InfluencerProfile() {
                   </div>
                 </CardContent>
               </Card>
+              )}
 
               {/* Availability */}
               <Card>
@@ -545,40 +570,46 @@ export default function InfluencerProfile() {
                     )}
                   </div>
 
-                  <div className="mt-4 pt-4 border-t">
-                    <h4 className="font-medium text-sm mb-3">Starting Rates</h4>
-                    <div className="space-y-2 text-sm">
-                      {influencer.rates.instagramPost !== "" && (
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Instagram Post:</span>
-                          <span className="font-medium">
-                            {influencer.rates.instagramPost}
-                          </span>
-                        </div>
-                      )}
-                      {influencer.rates.instagramStory !== "" && (
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">
-                            Instagram Story:
-                          </span>
-                          <span className="font-medium">
-                            {influencer.rates.instagramStory}
-                          </span>
-                        </div>
-                      )}
+                  {(isOwnProfile || preferences?.showRates) && (
+                    <div className="mt-4 pt-4 border-t">
+                      <h4 className="font-medium text-sm mb-3">
+                        Starting Rates
+                      </h4>
+                      <div className="space-y-2 text-sm">
+                        {influencer.rates.instagramPost && (
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">
+                              Instagram Post:
+                            </span>
+                            <span className="font-medium">
+                              {influencer.rates.instagramPost}
+                            </span>
+                          </div>
+                        )}
+                        {influencer.rates.instagramStory && (
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">
+                              Instagram Story:
+                            </span>
+                            <span className="font-medium">
+                              {influencer.rates.instagramStory}
+                            </span>
+                          </div>
+                        )}
 
-                      {influencer.rates.youtubeIntegration !== "" && (
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">
-                            YouTube Integration:
-                          </span>
-                          <span className="font-medium">
-                            {influencer.rates.youtubeIntegration}
-                          </span>
-                        </div>
-                      )}
+                        {influencer.rates.youtubeIntegration && (
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">
+                              YouTube Integration:
+                            </span>
+                            <span className="font-medium">
+                              {influencer.rates.youtubeIntegration}
+                            </span>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </CardContent>
               </Card>
             </div>
@@ -650,51 +681,67 @@ export default function InfluencerProfile() {
                       </CardContent>
                     </Card>
 
-                    <Card>
-                      <CardHeader>
-                        <CardTitle>Gender Split</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="space-y-3">
-                          <div className="space-y-1">
-                            <div className="flex justify-between text-sm">
-                              <span>Female</span>
-                              <span>
-                                {influencer.demographics.genderSplit.female}%
-                              </span>
+                    {influencer.demographics.genderSplit &&
+                      (influencer.demographics.genderSplit.female ||
+                        influencer.demographics.genderSplit.male ||
+                        influencer.demographics.genderSplit.other) && (
+                        <Card>
+                          <CardHeader>
+                            <CardTitle>Gender Split</CardTitle>
+                          </CardHeader>
+                          <CardContent>
+                            <div className="space-y-3">
+                              <div className="space-y-1">
+                                <div className="flex justify-between text-sm">
+                                  <span>Female</span>
+                                  <span>
+                                    {
+                                      influencer.demographics.genderSplit
+                                        .female
+                                    }
+                                    %
+                                  </span>
+                                </div>
+                                <Progress
+                                  value={
+                                    influencer.demographics.genderSplit.female
+                                  }
+                                  className="h-2"
+                                />
+                              </div>
+                              <div className="space-y-1">
+                                <div className="flex justify-between text-sm">
+                                  <span>Male</span>
+                                  <span>
+                                    {influencer.demographics.genderSplit.male}%
+                                  </span>
+                                </div>
+                                <Progress
+                                  value={
+                                    influencer.demographics.genderSplit.male
+                                  }
+                                  className="h-2"
+                                />
+                              </div>
+                              <div className="space-y-1">
+                                <div className="flex justify-between text-sm">
+                                  <span>Other</span>
+                                  <span>
+                                    {influencer.demographics.genderSplit.other}
+                                    %
+                                  </span>
+                                </div>
+                                <Progress
+                                  value={
+                                    influencer.demographics.genderSplit.other
+                                  }
+                                  className="h-2"
+                                />
+                              </div>
                             </div>
-                            <Progress
-                              value={influencer.demographics.genderSplit.female}
-                              className="h-2"
-                            />
-                          </div>
-                          <div className="space-y-1">
-                            <div className="flex justify-between text-sm">
-                              <span>Male</span>
-                              <span>
-                                {influencer.demographics.genderSplit.male}%
-                              </span>
-                            </div>
-                            <Progress
-                              value={influencer.demographics.genderSplit.male}
-                              className="h-2"
-                            />
-                          </div>
-                          <div className="space-y-1">
-                            <div className="flex justify-between text-sm">
-                              <span>Other</span>
-                              <span>
-                                {influencer.demographics.genderSplit.other}%
-                              </span>
-                            </div>
-                            <Progress
-                              value={influencer.demographics.genderSplit.other}
-                              className="h-2"
-                            />
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
+                          </CardContent>
+                        </Card>
+                      )}
                   </div>
 
                   <Card className="mt-6">

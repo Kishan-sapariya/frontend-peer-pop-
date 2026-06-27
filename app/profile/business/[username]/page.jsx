@@ -68,6 +68,16 @@ export default function BusinessProfilePage() {
     const date = new Date(dateString);
     return date.getFullYear();
   };
+  const businessTypeLabels = {
+    soleProprietorship: "Sole Proprietorship",
+    llc: "LLC",
+    corporation: "Corporation",
+    partnership: "Partnership",
+    nonprofit: "Non-Profit",
+    privateLimited: "Private Limited",
+  };
+  const formatBusinessType = (type) =>
+    type ? businessTypeLabels[type] || type : "";
   const renderSocialLinks = () => {
     const socialPlatforms = [
       {
@@ -99,7 +109,9 @@ export default function BusinessProfilePage() {
         bgColor: "from-blue-100 to-blue-200",
       },
     ];
-    return socialPlatforms.map((platform, index) => (
+    return socialPlatforms
+      .filter((platform) => platform.url || platform.followers)
+      .map((platform, index) => (
       <div
         key={index}
         className={`flex items-center justify-between p-3 bg-gradient-to-r ${platform.bgColor} rounded-lg`}
@@ -132,7 +144,7 @@ export default function BusinessProfilePage() {
     if (!business.industry && !business.businessType)
       return "Your business partner";
     return `${business.industry || "Business"} ${
-      business.businessType?.toUpperCase() || "Company"
+      formatBusinessType(business.businessType) || "Company"
     }`;
   };
   if (!businessProfileDetails) {
@@ -205,10 +217,12 @@ export default function BusinessProfilePage() {
                         <MapPin className="w-4 h-4 mr-1" />
                         {business.headquarters || "Location not specified"}
                       </div>
-                      <div className="flex items-center">
-                        <Calendar className="w-4 h-4 mr-1" />
-                        Founded {getFoundedYear(business.foundedYear)}
-                      </div>
+                      {business.foundedYear && (
+                        <div className="flex items-center">
+                          <Calendar className="w-4 h-4 mr-1" />
+                          Founded {getFoundedYear(business.foundedYear)}
+                        </div>
+                      )}
                       <div className="flex items-center">
                         <Users className="w-4 h-4 mr-1" />
                         {business.size || "Size not specified"}
@@ -233,7 +247,7 @@ export default function BusinessProfilePage() {
                             variant="outline"
                             className="bg-green-50 text-green-700 border-green-200"
                           >
-                            {business.businessType.toUpperCase()}
+                            {formatBusinessType(business.businessType)}
                           </Badge>
                         )}
                       </div>
@@ -278,9 +292,13 @@ export default function BusinessProfilePage() {
               <CardContent>
                 <p className="text-gray-700 text-sm leading-relaxed mb-4">
                   {business.about ||
-                    `${business.companyName} is a ${
-                      business.industry?.toLowerCase() || "business"
-                    } company focused on delivering excellent services and solutions.`}
+                    (business.companyName
+                      ? `${business.companyName} is a ${
+                          business.industry?.toLowerCase() || "business"
+                        } company focused on delivering excellent services and solutions.`
+                      : `This is a ${
+                          business.industry?.toLowerCase() || "business"
+                        } company focused on delivering excellent services and solutions.`)}
                 </p>
                 {business.website && (
                   <div className="flex items-center text-sm mb-3">

@@ -24,6 +24,7 @@ import {
   DollarSign,
 } from "lucide-react";
 import { useMusicianStore } from "@/store/useMusicianStore";
+import { useAuthStore } from "@/store/useAuthStore";
 import { useParams } from "next/navigation";
 import { getInitialLetter } from "@/utils/formatDate";
 
@@ -32,6 +33,7 @@ export default function profileDataProfile() {
   const [activeTab, setActiveTab] = useState("music");
   const { username } = useParams();
   const { getMusicianProfileByUsername, profile } = useMusicianStore();
+  const { user } = useAuthStore();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -53,16 +55,21 @@ export default function profileDataProfile() {
   }, [username]);
 
   const profileData = profile?.data || {};
+  const preferences = profileData.preferences || {};
+  const isOwnProfile = profile?.userProfile?.id === user?.id;
 
   const formatNumber = (num) => {
-    if (num === undefined) return;
-    if (num >= 1000000) {
-      return (num / 1000000).toFixed(1) + "M";
+    const n = Number(num);
+    if (num === undefined || num === null || num === "" || Number.isNaN(n)) {
+      return "—";
     }
-    if (num >= 1000) {
-      return (num / 1000).toFixed(1) + "K";
+    if (n >= 1000000) {
+      return (n / 1000000).toFixed(1) + "M";
     }
-    return num.toString();
+    if (n >= 1000) {
+      return (n / 1000).toFixed(1) + "K";
+    }
+    return n.toString();
   };
 
   return (
@@ -84,7 +91,7 @@ export default function profileDataProfile() {
             <div className="flex flex-col md:flex-row items-start md:items-center space-y-4 md:space-y-0 md:space-x-6">
               <div className="relative">
                 <Avatar className="w-32 h-32 border-4 border-white shadow-lg">
-                  <AvatarImage src={profileData.avatar || "/placeholder.svg"} alt={profile?.userProfile?.username || "Musician"} />
+                  <AvatarImage src={profileData.profileImage || profile?.userProfile?.image || "/placeholder.svg"} alt={profile?.userProfile?.username || "Musician"} />
                   <AvatarFallback className="text-2xl">
                     {getInitialLetter(profile?.userProfile.username)}
                   </AvatarFallback>
@@ -131,10 +138,12 @@ export default function profileDataProfile() {
                         <MapPin className="w-4 h-4 mr-1" />
                         {profileData.location}
                       </div>
-                      <div className="flex items-center">
-                        <Calendar className="w-4 h-4 mr-1" />
-                        {profileData.yearsActive} years active
-                      </div>
+                      {profileData.yearsActive && (
+                        <div className="flex items-center">
+                          <Calendar className="w-4 h-4 mr-1" />
+                          {profileData.yearsActive} years active
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -157,32 +166,34 @@ export default function profileDataProfile() {
                 </div>
 
                 {/* Music Stats */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
-                  <div className="text-center p-3 bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg">
-                    <div className="text-2xl font-bold text-blue-600">
-                      {formatNumber(profileData.streamingStats?.spotify)}
+                {(isOwnProfile || preferences?.publicStats) && (
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+                    <div className="text-center p-3 bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg">
+                      <div className="text-2xl font-bold text-blue-600">
+                        {formatNumber(profileData.streamingStats?.spotify)}
+                      </div>
+                      <div className="text-sm text-gray-600">Spotify Streams</div>
                     </div>
-                    <div className="text-sm text-gray-600">Spotify Streams</div>
-                  </div>
-                  <div className="text-center p-3 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg">
-                    <div className="text-2xl font-bold text-purple-600">
-                      {profileData.songsReleased}
+                    <div className="text-center p-3 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg">
+                      <div className="text-2xl font-bold text-purple-600">
+                        {profileData.songsReleased || "—"}
+                      </div>
+                      <div className="text-sm text-gray-600">Songs Released</div>
                     </div>
-                    <div className="text-sm text-gray-600">Songs Released</div>
-                  </div>
-                  <div className="text-center p-3 bg-gradient-to-br from-green-50 to-blue-50 rounded-lg">
-                    <div className="text-2xl font-bold text-green-600">
-                      {profileData.concertsPerformed}
+                    <div className="text-center p-3 bg-gradient-to-br from-green-50 to-blue-50 rounded-lg">
+                      <div className="text-2xl font-bold text-green-600">
+                        {profileData.concertsPerformed || "—"}
+                      </div>
+                      <div className="text-sm text-gray-600">Live Shows</div>
                     </div>
-                    <div className="text-sm text-gray-600">Live Shows</div>
-                  </div>
-                  <div className="text-center p-3 bg-gradient-to-br from-orange-50 to-red-50 rounded-lg">
-                    <div className="text-2xl font-bold text-orange-600">
-                      {profileData.albumsReleased}
+                    <div className="text-center p-3 bg-gradient-to-br from-orange-50 to-red-50 rounded-lg">
+                      <div className="text-2xl font-bold text-orange-600">
+                        {profileData.albumsReleased || "—"}
+                      </div>
+                      <div className="text-sm text-gray-600">Albums Released</div>
                     </div>
-                    <div className="text-sm text-gray-600">Albums Released</div>
                   </div>
-                </div>
+                )}
               </div>
             </div>
           </CardContent>
@@ -201,20 +212,39 @@ export default function profileDataProfile() {
                   {profileData.bio}
                 </p>
                 <div className="mt-4 space-y-2">
-                  <div className="flex items-center text-sm">
-                    <Globe className="w-4 h-4 mr-2 text-gray-400" />
-                    <a href="#" className="text-blue-600 hover:underline">
-                      {profileData.website}
-                    </a>
-                  </div>
-                  <div className="flex items-center text-sm">
-                    <Mail className="w-4 h-4 mr-2 text-gray-400" />
-                    <span className="text-gray-600">{profileData.email}</span>
-                  </div>
-                  <div className="flex items-center text-sm">
-                    <Phone className="w-4 h-4 mr-2 text-gray-400" />
-                    <span className="text-gray-600">{profileData.phone}</span>
-                  </div>
+                  {profileData.website && (
+                    <div className="flex items-center text-sm">
+                      <Globe className="w-4 h-4 mr-2 text-gray-400" />
+                      <a
+                        href={profileData.website}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:underline"
+                      >
+                        {profileData.website}
+                      </a>
+                    </div>
+                  )}
+                  {(isOwnProfile || preferences?.showContact) && (
+                    <>
+                      {profileData.email && (
+                        <div className="flex items-center text-sm">
+                          <Mail className="w-4 h-4 mr-2 text-gray-400" />
+                          <span className="text-gray-600">
+                            {profileData.email}
+                          </span>
+                        </div>
+                      )}
+                      {profileData.phone && (
+                        <div className="flex items-center text-sm">
+                          <Phone className="w-4 h-4 mr-2 text-gray-400" />
+                          <span className="text-gray-600">
+                            {profileData.phone}
+                          </span>
+                        </div>
+                      )}
+                    </>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -241,6 +271,7 @@ export default function profileDataProfile() {
             </Card>
 
             {/* Streaming Stats */}
+            {(isOwnProfile || preferences?.publicStats) && (
             <Card>
               <CardHeader>
                 <CardTitle>Streaming & Social</CardTitle>
@@ -264,12 +295,16 @@ export default function profileDataProfile() {
                           Profile
                         </a>
                       )}
-                      <div className="text-sm font-semibold text-green-600">
-                        {formatNumber(profileData.streamingStats?.spotify)}
-                      </div>
-                      <div className="text-xs text-gray-500">
-                        monthly listeners
-                      </div>
+                      {profileData.streamingStats?.spotify && (
+                        <>
+                          <div className="text-sm font-semibold text-green-600">
+                            {formatNumber(profileData.streamingStats?.spotify)}
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            monthly listeners
+                          </div>
+                        </>
+                      )}
                     </div>
                   </div>
                   {/* Apple Music */}
@@ -303,10 +338,16 @@ export default function profileDataProfile() {
                           Channel
                         </a>
                       )}
-                      <div className="text-sm font-semibold text-red-600">
-                        {formatNumber(profileData.streamingStats?.youtube)}
-                      </div>
-                      <div className="text-xs text-gray-500">subscribers</div>
+                      {profileData.streamingStats?.youtube && (
+                        <>
+                          <div className="text-sm font-semibold text-red-600">
+                            {formatNumber(profileData.streamingStats?.youtube)}
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            subscribers
+                          </div>
+                        </>
+                      )}
                     </div>
                   </div>
                   {/* SoundCloud */}
@@ -326,10 +367,16 @@ export default function profileDataProfile() {
                           Profile
                         </a>
                       )}
-                      <div className="text-sm font-semibold text-orange-600">
-                        {formatNumber(profileData.streamingStats?.soundcloud)}
-                      </div>
-                      <div className="text-xs text-gray-500">users</div>
+                      {profileData.streamingStats?.soundcloud && (
+                        <>
+                          <div className="text-sm font-semibold text-orange-600">
+                            {formatNumber(
+                              profileData.streamingStats?.soundcloud
+                            )}
+                          </div>
+                          <div className="text-xs text-gray-500">users</div>
+                        </>
+                      )}
                     </div>
                   </div>
                   {/* Instagram */}
@@ -349,12 +396,16 @@ export default function profileDataProfile() {
                           Profile
                         </a>
                       )}
-                      <div className="text-sm font-semibold text-pink-600">
-                        {formatNumber(
-                          profileData.socialLinks?.instagramFollowers
-                        )}
-                      </div>
-                      <div className="text-xs text-gray-500">followers</div>
+                      {profileData.socialLinks?.instagramFollowers && (
+                        <>
+                          <div className="text-sm font-semibold text-pink-600">
+                            {formatNumber(
+                              profileData.socialLinks?.instagramFollowers
+                            )}
+                          </div>
+                          <div className="text-xs text-gray-500">followers</div>
+                        </>
+                      )}
                     </div>
                   </div>
                   {/* TikTok */}
@@ -378,10 +429,16 @@ export default function profileDataProfile() {
                           Profile
                         </a>
                       )}
-                      <div className="text-sm font-semibold text-white">
-                        {formatNumber(profileData.socialLinks?.tiktokFollowers)}
-                      </div>
-                      <div className="text-xs text-gray-300">followers</div>
+                      {profileData.socialLinks?.tiktokFollowers && (
+                        <>
+                          <div className="text-sm font-semibold text-white">
+                            {formatNumber(
+                              profileData.socialLinks?.tiktokFollowers
+                            )}
+                          </div>
+                          <div className="text-xs text-gray-300">followers</div>
+                        </>
+                      )}
                     </div>
                   </div>
                   {/* Facebook */}
@@ -401,12 +458,16 @@ export default function profileDataProfile() {
                           Profile
                         </a>
                       )}
-                      <div className="text-sm font-semibold text-blue-600">
-                        {formatNumber(
-                          profileData.socialLinks?.facebookFollowers
-                        )}
-                      </div>
-                      <div className="text-xs text-gray-500">followers</div>
+                      {profileData.socialLinks?.facebookFollowers && (
+                        <>
+                          <div className="text-sm font-semibold text-blue-600">
+                            {formatNumber(
+                              profileData.socialLinks?.facebookFollowers
+                            )}
+                          </div>
+                          <div className="text-xs text-gray-500">followers</div>
+                        </>
+                      )}
                     </div>
                   </div>
                   {/* Twitter */}
@@ -426,17 +487,22 @@ export default function profileDataProfile() {
                           Profile
                         </a>
                       )}
-                      <div className="text-sm font-semibold text-blue-400">
-                        {formatNumber(
-                          profileData.socialLinks?.twitterFollowers
-                        )}
-                      </div>
-                      <div className="text-xs text-gray-500">followers</div>
+                      {profileData.socialLinks?.twitterFollowers && (
+                        <>
+                          <div className="text-sm font-semibold text-blue-400">
+                            {formatNumber(
+                              profileData.socialLinks?.twitterFollowers
+                            )}
+                          </div>
+                          <div className="text-xs text-gray-500">followers</div>
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>
               </CardContent>
             </Card>
+            )}
 
             {/* Services & Rates */}
             <Card>
@@ -476,6 +542,7 @@ export default function profileDataProfile() {
                   )}
                 </div>
 
+                {(isOwnProfile || preferences?.showRates) && (
                 <div className="mt-4 pt-4 border-t">
                   <h4 className="font-medium text-sm mb-3">Starting Rates</h4>
                   <div className="space-y-2 text-sm">
@@ -507,6 +574,7 @@ export default function profileDataProfile() {
                     </div>
                   </div>
                 </div>
+                )}
               </CardContent>
             </Card>
           </div>
@@ -668,29 +736,21 @@ export default function profileDataProfile() {
                   <CardContent>
                     <div className="space-y-6">
                       {Array.isArray(profileData?.training) &&
-                        profileData.training.map((education, index) => (
-                          <div
-                            key={index}
-                            className="flex items-start space-x-4"
-                          >
-                            <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                              <Award className="w-6 h-6 text-blue-600" />
-                            </div>
-                            <div className="flex-1">
-                              <h3 className="font-semibold text-lg">
-                                {education.institution}
-                              </h3>
-                              <p className="text-blue-600 font-medium">
-                                {education.program}
-                              </p>
-                              <div className="flex items-center space-x-4 mt-1 text-sm text-gray-500">
-                                <span>{education.period}</span>
-                                <span>•</span>
-                                <span>{education.degree}</span>
+                        profileData.training
+                          .filter((item) => item && item.trim())
+                          .map((item, index) => (
+                            <div
+                              key={index}
+                              className="flex items-start space-x-4"
+                            >
+                              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                                <Award className="w-6 h-6 text-blue-600" />
+                              </div>
+                              <div className="flex-1">
+                                <h3 className="font-semibold text-lg">{item}</h3>
                               </div>
                             </div>
-                          </div>
-                        ))}
+                          ))}
                     </div>
                   </CardContent>
                 </Card>
@@ -708,7 +768,7 @@ export default function profileDataProfile() {
                             variant="outline"
                             className="px-3 py-1"
                           >
-                            {lang.name} - {lang.level}
+                            {lang.language} - {lang.level}
                           </Badge>
                         ))}
                     </div>

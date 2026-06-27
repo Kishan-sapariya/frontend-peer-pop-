@@ -247,7 +247,7 @@ export default function YouTuberProfile() {
           level:
             typeof lang === "object" && lang?.level ? lang.level : "Fluent",
         }))
-      : [{ name: "English", level: "Native" }],
+      : [],
   };
 
   const getStatValue = (primary, fallback) => {
@@ -263,9 +263,9 @@ export default function YouTuberProfile() {
 
   const [hasError, setHasError] = useState(false);
 
-  const imageSrc = isOwnProfile
-    ? user?.coverImage
-    : profile?.userProfile?.coverImage;
+  const imageSrc =
+    (isOwnProfile ? user?.coverImage : profile?.userProfile?.coverImage) ||
+    personalInfo.coverImage;
 
   useEffect(() => {
     setHasError(false);
@@ -306,9 +306,10 @@ export default function YouTuberProfile() {
                         className="object-cover"
                         alt={creator.name}
                         src={
-                          isOwnProfile
+                          (isOwnProfile
                             ? user?.image
-                            : profile?.userProfile?.image
+                            : profile?.userProfile?.image) ||
+                          personalInfo.profileImage
                         }
                       />
                       <AvatarFallback className="text-3xl">
@@ -329,9 +330,10 @@ export default function YouTuberProfile() {
                         className="object-cover"
                         alt={creator.name}
                         src={
-                          isOwnProfile
+                          (isOwnProfile
                             ? user?.image
-                            : profile?.userProfile?.image
+                            : profile?.userProfile?.image) ||
+                          personalInfo.profileImage
                         }
                       />
                       <AvatarFallback className="text-6xl">
@@ -369,7 +371,8 @@ export default function YouTuberProfile() {
                     <div className="flex flex-col sm:flex-row sm:items-center text-xl text-gray-600 mb-1 flex-wrap">
                       {/* Creator Title */}
                       <p className="mr-2 mb-1 sm:mb-0 whitespace-nowrap">
-                        {creator.title} -
+                        {creator.title}
+                        {creator.contentCategories.length > 0 ? " -" : ""}
                       </p>
 
                       {creator.contentCategories.length > 0 && (
@@ -400,18 +403,26 @@ export default function YouTuberProfile() {
                     )}
 
                     <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 mb-4">
-                      <div className="flex items-center">
-                        <MapPin className="w-4 h-4 mr-1" />
-                        {capitalizeInitials(creator.location)}
-                      </div>
-                      <div className="flex items-center">
-                        <Calendar className="w-4 h-4 mr-1" />
-                        Creating since {creator.joinDate}
-                      </div>
-                      <div className="flex items-center">
-                        <Video className="w-4 h-4 mr-1" />
-                        {creator.stats.videos} videos
-                      </div>
+                      {creator.location &&
+                        creator.location !== "Location not specified" && (
+                          <div className="flex items-center">
+                            <MapPin className="w-4 h-4 mr-1" />
+                            {capitalizeInitials(creator.location)}
+                          </div>
+                        )}
+                      {creator.joinDate &&
+                        creator.joinDate !== "Not specified" && (
+                          <div className="flex items-center">
+                            <Calendar className="w-4 h-4 mr-1" />
+                            Creating since {creator.joinDate}
+                          </div>
+                        )}
+                      {creator.stats.videos > 0 && (
+                        <div className="flex items-center">
+                          <Video className="w-4 h-4 mr-1" />
+                          {creator.stats.videos} videos
+                        </div>
+                      )}
                     </div>
 
                     {/* Languages */}
@@ -478,7 +489,8 @@ export default function YouTuberProfile() {
                   </div>
                 </div>
                 {/* YouTube Stats */}
-                {!accountRestricted && (
+                {!accountRestricted &&
+                  (isOwnProfile || profileData?.preferences?.publicStats) && (
                   <div className="mt-8 pt-6 border-t">
                     {/* Slim connect prompt — owner only, until the channel is
                         linked. The stats below stay visible either way so any
