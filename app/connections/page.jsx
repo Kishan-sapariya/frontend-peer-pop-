@@ -453,7 +453,9 @@ export default function ConnectionsPage() {
                     ? `/profile/business/${creator.username}`
                     : creator.type === "FOUNDER"
                     ? `/profile/${creator.username}/founder`
-                    : `/profile/${creator.username}/${creator.creatorType?.toLowerCase()}`;
+                    : creator.creatorType
+                    ? `/profile/${creator.username}/${creator.creatorType.toLowerCase()}`
+                    : `/profile/${creator.username}`;
 
                 return (
                   <Card
@@ -735,11 +737,13 @@ export default function ConnectionsPage() {
               const otherUser = isOutgoing ? conn.receiver : conn.sender;
               const isAccepted = conn.status === "ACCEPTED";
               const profileLink =
-                otherUser?.type === "BUSINESS"
+                otherUser?.type === "BUSINESS" || otherUser?.role === "BUSINESS"
                   ? `/profile/business/${otherUser?.username}`
-                  : `/profile/${
-                      otherUser?.username
-                    }/${otherUser?.creatorType?.toLowerCase()}`;
+                  : otherUser?.isFounder
+                  ? `/profile/${otherUser?.username}/founder`
+                  : otherUser?.creatorType
+                  ? `/profile/${otherUser?.username}/${otherUser.creatorType.toLowerCase()}`
+                  : `/profile/${otherUser?.username}`;
               return (
                 <Card
                   key={conn.id}
