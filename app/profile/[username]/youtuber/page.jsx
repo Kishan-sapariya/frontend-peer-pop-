@@ -49,6 +49,7 @@ import MyPostsSection from "@/component/feeds/MyPostsSection";
 import ProfileActionsMenu from "@/component/profile/ProfileActionMenu";
 import PrivateAccountUI from "@/component/PrivateAccountUI";
 import PostInputSection from "@/component/feeds/PostInputSection";
+import YouTubeConnectToast from "@/component/youtube profile/YoutubeConnectToast";
 import {
   Dialog,
   DialogContent,
@@ -87,6 +88,19 @@ export default function YouTuberProfile() {
   }, [getYoutubeStats, profile?.userProfile?.id]);
 
   const safeStats = stats || {};
+  // YouTube stats only exist once the channel is connected via OAuth (the
+  // backend only creates a YouTubeStats row from the connect/cron flow), so an
+  // empty object means "not connected yet".
+  const hasYoutubeStats = Object.keys(safeStats).length > 0;
+
+  // Kick off the existing YouTube OAuth flow, returning to this profile after.
+  const handleConnectYouTube = () => {
+    const redirect =
+      typeof window !== "undefined" ? window.location.pathname : "";
+    window.location.href = `${
+      process.env.NEXT_PUBLIC_BASE_API_URL
+    }/youtube/auth?redirect=${encodeURIComponent(redirect)}`;
+  };
 
   const avgViews =
     (Number(safeStats.totalViews) || 0) /
@@ -264,6 +278,8 @@ export default function YouTuberProfile() {
 
   return (
     <div className="min-h-screen bg-gray-50 relative -mt-16">
+      {/* Refetches stats + toasts success after returning from YouTube OAuth */}
+      <YouTubeConnectToast />
       {/* Cover Image - extends behind navbar */}
       <div className="relative h-72 bg-gradient-to-b from-gray-900 to-gray-800">
         {imageSrc && !hasError && (
@@ -463,43 +479,66 @@ export default function YouTuberProfile() {
                 </div>
                 {/* YouTube Stats */}
                 {!accountRestricted && (
-                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mt-8 pt-6 border-t">
-                    {/* Public Stats Section */}
-                    <div className="text-center">
-                      <div className="text-3xl font-bold text-red-600">
-                        {formatNumber(
-                          getStatValue(
-                            safeStats.subscriberCount,
-                            profileData.statistics?.subscriberCount
-                          )
-                        )}
+                  <div className="mt-8 pt-6 border-t">
+                    {/* Slim connect prompt — owner only, until the channel is
+                        linked. The stats below stay visible either way so any
+                        manually-entered data is never hidden. */}
+                    {isOwnProfile && !hasYoutubeStats && (
+                      <div className="mb-5 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-red-100 bg-red-50/60 px-3 py-2">
+                        <span className="flex items-center gap-2 text-xs text-gray-600">
+                          <Youtube className="h-4 w-4 shrink-0 text-red-600" />
+                          Connect YouTube to auto-import live subscriber &amp;
+                          view stats.
+                        </span>
+                        <Button
+                          onClick={handleConnectYouTube}
+                          size="sm"
+                          className="h-7 shrink-0 rounded-full bg-red-600 px-3 text-xs text-white hover:bg-red-700"
+                        >
+                          <Youtube className="mr-1.5 h-3.5 w-3.5" />
+                          Connect
+                        </Button>
                       </div>
-                      <div className="text-sm text-gray-600">Subscribers</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-3xl font-bold text-red-600">
-                        {formatNumber(
-                          getStatValue(
-                            safeStats.totalViews,
-                            profileData?.statistics?.totalViews
-                          )
-                        )}
+                    )}
+
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+                      {/* Public Stats Section */}
+                      <div className="text-center">
+                        <div className="text-3xl font-bold text-red-600">
+                          {formatNumber(
+                            getStatValue(
+                              safeStats.subscriberCount,
+                              profileData.statistics?.subscriberCount
+                            )
+                          )}
+                        </div>
+                        <div className="text-sm text-gray-600">Subscribers</div>
                       </div>
-                      <div className="text-sm text-gray-600">Total Views</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-3xl font-bold text-red-600">
-                        {formatNumber(
-                          getStatValue(avgViews, creator?.stats?.avgViews)
-                        )}
+                      <div className="text-center">
+                        <div className="text-3xl font-bold text-red-600">
+                          {formatNumber(
+                            getStatValue(
+                              safeStats.totalViews,
+                              profileData?.statistics?.totalViews
+                            )
+                          )}
+                        </div>
+                        <div className="text-sm text-gray-600">Total Views</div>
                       </div>
-                      <div className="text-sm text-gray-600">Avg Views</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-3xl font-bold text-red-600">
-                        {formatNumber(creator.stats.watchTime)}
+                      <div className="text-center">
+                        <div className="text-3xl font-bold text-red-600">
+                          {formatNumber(
+                            getStatValue(avgViews, creator?.stats?.avgViews)
+                          )}
+                        </div>
+                        <div className="text-sm text-gray-600">Avg Views</div>
                       </div>
-                      <div className="text-sm text-gray-600">Watch Hours</div>
+                      <div className="text-center">
+                        <div className="text-3xl font-bold text-red-600">
+                          {formatNumber(creator.stats.watchTime)}
+                        </div>
+                        <div className="text-sm text-gray-600">Watch Hours</div>
+                      </div>
                     </div>
                   </div>
                 )}
