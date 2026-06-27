@@ -180,7 +180,7 @@ export default function FilmmakerProfile() {
                   <div className="mb-4 lg:mb-0">
                     <div className="flex items-center space-x-2 mb-2">
                       <h1 className="text-4xl font-bold text-gray-900">
-                        {userDetails.username}
+                        {profileData.stageName || userDetails.username}
                       </h1>
                       {profileData?.verified && (
                         <Badge className="bg-blue-500">Verified</Badge>
@@ -198,6 +198,12 @@ export default function FilmmakerProfile() {
                         <Calendar className="w-4 h-4 mr-1" />
                         Joined {formatDate(profile?.createdAt)}
                       </div>
+                      {profileData.experience && (
+                        <div className="flex items-center">
+                          <Briefcase className="w-4 h-4 mr-1" />
+                          {profileData.experience} years experience
+                        </div>
+                      )}
                     </div>
 
                     {/* Specializations */}
@@ -212,6 +218,21 @@ export default function FilmmakerProfile() {
                         </Badge>
                       ))}
                     </div>
+
+                    {/* Genres */}
+                    {profileData?.genres?.length > 0 && (
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        {profileData.genres.map((genreItem, index) => (
+                          <Badge
+                            key={index}
+                            variant="secondary"
+                            className="bg-purple-100 text-purple-700"
+                          >
+                            {genreItem}
+                          </Badge>
+                        ))}
+                      </div>
+                    )}
 
                     {/* Roles */}
                     <div className="flex flex-wrap gap-2 mb-4">
@@ -480,7 +501,94 @@ export default function FilmmakerProfile() {
                         </a>
                       </div>
                     )}
+
+                    {profileData.socialLinks?.twitter && (
+                      <div className="flex items-center justify-between p-2 rounded-lg bg-sky-50">
+                        <div className="flex items-center space-x-2">
+                          <div className="w-4 h-4 bg-sky-500 rounded flex items-center justify-center text-white text-[10px] font-bold">
+                            X
+                          </div>
+                          <span className="text-sm font-medium">Twitter/X</span>
+                        </div>
+                        <a
+                          href={
+                            profileData.socialLinks.twitter.startsWith("http")
+                              ? profileData.socialLinks.twitter
+                              : `https://${profileData.socialLinks.twitter}`
+                          }
+                          className="text-sm font-medium text-sky-600 hover:underline"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          View Profile
+                        </a>
+                      </div>
+                    )}
+
+                    {profileData.socialLinks?.behance && (
+                      <div className="flex items-center justify-between p-2 rounded-lg bg-indigo-50">
+                        <div className="flex items-center space-x-2">
+                          <div className="w-4 h-4 bg-indigo-600 rounded flex items-center justify-center text-white text-[9px] font-bold">
+                            Be
+                          </div>
+                          <span className="text-sm font-medium">Behance</span>
+                        </div>
+                        <a
+                          href={
+                            profileData.socialLinks.behance.startsWith("http")
+                              ? profileData.socialLinks.behance
+                              : `https://${profileData.socialLinks.behance}`
+                          }
+                          className="text-sm font-medium text-indigo-600 hover:underline"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          View Profile
+                        </a>
+                      </div>
+                    )}
+
+                    {profileData.imdbProfile && (
+                      <div className="flex items-center justify-between p-2 rounded-lg bg-yellow-50">
+                        <div className="flex items-center space-x-2">
+                          <div className="w-7 h-4 bg-yellow-400 rounded flex items-center justify-center text-black text-[9px] font-bold">
+                            IMDb
+                          </div>
+                          <span className="text-sm font-medium">IMDb</span>
+                        </div>
+                        <a
+                          href={
+                            profileData.imdbProfile.startsWith("http")
+                              ? profileData.imdbProfile
+                              : `https://${profileData.imdbProfile}`
+                          }
+                          className="text-sm font-medium text-yellow-700 hover:underline"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          View Profile
+                        </a>
+                      </div>
+                    )}
                   </div>
+
+                  {profileData.reelUrl && (
+                    <a
+                      href={
+                        profileData.reelUrl.startsWith("http")
+                          ? profileData.reelUrl
+                          : `https://${profileData.reelUrl}`
+                      }
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-4 block"
+                    >
+                      <Button className="w-full" size="sm">
+                        <Play className="w-4 h-4 mr-2" />
+                        Watch Demo Reel
+                      </Button>
+                    </a>
+                  )}
 
                   <div className="mt-4 p-3 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg">
                     <div className="text-center">
@@ -529,6 +637,34 @@ export default function FilmmakerProfile() {
                       <Badge
                         variant="secondary"
                         className="bg-blue-100 text-blue-700"
+                      >
+                        Available
+                      </Badge>
+                    )}
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <Clapperboard className="w-4 h-4 mr-2 text-pink-500" />
+                      <span className="text-sm">Producing</span>
+                    </div>
+                    {profileData.availability?.producing && (
+                      <Badge
+                        variant="secondary"
+                        className="bg-pink-100 text-pink-700"
+                      >
+                        Available
+                      </Badge>
+                    )}
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <Edit className="w-4 h-4 mr-2 text-teal-500" />
+                      <span className="text-sm">Editing</span>
+                    </div>
+                    {profileData.availability?.editing && (
+                      <Badge
+                        variant="secondary"
+                        className="bg-teal-100 text-teal-700"
                       >
                         Available
                       </Badge>

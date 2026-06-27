@@ -379,6 +379,76 @@ export default function BusinessProfilePage() {
                 </div>
               </CardContent>
             </Card>
+            {isOwnProfile &&
+              (business.gstNumber ||
+                business.panNumber ||
+                business.gstFile ||
+                business.panFile) && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center">
+                      <FileText className="w-5 h-5 mr-2" />
+                      Tax & Legal
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      {business.gstNumber && (
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="text-gray-500">GST Number</span>
+                          <span className="font-medium text-gray-800">
+                            {business.gstNumber}
+                          </span>
+                        </div>
+                      )}
+                      {business.panNumber && (
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="text-gray-500">PAN Number</span>
+                          <span className="font-medium text-gray-800">
+                            {business.panNumber}
+                          </span>
+                        </div>
+                      )}
+                      {business.gstFile &&
+                        (typeof business.gstFile === "string" &&
+                        business.gstFile.startsWith("http") ? (
+                          <a
+                            href={business.gstFile}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center text-sm text-blue-600 hover:underline"
+                          >
+                            <FileText className="w-4 h-4 mr-2" />
+                            View GST Certificate
+                          </a>
+                        ) : (
+                          <div className="flex items-center text-sm text-gray-600">
+                            <FileText className="w-4 h-4 mr-2 text-gray-400" />
+                            GST Certificate
+                          </div>
+                        ))}
+                      {business.panFile &&
+                        (typeof business.panFile === "string" &&
+                        business.panFile.startsWith("http") ? (
+                          <a
+                            href={business.panFile}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center text-sm text-blue-600 hover:underline"
+                          >
+                            <FileText className="w-4 h-4 mr-2" />
+                            View PAN Document
+                          </a>
+                        ) : (
+                          <div className="flex items-center text-sm text-gray-600">
+                            <FileText className="w-4 h-4 mr-2 text-gray-400" />
+                            PAN Document
+                          </div>
+                        ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
           </div>
           <div className="lg:col-span-3">
             <Tabs

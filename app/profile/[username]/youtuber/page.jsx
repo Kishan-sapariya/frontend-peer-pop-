@@ -615,6 +615,65 @@ export default function YouTuberProfile() {
                 </CardContent>
               </Card>
 
+              {/* Content */}
+              {(contentInfo.primaryNiche ||
+                (Array.isArray(contentInfo.contentStyle) &&
+                  contentInfo.contentStyle.length > 0) ||
+                contentInfo.uploadFrequency ||
+                contentInfo.videoLength) && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center">
+                      <Boxes className="w-5 h-5 mr-2" />
+                      Content
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {contentInfo.primaryNiche && (
+                      <div>
+                        <p className="mb-2 text-xs font-medium uppercase tracking-wide text-gray-500">
+                          Primary Niche
+                        </p>
+                        <Badge variant="secondary">
+                          {contentInfo.primaryNiche}
+                        </Badge>
+                      </div>
+                    )}
+                    {Array.isArray(contentInfo.contentStyle) &&
+                      contentInfo.contentStyle.length > 0 && (
+                        <div>
+                          <p className="mb-2 text-xs font-medium uppercase tracking-wide text-gray-500">
+                            Content Style
+                          </p>
+                          <div className="flex flex-wrap gap-2">
+                            {contentInfo.contentStyle.map((style, i) => (
+                              <Badge key={i} variant="secondary">
+                                {style}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    {contentInfo.uploadFrequency && (
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-gray-500">Upload Frequency</span>
+                        <span className="font-medium text-gray-900">
+                          {contentInfo.uploadFrequency}
+                        </span>
+                      </div>
+                    )}
+                    {contentInfo.videoLength && (
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-gray-500">Avg Video Length</span>
+                        <span className="font-medium text-gray-900">
+                          {contentInfo.videoLength}
+                        </span>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              )}
+
               {/* Social Media Reach */}
               <Card>
                 <CardHeader>

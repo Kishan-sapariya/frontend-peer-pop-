@@ -259,6 +259,11 @@ export default function ComedianProfile() {
                         </Badge>
                       )}
                     </div>
+                    {personalInfo.stageName && (
+                      <p className="text-lg text-gray-500 italic mb-2">
+                        aka {personalInfo.stageName}
+                      </p>
+                    )}
                     <p className="text-xl text-gray-600 mb-3">
                       {comedian.title}
                     </p>
@@ -459,6 +464,66 @@ export default function ComedianProfile() {
                   </div>
                 </CardContent>
               </Card>
+
+              {/* Performance Details */}
+              {(comedyCareer.performanceFrequency ||
+                performanceDetails.setLength ||
+                performanceDetails.contentRating ||
+                performanceDetails.travelWillingness ||
+                comedyCareer.avgAudienceSize) && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center">
+                      <Mic className="w-5 h-5 mr-2" />
+                      Performance Details
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3 text-sm">
+                      {comedyCareer.performanceFrequency && (
+                        <div className="flex items-center justify-between">
+                          <span className="text-gray-600">Frequency</span>
+                          <Badge variant="secondary">
+                            {comedyCareer.performanceFrequency}
+                          </Badge>
+                        </div>
+                      )}
+                      {performanceDetails.setLength && (
+                        <div className="flex items-center justify-between">
+                          <span className="text-gray-600">Set Length</span>
+                          <Badge variant="secondary">
+                            {performanceDetails.setLength}
+                          </Badge>
+                        </div>
+                      )}
+                      {performanceDetails.contentRating && (
+                        <div className="flex items-center justify-between">
+                          <span className="text-gray-600">Content Rating</span>
+                          <Badge variant="secondary">
+                            {performanceDetails.contentRating}
+                          </Badge>
+                        </div>
+                      )}
+                      {performanceDetails.travelWillingness && (
+                        <div className="flex items-center justify-between">
+                          <span className="text-gray-600">Travel</span>
+                          <Badge variant="secondary">
+                            {performanceDetails.travelWillingness}
+                          </Badge>
+                        </div>
+                      )}
+                      {comedyCareer.avgAudienceSize && (
+                        <div className="flex items-center justify-between">
+                          <span className="text-gray-600">Avg Audience</span>
+                          <Badge variant="secondary">
+                            {comedyCareer.avgAudienceSize}
+                          </Badge>
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
 
               {/* Social Media */}
               <Card>

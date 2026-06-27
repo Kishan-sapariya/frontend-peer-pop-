@@ -72,6 +72,14 @@ export default function profileDataProfile() {
     return n.toString();
   };
 
+  const formatLabel = (value) => {
+    if (!value || typeof value !== "string") return "";
+    return value
+      .split("-")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 -mt-16">
       {/* Cover Image - extends behind navbar */}
@@ -114,10 +122,29 @@ export default function profileDataProfile() {
                         <Badge className="bg-blue-500">Verified Artist</Badge>
                       )}
                     </div>
-                    <p className="text-xl text-gray-600 mt-1">
-                      {profileData.title}
-                    </p>
-                    <div className="flex flex-wrap gap-2">
+                    {profileData.stageName && (
+                      <p className="text-lg font-medium text-gray-700 mt-1">
+                        {profileData.stageName}
+                      </p>
+                    )}
+                    {profileData.title && (
+                      <p className="text-xl text-gray-600 mt-1">
+                        {profileData.title}
+                      </p>
+                    )}
+                    {profileData.musicalRole && (
+                      <div className="mt-1">
+                        <Badge variant="secondary" className="bg-blue-100 text-blue-700">
+                          {formatLabel(profileData.musicalRole)}
+                        </Badge>
+                      </div>
+                    )}
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {profileData.primaryGenre && (
+                        <Badge className="bg-purple-600 text-white">
+                          {profileData.primaryGenre}
+                        </Badge>
+                      )}
                       {profileData?.genres &&
                       Array.isArray(profileData.genres) &&
                       profileData.genres.length > 0 ? (
@@ -246,6 +273,26 @@ export default function profileDataProfile() {
                     </>
                   )}
                 </div>
+                {(profileData.experience || profileData.performanceType) && (
+                  <div className="mt-4 pt-4 border-t space-y-2 text-sm">
+                    {profileData.experience && (
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Experience:</span>
+                        <span className="font-medium">
+                          {formatLabel(profileData.experience)}
+                        </span>
+                      </div>
+                    )}
+                    {profileData.performanceType && (
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Performance:</span>
+                        <span className="font-medium">
+                          {formatLabel(profileData.performanceType)}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                )}
               </CardContent>
             </Card>
 
@@ -255,6 +302,13 @@ export default function profileDataProfile() {
                 <CardTitle>Instruments & Skills</CardTitle>
               </CardHeader>
               <CardContent>
+                {profileData.primaryInstrument && (
+                  <div className="mb-4">
+                    <Badge className="bg-blue-600 text-white">
+                      {profileData.primaryInstrument}
+                    </Badge>
+                  </div>
+                )}
                 <div className="space-y-4">
                   {Array.isArray(profileData.instruments) &&
                     profileData.instruments.map((instrument, index) => (
@@ -267,6 +321,39 @@ export default function profileDataProfile() {
                       </div>
                     ))}
                 </div>
+                {Array.isArray(profileData.musicalSkills) &&
+                  profileData.musicalSkills.length > 0 && (
+                    <div className="mt-4 pt-4 border-t">
+                      <h4 className="font-medium text-sm mb-3">Skills</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {profileData.musicalSkills.map((skill, index) => (
+                          <Badge key={index} variant="secondary">
+                            {skill}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                {Array.isArray(profileData.certifications) &&
+                  profileData.certifications.filter((c) => c && c.trim())
+                    .length > 0 && (
+                    <div className="mt-4 pt-4 border-t">
+                      <h4 className="font-medium text-sm mb-3">Certifications</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {profileData.certifications
+                          .filter((c) => c && c.trim())
+                          .map((cert, index) => (
+                            <Badge
+                              key={index}
+                              variant="outline"
+                              className="px-3 py-1"
+                            >
+                              {cert}
+                            </Badge>
+                          ))}
+                      </div>
+                    </div>
+                  )}
               </CardContent>
             </Card>
 
@@ -657,6 +744,27 @@ export default function profileDataProfile() {
                           </div>
                         ))}
                     </div>
+                    {(profileData.homeStudio ||
+                      profileData.recordingCapability) && (
+                      <div className="mt-4 pt-4 border-t space-y-2 text-sm">
+                        {profileData.homeStudio && (
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">Home Studio:</span>
+                            <span className="font-medium">Yes</span>
+                          </div>
+                        )}
+                        {profileData.recordingCapability && (
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">
+                              Recording Capability:
+                            </span>
+                            <span className="font-medium">
+                              {formatLabel(profileData.recordingCapability)}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               </TabsContent>

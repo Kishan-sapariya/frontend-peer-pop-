@@ -98,6 +98,13 @@ export default function DancerProfile() {
       }
     : null;
 
+  // Collected-but-unrendered fields (flat onboarding formData -> profile.data.*)
+  const primaryStyle = profile?.data?.primaryStyle || "";
+  const travelWillingness = profile?.data?.travelWillingness || "";
+  const certifications = (profile?.data?.certifications || []).filter(
+    (c) => c && c.trim()
+  );
+
   const formatNumber = (num) => {
     if (num >= 1000000) {
       return (num / 1000000).toFixed(1) + "M"
@@ -150,6 +157,9 @@ export default function DancerProfile() {
               <div className="flex-1">
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between">
                   <div>
+                    {dancer.name && (
+                      <h1 className="text-3xl font-bold text-gray-900">{dancer.name}</h1>
+                    )}
                     <p className="text-xl text-gray-600 mt-1">{dancer.title}</p>
                     <p className="text-purple-600 font-medium mt-1">{dancer.specialties}</p>
                     <div className="flex items-center space-x-4 mt-2 text-sm text-gray-500">
@@ -261,6 +271,14 @@ export default function DancerProfile() {
                 <CardTitle>Dance Styles & Expertise</CardTitle>
               </CardHeader>
               <CardContent>
+                {primaryStyle && (
+                  <div className="mb-4">
+                    <Badge className="bg-purple-100 text-purple-700 hover:bg-purple-100 text-sm px-3 py-1">
+                      <Star className="w-3 h-3 mr-1" />
+                      Primary Style: {primaryStyle}
+                    </Badge>
+                  </div>
+                )}
                 <div className="space-y-4">
                   {dancer.danceStyles.map((style, index) => {
                     const levelPercent =
@@ -291,6 +309,72 @@ export default function DancerProfile() {
                 </div>
               </CardContent>
             </Card>
+
+            {/* Skills & Training */}
+            {(dancer.techniques.length > 0 ||
+              dancer.specialSkills.length > 0 ||
+              certifications.length > 0) && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Skills & Training</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {dancer.techniques.length > 0 && (
+                    <div>
+                      <h4 className="font-medium text-sm mb-2">Techniques</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {dancer.techniques.map((technique, index) => (
+                          <Badge key={index} variant="secondary">
+                            {technique}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {dancer.specialSkills.length > 0 && (
+                    <div>
+                      <h4 className="font-medium text-sm mb-2">Special Skills</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {dancer.specialSkills.map((skill, index) => (
+                          <Badge key={index} variant="secondary">
+                            {skill}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {certifications.length > 0 && (
+                    <div>
+                      <h4 className="font-medium text-sm mb-2">Certifications</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {certifications.map((cert, index) => (
+                          <Badge key={index} variant="secondary">
+                            {cert}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Details */}
+            {travelWillingness && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Details</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-600">Travel Willingness</span>
+                    <Badge variant="secondary" className="capitalize">
+                      {travelWillingness}
+                    </Badge>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
 
             {/* Social Media */}
             <Card>

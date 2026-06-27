@@ -134,6 +134,12 @@ export default function InfluencerProfile() {
           typeof cat === "object" ? cat : { name: cat, percentage: 0, posts: 0 }
         )
       : [],
+    contentTypes: Array.isArray(contentInfo.contentTypes)
+      ? contentInfo.contentTypes
+      : [],
+    contentStyle: Array.isArray(contentInfo.contentStyle)
+      ? contentInfo.contentStyle
+      : [],
     demographics: {
       ageGroups: Array.isArray(audience.age)
         ? audience.age.map((range) =>
@@ -433,6 +439,61 @@ export default function InfluencerProfile() {
                   </div>
                 </CardContent>
               </Card>
+
+              {/* Content */}
+              {(influencer.contentCategories.length > 0 ||
+                influencer.contentTypes.length > 0 ||
+                influencer.contentStyle.length > 0) && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Content</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {influencer.contentCategories.length > 0 && (
+                      <div>
+                        <p className="mb-2 text-xs font-medium uppercase tracking-wide text-gray-500">
+                          Categories
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                          {influencer.contentCategories.map((cat, i) => (
+                            <Badge key={i} variant="secondary">
+                              {cat.name}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {influencer.contentTypes.length > 0 && (
+                      <div>
+                        <p className="mb-2 text-xs font-medium uppercase tracking-wide text-gray-500">
+                          Content Types
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                          {influencer.contentTypes.map((type, i) => (
+                            <Badge key={i} variant="secondary">
+                              {type}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {influencer.contentStyle.length > 0 && (
+                      <div>
+                        <p className="mb-2 text-xs font-medium uppercase tracking-wide text-gray-500">
+                          Style
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                          {influencer.contentStyle.map((style, i) => (
+                            <Badge key={i} variant="secondary">
+                              {style}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              )}
 
               {/* Social Media Stats */}
               {hasSocialPresence && (
