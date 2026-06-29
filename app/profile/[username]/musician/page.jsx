@@ -26,7 +26,8 @@ import {
 import { useMusicianStore } from "@/store/useMusicianStore";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useParams } from "next/navigation";
-import { getInitialLetter } from "@/utils/formatDate";
+import { getInitialLetter, getCompletionCateogryStyle } from "@/utils/formatDate";
+import ProfileCompletionBanner from "@/component/profile/ProfileCompletionBanner";
 
 export default function profileDataProfile() {
   const [isFollowing, setIsFollowing] = useState(false);
@@ -118,6 +119,17 @@ export default function profileDataProfile() {
                       <h1 className="text-3xl font-bold text-gray-900">
                         {profile?.userProfile.username}
                       </h1>
+                      {profile?.completion?.category && (
+                        <Badge
+                          className={
+                            getCompletionCateogryStyle(
+                              profile.completion.category
+                            )?.className
+                          }
+                        >
+                          {profile.completion.category}
+                        </Badge>
+                      )}
                       {profileData.verified && (
                         <Badge className="bg-blue-500">Verified Artist</Badge>
                       )}
@@ -191,6 +203,8 @@ export default function profileDataProfile() {
                     </Button>
                   </div>
                 </div>
+
+                <ProfileCompletionBanner completion={profile?.completion} isOwner={isOwnProfile} />
 
                 {/* Music Stats */}
                 {(isOwnProfile || preferences?.publicStats) && (

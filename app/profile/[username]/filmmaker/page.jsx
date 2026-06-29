@@ -43,7 +43,8 @@ import {
 import { useFilmMakerStore } from "@/store/useFilmMakerStore";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useParams } from "next/navigation";
-import { formatDate } from "@/utils/formatDate";
+import { formatDate, getCompletionCateogryStyle } from "@/utils/formatDate";
+import ProfileCompletionBanner from "@/component/profile/ProfileCompletionBanner";
 
 export default function FilmmakerProfile() {
   const [isFollowing, setIsFollowing] = useState(false);
@@ -182,6 +183,17 @@ export default function FilmmakerProfile() {
                       <h1 className="text-4xl font-bold text-gray-900">
                         {profileData.stageName || userDetails.username}
                       </h1>
+                      {profile?.completion?.category && (
+                        <Badge
+                          className={
+                            getCompletionCateogryStyle(
+                              profile.completion.category
+                            )?.className
+                          }
+                        >
+                          {profile.completion.category}
+                        </Badge>
+                      )}
                       {profileData?.verified && (
                         <Badge className="bg-blue-500">Verified</Badge>
                       )}
@@ -315,6 +327,11 @@ export default function FilmmakerProfile() {
                     </div>
                   </div>
                 </div>
+
+                <ProfileCompletionBanner
+                  completion={profile?.completion}
+                  isOwner={isOwnProfile}
+                />
 
                 {/* Stats */}
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mt-8 pt-6 border-t">

@@ -47,6 +47,7 @@ import ShareDialog from "@/component/ShareDialog";
 import ConnectBtn from "@/component/Connection/ConnectBtn";
 import MyPostsSection from "@/component/feeds/MyPostsSection";
 import ProfileActionsMenu from "@/component/profile/ProfileActionMenu";
+import ProfileCompletionBanner from "@/component/profile/ProfileCompletionBanner";
 import PrivateAccountUI from "@/component/PrivateAccountUI";
 import PostInputSection from "@/component/feeds/PostInputSection";
 import YouTubeConnectToast from "@/component/youtube profile/YoutubeConnectToast";
@@ -447,22 +448,10 @@ export default function YouTuberProfile() {
                         </div>
                       </div>
                     )}
-                    {profile?.completion?.percentage < 100 && isOwnProfile && (
-                      <div className="mt-4 p-3 bg-yellow-50 text-sm rounded-lg">
-                        🚀 Your profile is {profile.completion.percentage}%
-                        complete. Fill in the missing details to unlock{" "}
-                        <b>Pro</b> status.
-                      </div>
-                    )}
-                    {isOwnProfile &&
-                      profile?.completion?.percentage < 70 &&
-                      profile?.completion?.percentage > 99 && (
-                        <div className="mt-4 p-3 bg-yellow-50 text-sm rounded-lg">
-                          🚀 Your profile is {profile.completion.percentage}%
-                          complete. Fill in the missing details to unlock{" "}
-                          <b>Elite</b> status.
-                        </div>
-                      )}
+                    <ProfileCompletionBanner
+                      completion={profile?.completion}
+                      isOwner={isOwnProfile}
+                    />
                   </div>
 
                   <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-3 sm:space-y-0 sm:space-x-3">

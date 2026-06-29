@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import ProfileCompletionBanner from "@/component/profile/ProfileCompletionBanner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import {
@@ -331,22 +332,10 @@ export default function InfluencerProfile() {
                     )}
                   </div>
                 </div>
-                {isOwnProfile &&
-                  profile?.completion?.percentage >= 70 &&
-                  profile?.completion?.percentage < 100 && (
-                    <div className="mt-4 p-3 bg-yellow-50 text-sm rounded-lg">
-                      🚀 Your profile is {profile.completion.percentage}%
-                      complete. Fill in the missing details to unlock{" "}
-                      <b>Elite</b> status.
-                    </div>
-                  )}
-                {isOwnProfile && profile?.completion?.percentage < 70 && (
-                  <div className="mt-4 p-3 bg-yellow-50 text-sm rounded-lg">
-                    🚀 Your profile is {profile.completion.percentage}%
-                    complete. Fill in the missing details to unlock <b>Pro</b>{" "}
-                    status.
-                  </div>
-                )}
+                <ProfileCompletionBanner
+                  completion={profile?.completion}
+                  isOwner={isOwnProfile}
+                />
 
                 {/* Key Stats */}
                 {!accountRestricted &&

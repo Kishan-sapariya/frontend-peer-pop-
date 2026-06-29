@@ -8,8 +8,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { getCompletionCateogryStyle } from "@/utils/formatDate"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Progress } from "@/components/ui/progress"
+import ProfileCompletionBanner from "@/component/profile/ProfileCompletionBanner";
 import {
   MapPin,
   Calendar,
@@ -158,7 +160,22 @@ export default function DancerProfile() {
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between">
                   <div>
                     {dancer.name && (
-                      <h1 className="text-3xl font-bold text-gray-900">{dancer.name}</h1>
+                      <div className="flex items-center gap-2">
+                        <h1 className="text-3xl font-bold text-gray-900">
+                          {dancer.name}
+                        </h1>
+                        {profile?.completion?.category && (
+                          <Badge
+                            className={
+                              getCompletionCateogryStyle(
+                                profile.completion.category
+                              )?.className
+                            }
+                          >
+                            {profile.completion.category}
+                          </Badge>
+                        )}
+                      </div>
                     )}
                     <p className="text-xl text-gray-600 mt-1">{dancer.title}</p>
                     <p className="text-purple-600 font-medium mt-1">{dancer.specialties}</p>
@@ -190,6 +207,8 @@ export default function DancerProfile() {
                     </Button>
                   </div>
                 </div>
+
+                <ProfileCompletionBanner completion={profile?.completion} isOwner={isOwnProfile} />
 
                 {/* Dance Stats */}
                 {(isOwnProfile || preferences?.publicStats) && (
