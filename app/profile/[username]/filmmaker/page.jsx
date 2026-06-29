@@ -827,7 +827,7 @@ export default function FilmmakerProfile() {
               onValueChange={setActiveTab}
               className="w-full"
             >
-              <TabsList className="grid w-full grid-cols-4 mb-6">
+              <TabsList className="grid w-full grid-cols-4 mb-6 h-auto gap-1 rounded-xl border border-gray-200 bg-gray-100 p-1 shadow-sm [&_[data-slot=tabs-trigger]]:rounded-lg [&_[data-slot=tabs-trigger]]:py-2 [&_[data-slot=tabs-trigger]]:border-0 [&_[data-slot=tabs-trigger]]:focus-visible:ring-0 [&_[data-slot=tabs-trigger]]:focus-visible:outline-none [&_[data-slot=tabs-trigger]]:focus-visible:ring-offset-0">
                 <TabsTrigger value="filmography">Filmography</TabsTrigger>
                 <TabsTrigger value="equipment">Equipment</TabsTrigger>
                 <TabsTrigger value="awards">Awards</TabsTrigger>
