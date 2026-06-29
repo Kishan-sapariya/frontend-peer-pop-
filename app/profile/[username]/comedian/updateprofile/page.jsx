@@ -897,7 +897,7 @@ export default function ComedianProfileUpdate() {
             </div>
 
             <div>
-              <Label>I'm Available For:</Label>
+              <Label>Open to:</Label>
               <div className="grid grid-cols-2 gap-4 mt-3">
                 {[
                   { key: "standup", label: "Stand-up Shows" },
