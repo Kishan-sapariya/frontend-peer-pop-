@@ -27,6 +27,7 @@ import {
   Youtube,
   Twitter,
   CheckCircle,
+  Handshake,
 } from "lucide-react";
 import UploadImageModal from "@/component/profile/UploadImageModal";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -332,6 +333,34 @@ export default function InfluencerProfile() {
                     )}
                   </div>
                 </div>
+                {/* Open to — collaboration availability, surfaced up top */}
+                {(() => {
+                  const a = influencer.availability || {};
+                  const openTo = [
+                    a.sponsoredPosts && "Sponsored Posts",
+                    a.stories && "Story Promotions",
+                    a.reels && "Reels/Short Videos",
+                    a.youtube && "YouTube Integrations",
+                    a.events && "Event Appearances",
+                    a.ambassadorships && "Brand Ambassadorships",
+                  ].filter(Boolean);
+                  if (openTo.length === 0) return null;
+                  return (
+                    <div className="mb-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Handshake className="w-4 h-4 text-green-600" />
+                        <span className="text-sm font-medium text-gray-700">Open to</span>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {openTo.map((label) => (
+                          <Badge key={label} className="rounded-full border border-green-200 bg-green-50 px-3 py-1 text-green-700 hover:bg-green-50">
+                            {label}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })()}
                 <ProfileCompletionBanner
                   completion={profile?.completion}
                   isOwner={isOwnProfile}

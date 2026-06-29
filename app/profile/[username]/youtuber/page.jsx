@@ -30,6 +30,7 @@ import {
   Phone,
   Lock,
   Linkedin,
+  Handshake,
 } from "lucide-react";
 import { useYoutubeStore } from "@/store/useYoutubeStore";
 import { useParams } from "next/navigation";
@@ -448,6 +449,38 @@ export default function YouTuberProfile() {
                         </div>
                       </div>
                     )}
+                    {/* Open to — collaboration availability, surfaced up top */}
+                    {(() => {
+                      const a = creator.availability || {};
+                      const openTo = [
+                        a.sponsorships && "Sponsored Content",
+                        a.collaborations && "Creator Collaborations",
+                        a.consulting && "YouTube Consulting",
+                        a.speaking && "Speaking Engagements",
+                      ].filter(Boolean);
+                      if (openTo.length === 0) return null;
+                      return (
+                        <div className="mb-4">
+                          <div className="flex items-center gap-2 mb-2">
+                            <Handshake className="w-4 h-4 text-green-600" />
+                            <span className="text-sm font-medium text-gray-700">
+                              Open to
+                            </span>
+                          </div>
+                          <div className="flex flex-wrap gap-2">
+                            {openTo.map((label) => (
+                              <Badge
+                                key={label}
+                                className="rounded-full border border-green-200 bg-green-50 px-3 py-1 text-green-700 hover:bg-green-50"
+                              >
+                                {label}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })()}
+
                     <ProfileCompletionBanner
                       completion={profile?.completion}
                       isOwner={isOwnProfile}

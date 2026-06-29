@@ -30,7 +30,7 @@ import {
   Eye,
 } from "lucide-react";
 import Link from "next/link";
-import { getInitialLetter } from "@/utils/formatDate";
+import { getInitialLetter, getCompletionCateogryStyle } from "@/utils/formatDate";
 
 const professions = {
   Youtuber: "YOUTUBER",
@@ -472,10 +472,21 @@ export default function SearchPage() {
                   </div>
 
                   <CardContent className="px-5 pt-14 pb-5">
-                    {/* Name */}
-                    <h3 className="font-bold text-lg text-gray-900 group-hover:text-yellow-600 transition-colors truncate">
-                      {user.type === "BUSINESS" ? user.companyName : user.username}
-                    </h3>
+                    {/* Name + completion tier (discovery signal) */}
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-bold text-lg text-gray-900 group-hover:text-yellow-600 transition-colors truncate">
+                        {user.type === "BUSINESS" ? user.companyName : user.username}
+                      </h3>
+                      {user.tier && (
+                        <Badge
+                          className={`shrink-0 px-2 py-0.5 text-[10px] ${
+                            getCompletionCateogryStyle(user.tier)?.className || ""
+                          }`}
+                        >
+                          {user.tier}
+                        </Badge>
+                      )}
+                    </div>
 
                     {/* Industry for business */}
                     {user.type === "BUSINESS" && user.industry && (

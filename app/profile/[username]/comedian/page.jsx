@@ -24,6 +24,7 @@ import {
   Instagram,
   Twitter,
   Youtube,
+  Handshake,
 } from "lucide-react";
 import { formatNumber, getCompletionCateogryStyle } from "@/utils/formatDate";
 import UploadImageModal from "@/component/profile/UploadImageModal";
@@ -324,6 +325,34 @@ export default function ComedianProfile() {
                         </div>
                       </div>
                     )}
+
+                    {/* Open to — collaboration availability, surfaced up top */}
+                    {(() => {
+                      const a = comedian.availability || {};
+                      const openTo = [
+                        a.standup && "Stand-up Shows",
+                        a.corporate && "Corporate Events",
+                        a.writing && "Comedy Writing",
+                        a.podcasts && "Podcast Appearances",
+                        a.private && "Private Shows",
+                      ].filter(Boolean);
+                      if (openTo.length === 0) return null;
+                      return (
+                        <div className="mb-4">
+                          <div className="flex items-center gap-2 mb-2">
+                            <Handshake className="w-4 h-4 text-green-600" />
+                            <span className="text-sm font-medium text-gray-700">Open to</span>
+                          </div>
+                          <div className="flex flex-wrap gap-2">
+                            {openTo.map((label) => (
+                              <Badge key={label} className="rounded-full border border-green-200 bg-green-50 px-3 py-1 text-green-700 hover:bg-green-50">
+                                {label}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })()}
 
                     {/* Profile Completion Notice */}
                     <ProfileCompletionBanner

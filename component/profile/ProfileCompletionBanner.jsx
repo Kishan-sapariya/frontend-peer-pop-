@@ -46,8 +46,9 @@ export default function ProfileCompletionBanner({ completion, isOwner }) {
         <span>
           Your profile is{" "}
           <span className="font-semibold text-gray-900">{percentage}%</span>{" "}
-          complete — {pointsToNextTier}% away from{" "}
-          <span className="font-semibold text-gray-900">{nextTier}</span> status.
+          complete. More complete profiles get discovered more — you&apos;re only{" "}
+          <span className="font-semibold text-gray-900">{pointsToNextTier}%</span>{" "}
+          from <span className="font-semibold text-gray-900">{nextTier}</span>.
         </span>
       </div>
 
