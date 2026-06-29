@@ -1,9 +1,17 @@
 "use client";
 
 import React from "react";
-import { Calendar, Clock, MapPin, MoreVertical, Trash2 } from "lucide-react";
+import {
+  Calendar,
+  Clock,
+  MapPin,
+  MoreVertical,
+  Trash2,
+  CalendarDays,
+} from "lucide-react";
 import { format } from "date-fns";
 import UpcomingShowModal from "./UpcomingShowModal";
+import EmptyState from "@/component/profile/EmptyState";
 import { useComedianStore } from "@/store/useComedianStore";
 import {
   Popover,
@@ -86,12 +94,11 @@ export default function UpcomingShowsTab({ isOwnProfile }) {
             );
           })
         ) : (
-          <div className="text-center text-gray-500 p-8 sm:p-10 border border-dashed border-gray-300 rounded-md">
-            <p className="text-base sm:text-lg font-medium mb-2">
-              No Shows yet
-            </p>
-            <p className="text-sm">Add your first Upcoming show</p>
-          </div>
+          <EmptyState
+            icon={CalendarDays}
+            title="No upcoming shows"
+            description="Add your upcoming shows so fans know where to catch you live."
+          />
         )}
       </div>
     </div>

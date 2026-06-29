@@ -3,7 +3,8 @@ import React from "react";
 import AddCollaborationModal from "./AddCollaborationModal";
 import { useYoutubeStore } from "@/store/useYoutubeStore";
 import { capitalizeInitials } from "@/utils/formatDate";
-import { MoreVertical, Trash2 } from "lucide-react";
+import { MoreVertical, Trash2, Users } from "lucide-react";
+import EmptyState from "@/component/profile/EmptyState";
 import {
   Popover,
   PopoverTrigger,
@@ -29,13 +30,11 @@ export default function RecentCollaborations({ isOwnProfile }) {
 
       <div className="space-y-4">
         {collaborations.length === 0 ? (
-          <div className="text-center text-gray-500 p-10 border border-dashed border-gray-300 rounded-md">
-            <p className="text-lg font-medium mb-2">No collaborations yet</p>
-            <p className="text-sm">
-              Add your first collaboration to showcase your creative
-              partnerships.
-            </p>
-          </div>
+          <EmptyState
+            icon={Users}
+            title="No collaborations yet"
+            description="Add your first collaboration to showcase who you've worked with."
+          />
         ) : (
           collaborations.map((collab, idx) => (
             <Card

@@ -23,6 +23,8 @@ import {
 } from "@/components/ui/popover";
 import { formatDate } from "@/utils/formatDate";
 import { useInfluencerStore } from "@/store/useInfluencerStore";
+import { Film } from "lucide-react";
+import EmptyState from "@/component/profile/EmptyState";
 
 export default function RecentContent({ isOwnProfile }) {
   const router = useRouter();
@@ -118,12 +120,12 @@ export default function RecentContent({ isOwnProfile }) {
             </Card>
           ))
         ) : (
-          <div className="sm:col-span-2 w-full text-center text-gray-500 p-10 border border-dashed border-gray-300 rounded-md">
-            <p className="text-lg font-medium mb-2">No Recent Content yet</p>
-            <p className="text-sm">
-              Add your Recent Content to showcase your creative work.
-            </p>
-          </div>
+          <EmptyState
+            icon={Film}
+            title="No recent content yet"
+            description="Share your latest posts to showcase your work here."
+            className="sm:col-span-2 w-full"
+          />
         )}
       </div>
     </div>

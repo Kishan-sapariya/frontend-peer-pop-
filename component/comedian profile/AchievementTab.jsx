@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import AchievementModal from "./AchievementModal";
+import EmptyState from "@/component/profile/EmptyState";
 
 export default function AchievementTab({ isOwnProfile }) {
   const { profile, deleteAchievement } = useComedianStore();
@@ -73,12 +74,12 @@ export default function AchievementTab({ isOwnProfile }) {
             </div>
           ))
         ) : (
-          <div className="sm:col-span-2 text-center text-gray-500 p-8 sm:p-10 border border-dashed border-gray-300 rounded-md">
-            <p className="text-base sm:text-lg font-medium mb-2">
-              No Recent achievements yet
-            </p>
-            <p className="text-sm">Add your first professional milestone</p>
-          </div>
+          <EmptyState
+            className="sm:col-span-2"
+            icon={Award}
+            title="No achievements yet"
+            description="Add your achievements to highlight your milestones and recognition."
+          />
         )}
       </div>
     </div>

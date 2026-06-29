@@ -3,8 +3,9 @@
 import React, { useEffect, useRef, useCallback } from "react";
 import { useFeedStore } from "@/store/useFeedStore";
 import PostCard from "./PostCard";
-import { Loader2 } from "lucide-react";
+import { Loader2, PenSquare } from "lucide-react";
 import PostSkeleton from "./PostSkeleton";
+import EmptyState from "@/component/profile/EmptyState";
 
 const MyPostsSection = ({ profileId }) => {
   const { posts, fetchMyPosts, loading, loadingMore, hasMore } = useFeedStore();
@@ -36,9 +37,12 @@ const MyPostsSection = ({ profileId }) => {
 
   if (!posts.length) {
     return (
-      <p className="text-center text-gray-500 font-medium mt-10">
-        No posts available yet. Create your first post!
-      </p>
+      <EmptyState
+        className="mt-4"
+        icon={PenSquare}
+        title="No posts yet"
+        description="Share your work, ideas, or updates — your first post will show up here."
+      />
     );
   }
 

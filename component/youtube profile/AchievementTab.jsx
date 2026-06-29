@@ -3,6 +3,7 @@ import AddAchievementModal from "./AddAchievementModal";
 import { useYoutubeStore } from "@/store/useYoutubeStore";
 import { Card, CardContent } from "@/components/ui/card";
 import { Award, MoreVertical, Trash2 } from "lucide-react";
+import EmptyState from "@/component/profile/EmptyState";
 import {
   Popover,
   PopoverTrigger,
@@ -25,13 +26,11 @@ const AchievementTab = ({ isOwnProfile }) => {
       </div>
 
       {achievements.length === 0 ? (
-        <div className="text-center text-gray-500 p-10 border border-dashed border-gray-300 rounded-md">
-          <p className="text-lg font-medium mb-2">No achievements yet</p>
-          <p className="text-sm">
-            Add your first achievement to showcase your progress and
-            recognition.
-          </p>
-        </div>
+        <EmptyState
+          icon={Award}
+          title="No achievements yet"
+          description="Add your first achievement to showcase your progress and milestones."
+        />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {achievements.map((achievement, index) => (

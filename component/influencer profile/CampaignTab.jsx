@@ -8,8 +8,10 @@ import {
   Eye,
   Heart,
   MoreVertical,
+  Megaphone,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import EmptyState from "@/component/profile/EmptyState";
 import {
   Popover,
   PopoverContent,
@@ -93,12 +95,12 @@ export default function CampaignTab({ isOwnProfile }) {
               </Card>
             ))
           ) : (
-            <div className="sm:col-span-2 w-full text-center text-gray-500 p-10 border border-dashed border-gray-300 rounded-md">
-              <p className="text-lg font-medium mb-2">No Campaigns yet</p>
-              <p className="text-sm">
-                Add your Campaigns to showcase your creative work.
-              </p>
-            </div>
+            <EmptyState
+              icon={Megaphone}
+              title="No campaigns yet"
+              description="Add brand campaigns you've worked on to showcase your partnerships."
+              className="sm:col-span-2 w-full"
+            />
           )}
         </div>
       </div>

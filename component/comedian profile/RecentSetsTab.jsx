@@ -9,6 +9,7 @@ import {
   MoreVertical,
   Trash2,
   Users,
+  Mic2,
 } from "lucide-react";
 import { useComedianStore } from "@/store/useComedianStore";
 import {
@@ -18,6 +19,7 @@ import {
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import RecentSetsModal from "./RecentSetsModal";
+import EmptyState from "@/component/profile/EmptyState";
 import { capitalizeInitials, formatDate } from "@/utils/formatDate";
 
 export default function RecentSetsTab({ isOwnProfile }) {
@@ -102,12 +104,11 @@ export default function RecentSetsTab({ isOwnProfile }) {
             </div>
           ))
         ) : (
-          <div className="text-center text-gray-500 p-8 sm:p-10 border border-dashed border-gray-300 rounded-md">
-            <p className="text-base sm:text-lg font-medium mb-2">
-              No Recent Sets yet
-            </p>
-            <p className="text-sm">Add your first recent performance</p>
-          </div>
+          <EmptyState
+            icon={Mic2}
+            title="No recent sets yet"
+            description="Add your recent stand-up sets to showcase your performances."
+          />
         )}
       </div>
     </div>
