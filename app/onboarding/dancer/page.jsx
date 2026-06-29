@@ -18,6 +18,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
+import OnboardingImageUpload from "@/component/onboarding/OnboardingImageUpload";
 import {
   Upload,
   Plus,
@@ -222,24 +223,7 @@ export default function DancerOnboarding() {
               <p className="text-gray-600">Let's create your dance profile</p>
             </div>
 
-            <div className="flex justify-center">
-              <div className="relative">
-                <Avatar className="w-24 h-24">
-                  <AvatarImage
-                    src={formData.profileImage || "/placeholder.svg"}
-                  />
-                  <AvatarFallback>
-                    <Music className="w-8 h-8 text-gray-400" />
-                  </AvatarFallback>
-                </Avatar>
-                <Button
-                  size="sm"
-                  className="absolute -bottom-2 -right-2 rounded-full w-8 h-8 p-0"
-                >
-                  <Upload className="w-4 h-4" />
-                </Button>
-              </div>
-            </div>
+            <OnboardingImageUpload />
 
             <div className="grid grid-cols-2 gap-4">
               <div>

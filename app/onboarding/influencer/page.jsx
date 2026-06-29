@@ -30,6 +30,7 @@ import {
 import { useInfluencerStore } from "@/store/useInfluencerStore";
 import { useRouter } from "next/navigation";
 import { LocationSelector } from "@/component/LocationSelector";
+import OnboardingImageUpload from "@/component/onboarding/OnboardingImageUpload";
 
 export default function InfluencerOnboarding() {
   const router = useRouter();
@@ -336,6 +337,8 @@ export default function InfluencerOnboarding() {
                 Let's create your influencer profile
               </p>
             </div>
+
+            <OnboardingImageUpload />
 
             <div className="grid grid-cols-2 gap-4">
               <div>

@@ -29,6 +29,7 @@ import {
 } from "lucide-react";
 import { useComedianStore } from "@/store/useComedianStore";
 import { LocationSelector } from "@/component/LocationSelector";
+import OnboardingImageUpload from "@/component/onboarding/OnboardingImageUpload";
 
 export default function ComedianOnboarding() {
   const { createComedianProfile } = useComedianStore();
@@ -297,6 +298,8 @@ export default function ComedianOnboarding() {
               <h2 className="text-2xl font-bold mb-2">Welcome, Comedian!</h2>
               <p className="text-gray-600">Let's set up your comedy profile</p>
             </div>
+
+            <OnboardingImageUpload />
 
             <div className="grid grid-cols-2 gap-4">
               <div>

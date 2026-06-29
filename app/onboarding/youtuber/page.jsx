@@ -36,6 +36,7 @@ import { LocationSelector } from "@/component/LocationSelector";
 import toast from "react-hot-toast";
 import { useAuthStore } from "@/store/useAuthStore";
 import YouTubeConnectToast from "@/component/youtube profile/YoutubeConnectToast";
+import OnboardingImageUpload from "@/component/onboarding/OnboardingImageUpload";
 
 export default function YouTuberOnboarding() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -366,6 +367,8 @@ export default function YouTuberOnboarding() {
                 Let's set up your YouTube creator profile
               </p>
             </div>
+
+            <OnboardingImageUpload />
 
             <div className="space-y-4">
               <div className="flex justify-center items-center">

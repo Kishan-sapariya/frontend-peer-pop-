@@ -18,6 +18,7 @@ import { Loader2 } from "lucide-react";
 import { useBusinessStore } from "@/store/useBusinessStore";
 import { useAuthStore } from "@/store/useAuthStore";
 import { LocationSelector } from "@/component/LocationSelector";
+import OnboardingImageUpload from "@/component/onboarding/OnboardingImageUpload";
 import toast from "react-hot-toast";
 
 export default function BusinessOnboardingForm() {
@@ -169,6 +170,8 @@ export default function BusinessOnboardingForm() {
             <p className="text-sm text-gray-500">
               Provide your company’s basic information.
             </p>
+
+            <OnboardingImageUpload />
 
             <div>
               <Label htmlFor="about">
