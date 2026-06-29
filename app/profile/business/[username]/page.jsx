@@ -47,6 +47,7 @@ import UpdateSocials from "@/component/business/UpdateSocials";
 import PostInputSection from "@/component/feeds/PostInputSection";
 import AddServiceDialog from "@/component/business/AddServiceDialog";
 import AddAchievementDialog from "@/component/business/AddAchievementDialog";
+import ProfileNotSetUp from "@/component/profile/ProfileNotSetUp";
 
 export default function BusinessProfilePage() {
   const {
@@ -59,10 +60,31 @@ export default function BusinessProfilePage() {
   const { user } = useAuthStore();
   const { username } = useParams();
   const [activeTab, setActiveTab] = useState("posts");
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
-    getBusinessDetails(username);
+    setLoading(true);
+    getBusinessDetails(username).finally(() => setLoading(false));
   }, [getBusinessDetails, username]);
-  const business = businessProfileDetails?.businessProfile || {};
+
+  const businessProfile = businessProfileDetails?.businessProfile;
+  const isOwner = !!user?.username && user.username === username;
+
+  if (loading) {
+    return (
+      <div className="flex min-h-[70vh] items-center justify-center">
+        <Loader2 className="h-10 w-10 animate-spin text-gray-400" />
+      </div>
+    );
+  }
+
+  // The user exists but has no business profile (e.g. signed up but never
+  // completed onboarding) — show the "not set up" state instead of a page of
+  // misleading "Business Name" placeholders.
+  if (!businessProfile) {
+    return <ProfileNotSetUp username={username} isOwner={isOwner} />;
+  }
+
+  const business = businessProfile;
   const getFoundedYear = (dateString) => {
     if (!dateString) return "N/A";
     const date = new Date(dateString);

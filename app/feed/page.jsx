@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/popover";
 import { useFeedStore } from "@/store/useFeedStore";
 import SuggestedUsers from "@/component/feeds/SuggestedUser";
+import CreateProfileBanner from "@/component/feeds/CreateProfileBanner";
 
 export default function HomeFeed() {
   const [activeNav, setActiveNav] = useState("home");
@@ -99,6 +100,9 @@ export default function HomeFeed() {
 
           {/* Main Feed */}
           <div className="lg:col-span-2 space-y-4">
+            {/* Nudge to complete profile (only for users without one) */}
+            <CreateProfileBanner />
+
             {/* Filter Bar */}
             <div className="flex items-center justify-between bg-white/90 backdrop-blur-sm rounded-xl p-3 shadow-lg border border-[#041049]/10">
               <div className="flex items-center space-x-1 md:space-x-4">
