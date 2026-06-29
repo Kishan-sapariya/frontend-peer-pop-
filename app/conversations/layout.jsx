@@ -20,11 +20,17 @@ function ConversationsSidebar({ onConversationSelect, selectedConversationId }) 
   const { conversations, getAllConversation, loading } = useConversationStore();
   const [searchTerm, setSearchTerm] = useState("");
   const [isNewChatModalOpen, setIsNewChatModalOpen] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(15);
   const router = useRouter();
 
   useEffect(() => {
     getAllConversation();
   }, [getAllConversation]);
+
+  // Reset the render window whenever the search changes so results start at the top.
+  useEffect(() => {
+    setVisibleCount(15);
+  }, [searchTerm]);
 
   const getOtherUser = (conversation, currentUserId) => {
     return conversation?.participants?.find((p) => p.userId !== currentUserId)?.user;
@@ -40,12 +46,29 @@ function ConversationsSidebar({ onConversationSelect, selectedConversationId }) 
     );
   }) || [];
 
-  // Get all user IDs for online status tracking
+  // Only render a window of conversations (growing on scroll / "Load more")
+  // instead of mounting every row at once.
+  const visibleConversations = filteredConversations.slice(0, visibleCount);
+  const hasMoreToShow =
+    visibleConversations.length < filteredConversations.length;
+
+  const handleListScroll = (e) => {
+    const el = e.currentTarget;
+    // Reveal more rows as the user nears the bottom of the list.
+    if (el.scrollHeight - el.scrollTop - el.clientHeight < 250) {
+      setVisibleCount((v) =>
+        v < filteredConversations.length ? v + 15 : v
+      );
+    }
+  };
+
+  // Track online status only for the rows actually rendered.
   const userIds = useMemo(() => {
     return filteredConversations
+      .slice(0, visibleCount)
       .map((c) => getOtherUser(c, user?.id)?.id)
       .filter(Boolean);
-  }, [filteredConversations, user?.id]);
+  }, [filteredConversations, visibleCount, user?.id]);
 
   const { isOnline } = useOnlineStatus(userIds);
 
@@ -115,7 +138,7 @@ function ConversationsSidebar({ onConversationSelect, selectedConversationId }) 
       </div>
 
       {/* Conversations List */}
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto" onScroll={handleListScroll}>
         {loading && (!conversations || conversations.length === 0) ? (
           <div className="p-4 space-y-3">
             {[1, 2, 3, 4].map((i) => (
@@ -148,7 +171,7 @@ function ConversationsSidebar({ onConversationSelect, selectedConversationId }) 
           </div>
         ) : (
           <div className="py-2">
-            {filteredConversations.map((c) => {
+            {visibleConversations.map((c) => {
               const otherUser = getOtherUser(c, user?.id);
               const isUnread = c.unreadCount > 0;
               const isSelected = selectedConversationId === c.id;
@@ -211,6 +234,21 @@ function ConversationsSidebar({ onConversationSelect, selectedConversationId }) 
                 </div>
               );
             })}
+
+            {hasMoreToShow && (
+              <div className="px-4 pb-3 pt-1">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() =>
+                    setVisibleCount((v) => v + 15)
+                  }
+                  className="w-full rounded-full text-gray-500 hover:text-gray-900"
+                >
+                  Load more
+                </Button>
+              </div>
+            )}
           </div>
         )}
       </div>
