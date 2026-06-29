@@ -268,7 +268,7 @@ export default function ConversationsLayout({ children }) {
   const conversationId = pathname.split("/").pop();
 
   return (
-    <div className="fixed inset-0 top-20 flex bg-gray-100">
+    <div className="fixed inset-0 top-16 flex bg-gray-100">
       {/* Sidebar - Hidden on mobile when in a chat, always visible on desktop */}
       <aside
         className={`
