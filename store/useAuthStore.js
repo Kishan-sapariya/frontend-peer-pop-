@@ -293,7 +293,7 @@ export const useAuthStore = create((set, get) => ({
       cursor: null,
     }),
 
-  fetchSearchResults: async (q, creatorType, location, limit = 10) => {
+  fetchSearchResults: async (q, creatorType, location, tier, limit = 10) => {
     try {
       set({ loading: true });
 
@@ -319,6 +319,11 @@ export const useAuthStore = create((set, get) => ({
         params.location = Array.isArray(location)
           ? location.join(",")
           : location;
+      }
+
+      // Filter by completion tier (Rising/Elite/Pro)
+      if (tier && (Array.isArray(tier) ? tier.length : tier)) {
+        params.tier = Array.isArray(tier) ? tier.join(",") : tier;
       }
 
       const res = await axios.get(`${API_URL}/auth/search`, { params });
@@ -360,6 +365,7 @@ export const useAuthStore = create((set, get) => ({
               creatorType: user.creatorProfile.creatorType,
               data: user.creatorProfile.data,
               location: locationString || null,
+              tier: user.tier || user.creatorProfile.data?.completionTier || null,
             };
           }
           if (user.businessProfile) {
@@ -441,6 +447,7 @@ export const useAuthStore = create((set, get) => ({
               creatorType: user.creatorProfile.creatorType,
               data: user.creatorProfile.data,
               location: locationString || null,
+              tier: user.tier || user.creatorProfile.data?.completionTier || null,
             };
           }
           if (user.businessProfile) {

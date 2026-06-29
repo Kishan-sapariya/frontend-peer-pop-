@@ -28,6 +28,7 @@ import {
   Filter,
   Users,
   Eye,
+  Sparkles,
 } from "lucide-react";
 import Link from "next/link";
 import { getInitialLetter, getCompletionCateogryStyle } from "@/utils/formatDate";
@@ -66,33 +67,48 @@ export default function SearchPage() {
   const q = searchParams.get("q") || "";
   const creatorTypeParam = searchParams.get("creatorType") || "";
   const locationParam = searchParams.get("location") || "";
+  const tierParam = searchParams.get("tier") || "";
 
   const { results, fetchSearchResults, loading } = useAuthStore();
   const [showFilters, setShowFilters] = useState(false);
   const [selectedProfessions, setSelectedProfessions] = useState([]);
   const [selectedLocations, setSelectedLocations] = useState([]);
+  const [selectedTiers, setSelectedTiers] = useState([]);
   const [customLocationInput, setCustomLocationInput] = useState("");
   const [activeFilterCount, setActiveFilterCount] = useState(0);
 
   useEffect(() => {
     const creatorTypes = creatorTypeParam ? creatorTypeParam.split(",") : [];
     const locations = locationParam ? locationParam.split(",") : [];
+    const tiers = tierParam ? tierParam.split(",") : [];
     setSelectedProfessions(creatorTypes);
     setSelectedLocations(locations);
-  }, [creatorTypeParam, locationParam]);
+    setSelectedTiers(tiers);
+  }, [creatorTypeParam, locationParam, tierParam]);
 
   useEffect(() => {
     const creatorTypes =
       selectedProfessions.length > 0 ? selectedProfessions.join(",") : "";
     const locations =
       selectedLocations.length > 0 ? selectedLocations.join(",") : "";
+    const tiers = selectedTiers.length > 0 ? selectedTiers.join(",") : "";
 
-    fetchSearchResults(q, creatorTypes, locations);
-  }, [q, selectedProfessions, selectedLocations, fetchSearchResults]);
+    fetchSearchResults(q, creatorTypes, locations, tiers);
+  }, [
+    q,
+    selectedProfessions,
+    selectedLocations,
+    selectedTiers,
+    fetchSearchResults,
+  ]);
 
   useEffect(() => {
-    setActiveFilterCount(selectedProfessions.length + selectedLocations.length);
-  }, [selectedProfessions, selectedLocations]);
+    setActiveFilterCount(
+      selectedProfessions.length +
+        selectedLocations.length +
+        selectedTiers.length
+    );
+  }, [selectedProfessions, selectedLocations, selectedTiers]);
 
   const handleProfessionToggle = (enumValue) => {
     setSelectedProfessions((prev) => {
@@ -116,6 +132,17 @@ export default function SearchPage() {
     });
   };
 
+  const handleTierToggle = (t) => {
+    setSelectedTiers((prev) => {
+      const newTiers = prev.includes(t)
+        ? prev.filter((x) => x !== t)
+        : [...prev, t];
+
+      updateURL({ tier: newTiers });
+      return newTiers;
+    });
+  };
+
   const updateURL = (newFilters) => {
     const params = new URLSearchParams(window.location.search);
 
@@ -134,6 +161,14 @@ export default function SearchPage() {
         params.set("location", newFilters.location.join(","));
       } else {
         params.delete("location");
+      }
+    }
+
+    if (newFilters.tier !== undefined) {
+      if (newFilters.tier.length > 0) {
+        params.set("tier", newFilters.tier.join(","));
+      } else {
+        params.delete("tier");
       }
     }
 
@@ -159,8 +194,9 @@ export default function SearchPage() {
   const clearAllFilters = () => {
     setSelectedProfessions([]);
     setSelectedLocations([]);
+    setSelectedTiers([]);
     setCustomLocationInput("");
-    updateURL({ creatorType: [], location: [] });
+    updateURL({ creatorType: [], location: [], tier: [] });
   };
 
   return (
@@ -278,6 +314,40 @@ export default function SearchPage() {
                             </div>
                           )
                         )}
+                      </div>
+                    </div>
+
+                    {/* Tier filter (Rising / Elite / Pro) */}
+                    <div className="flex-1 space-y-4">
+                      <div className="flex items-center gap-2">
+                        <div className="w-6 h-6 rounded bg-yellow-500 flex items-center justify-center">
+                          <Sparkles className="w-4 h-4 text-gray-900" />
+                        </div>
+                        <h4 className="font-semibold text-gray-900">Tier</h4>
+                        {selectedTiers.length > 0 && (
+                          <Badge
+                            variant="secondary"
+                            className="bg-yellow-100 text-yellow-700"
+                          >
+                            {selectedTiers.length} selected
+                          </Badge>
+                        )}
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {["Rising", "Elite", "Pro"].map((t) => (
+                          <button
+                            key={t}
+                            type="button"
+                            onClick={() => handleTierToggle(t)}
+                            className={`rounded-full border px-4 py-1.5 text-sm font-medium transition-colors ${
+                              selectedTiers.includes(t)
+                                ? "border-yellow-300 bg-yellow-100 text-yellow-800"
+                                : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
+                            }`}
+                          >
+                            {t}
+                          </button>
+                        ))}
                       </div>
                     </div>
 
