@@ -93,7 +93,7 @@ export default function SearchPage() {
       selectedLocations.length > 0 ? selectedLocations.join(",") : "";
     const tiers = selectedTiers.length > 0 ? selectedTiers.join(",") : "";
 
-    fetchSearchResults(q, creatorTypes, locations, tiers);
+    fetchSearchResults(q, creatorTypes, locations, 10, tiers);
   }, [
     q,
     selectedProfessions,

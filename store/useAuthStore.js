@@ -293,7 +293,7 @@ export const useAuthStore = create((set, get) => ({
       cursor: null,
     }),
 
-  fetchSearchResults: async (q, creatorType, location, tier, limit = 10) => {
+  fetchSearchResults: async (q, creatorType, location, limit = 10, tier) => {
     try {
       set({ loading: true });
 
