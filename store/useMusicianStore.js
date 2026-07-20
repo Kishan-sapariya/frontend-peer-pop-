@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import axios from "axios";
 import { toast } from "react-hot-toast";
+import { showApiError } from "@/utils/showApiError";
 
 const API_URL = process.env.NEXT_PUBLIC_BASE_API_URL;
 axios.defaults.withCredentials = true;
@@ -20,10 +21,7 @@ export const useMusicianStore = create((set) => ({
       return createdProfile;
     } catch (error) {
       console.error("Error creating musician profile:", error);
-      toast.error(
-        error?.response?.data?.message ||
-          "Failed to create musician profile. Please try again."
-      );
+      showApiError(error, "Failed to create musician profile. Please try again.");
     }
   },
 
@@ -37,9 +35,9 @@ export const useMusicianStore = create((set) => ({
       return profile;
     } catch (error) {
       console.error("Error fetching musician profile by username:", error);
-      toast.error(
-        error?.response?.data?.message ||
-          "Failed to fetch musician profile by username. Please try again."
+      showApiError(
+        error,
+        "Failed to fetch musician profile by username. Please try again."
       );
     }
   },

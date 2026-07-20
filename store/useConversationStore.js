@@ -2,6 +2,7 @@ import { create } from "zustand";
 import axios from "axios";
 import { useAuthStore } from "./useAuthStore";
 import socket from "@/lib/socket";
+import { showApiError } from "@/utils/showApiError";
 
 const API_URL = process.env.NEXT_PUBLIC_BASE_API_URL;
 axios.defaults.withCredentials = true;
@@ -49,6 +50,7 @@ export const useConversationStore = create((set, get) => ({
       return newConv;
     } catch (err) {
       console.error(err);
+      showApiError(err, "Couldn't start the conversation. Please try again.");
       set({
         error: err.response?.data?.message || "Failed to create conversation",
         loading: false,
@@ -135,6 +137,7 @@ export const useConversationStore = create((set, get) => ({
       );
     } catch (err) {
       console.error("Failed to send message:", err);
+      showApiError(err, "Message failed to send. Please try again.");
       set({
         error:
           err.response?.data?.message ||

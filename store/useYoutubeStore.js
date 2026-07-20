@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import axios from "axios";
 import { toast } from "react-hot-toast";
+import { showApiError } from "@/utils/showApiError";
 
 const API_URL = process.env.NEXT_PUBLIC_BASE_API_URL;
 axios.defaults.withCredentials = true;
@@ -22,10 +23,7 @@ export const useYoutubeStore = create((set, get) => ({
       return createdProfile;
     } catch (error) {
       console.error("Error creating YouTube profile:", error);
-      toast.error(
-        error?.response?.data?.message ||
-          "Failed to create YouTube profile. Please try again."
-      );
+      showApiError(error, "Failed to create YouTube profile. Please try again.");
     }
   },
 
@@ -57,9 +55,9 @@ export const useYoutubeStore = create((set, get) => ({
       return profile;
     } catch (error) {
       console.error("Error fetching YouTube profile by username:", error);
-      toast.error(
-        error?.response?.data?.message ||
-          "Failed to fetch YouTube profile by username. Please try again."
+      showApiError(
+        error,
+        "Failed to fetch YouTube profile by username. Please try again."
       );
     }
   },
@@ -75,10 +73,7 @@ export const useYoutubeStore = create((set, get) => ({
       return response.data;
     } catch (error) {
       console.error("Error uploading content:", error);
-      toast.error(
-        error?.response?.data?.message ||
-          "Failed to upload content. Please try again."
-      );
+      showApiError(error, "Failed to upload content. Please try again.");
     }
   },
 
@@ -89,10 +84,7 @@ export const useYoutubeStore = create((set, get) => ({
       set({ recentContent: response.data.content });
     } catch (error) {
       console.error("Error uploading content:", error);
-      toast.error(
-        error?.response?.data?.message ||
-          "Failed to upload content. Please try again."
-      );
+      showApiError(error, "Failed to upload content. Please try again.");
     }
   },
 
@@ -116,10 +108,7 @@ export const useYoutubeStore = create((set, get) => ({
       });
     } catch (error) {
       console.error("Error deleting content:", error);
-      toast.error(
-        error?.response?.data?.message ||
-          "Failed to delete content. Please try again."
-      );
+      showApiError(error, "Failed to delete content. Please try again.");
     }
   },
 
@@ -138,10 +127,7 @@ export const useYoutubeStore = create((set, get) => ({
       return response.data;
     } catch (error) {
       console.error("Error adding collaboration:", error);
-      toast.error(
-        error?.response?.data?.message ||
-          "Failed to add collaboration. Please try again."
-      );
+      showApiError(error, "Failed to add collaboration. Please try again.");
     }
   },
   deleteCollaboration: async (collabId) => {
@@ -169,10 +155,7 @@ export const useYoutubeStore = create((set, get) => ({
       return response.data;
     } catch (error) {
       console.error("Error deleting collab:", error);
-      toast.error(
-        error?.response?.data?.message ||
-          "Failed to delete collab. Please try again."
-      );
+      showApiError(error, "Failed to delete collab. Please try again.");
     }
   },
   addAchievement: async (achievements) => {
@@ -189,10 +172,7 @@ export const useYoutubeStore = create((set, get) => ({
       return response.data;
     } catch (error) {
       console.error("Error adding achievement:", error);
-      toast.error(
-        error?.response?.data?.message ||
-          "Failed to add achievement. Please try again."
-      );
+      showApiError(error, "Failed to add achievement. Please try again.");
     }
   },
   deleteAchievement: async (achievementId) => {
@@ -220,10 +200,7 @@ export const useYoutubeStore = create((set, get) => ({
       return response.data;
     } catch (error) {
       console.error("Error deleting Achievement:", error);
-      toast.error(
-        error?.response?.data?.message ||
-          "Failed to delete Achievement. Please try again."
-      );
+      showApiError(error, "Failed to delete Achievement. Please try again.");
     }
   },
   updateYoutubeProfile: async (profileData) => {
@@ -240,10 +217,7 @@ export const useYoutubeStore = create((set, get) => ({
       return updatedProfile;
     } catch (error) {
       console.error("Error updating YouTube profile:", error);
-      toast.error(
-        error?.response?.data?.message ||
-          "Failed to update YouTube profile. Please try again."
-      );
+      showApiError(error, "Failed to update YouTube profile. Please try again.");
     }
   },
 }));

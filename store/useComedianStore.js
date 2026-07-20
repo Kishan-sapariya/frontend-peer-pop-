@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import axios from "axios";
 import { toast } from "react-hot-toast";
+import { showApiError } from "@/utils/showApiError";
 
 const API_URL = process.env.NEXT_PUBLIC_BASE_API_URL;
 axios.defaults.withCredentials = true;
@@ -20,10 +21,7 @@ export const useComedianStore = create((set, get) => ({
       return createdProfile;
     } catch (error) {
       console.error("Error creating comedian profile:", error);
-      toast.error(
-        error?.response?.data?.message ||
-          "Failed to create Comedian profile. Please try again."
-      );
+      showApiError(error, "Failed to create Comedian profile. Please try again.");
     }
   },
 
@@ -37,9 +35,9 @@ export const useComedianStore = create((set, get) => ({
       return profile;
     } catch (error) {
       console.error("Error fetching comedian profile by username:", error);
-      toast.error(
-        error?.response?.data?.message ||
-          "Failed to fetch comedian profile by username. Please try again."
+      showApiError(
+        error,
+        "Failed to fetch comedian profile by username. Please try again."
       );
     }
   },
@@ -69,9 +67,7 @@ export const useComedianStore = create((set, get) => ({
       return response.data;
     } catch (error) {
       console.error("Error adding upcoming show:", error);
-      toast.error(
-        error?.response?.data?.message || "Failed to add upcoming show."
-      );
+      showApiError(error, "Failed to add upcoming show.");
     }
   },
 
@@ -100,10 +96,7 @@ export const useComedianStore = create((set, get) => ({
       return response.data;
     } catch (error) {
       console.error("Error deleting show:", error);
-      toast.error(
-        error?.response?.data?.message ||
-          "Failed to delete show. Please try again."
-      );
+      showApiError(error, "Failed to delete show. Please try again.");
     }
   },
   addRecentSets: async (sets) => {
@@ -132,9 +125,7 @@ export const useComedianStore = create((set, get) => ({
       return response.data;
     } catch (error) {
       console.error("Error adding recent set:", error);
-      toast.error(
-        error?.response?.data?.message || "Failed to add recent set."
-      );
+      showApiError(error, "Failed to add recent set.");
     }
   },
   deleteRecentSets: async (recentSetsId) => {
@@ -162,10 +153,7 @@ export const useComedianStore = create((set, get) => ({
       return response.data;
     } catch (error) {
       console.error("Error deleting set:", error);
-      toast.error(
-        error?.response?.data?.message ||
-          "Failed to delete set. Please try again."
-      );
+      showApiError(error, "Failed to delete set. Please try again.");
     }
   },
   addAchievement: async (achievements) => {
@@ -185,10 +173,7 @@ export const useComedianStore = create((set, get) => ({
       return response.data;
     } catch (error) {
       console.error("Error adding achievement:", error);
-      toast.error(
-        error?.response?.data?.message ||
-          "Failed to add achievement. Please try again."
-      );
+      showApiError(error, "Failed to add achievement. Please try again.");
     }
   },
   deleteAchievement: async (achievementId) => {
@@ -216,10 +201,7 @@ export const useComedianStore = create((set, get) => ({
       return response.data;
     } catch (error) {
       console.error("Error deleting Achievement:", error);
-      toast.error(
-        error?.response?.data?.message ||
-          "Failed to delete Achievement. Please try again."
-      );
+      showApiError(error, "Failed to delete Achievement. Please try again.");
     }
   },
   updateComedianProfile: async (profileData) => {
@@ -236,10 +218,7 @@ export const useComedianStore = create((set, get) => ({
       return updatedProfile;
     } catch (error) {
       console.error("Error updating comedian profile:", error);
-      toast.error(
-        error?.response?.data?.message ||
-          "Failed to update comedian profile. Please try again."
-      );
+      showApiError(error, "Failed to update comedian profile. Please try again.");
     }
   },
 }));

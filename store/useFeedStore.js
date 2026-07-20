@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import axios from "axios";
 import { toast } from "react-hot-toast";
+import { showApiError } from "@/utils/showApiError";
 
 const API_URL = process.env.NEXT_PUBLIC_BASE_API_URL;
 axios.defaults.withCredentials = true;
@@ -58,7 +59,7 @@ export const useFeedStore = create((set, get) => ({
       return res.data.post;
     } catch (err) {
       console.error("Error creating post:", err);
-      toast.error(err.response?.data?.message || "Failed to create post");
+      showApiError(err, "Failed to create post");
     } finally {
       set({ loading: false });
     }
@@ -85,7 +86,7 @@ export const useFeedStore = create((set, get) => ({
       });
     } catch (err) {
       console.error("Error fetching posts:", err);
-      toast.error(err.response?.data?.message || "Failed to load posts");
+      showApiError(err, "Failed to load posts");
     } finally {
       if (isLoadMore) {
         set({ loadingMore: false });
@@ -117,7 +118,7 @@ export const useFeedStore = create((set, get) => ({
       });
     } catch (err) {
       console.error("Error fetching posts:", err);
-      toast.error(err.response?.data?.message || "Failed to load posts");
+      showApiError(err, "Failed to load posts");
     } finally {
       if (isLoadMore) {
         set({ loadingMore: false });
@@ -145,7 +146,7 @@ export const useFeedStore = create((set, get) => ({
       });
     } catch (err) {
       console.error("Error fetching posts:", err);
-      toast.error(err.response?.data?.message || "Failed to load posts");
+      showApiError(err, "Failed to load posts");
     } finally {
       if (isLoadMore) set({ loadingMore: false });
       else set({ loading: false });
@@ -221,7 +222,7 @@ export const useFeedStore = create((set, get) => ({
             : state.singlePost,
       }));
       console.error("Error liking post:", error);
-      toast.error(error.response?.data?.message || "Failed to like post");
+      showApiError(error, "Failed to like post");
     }
   },
   addComment: async (postId, comment, currentUser) => {
@@ -310,7 +311,7 @@ export const useFeedStore = create((set, get) => ({
             : state.singlePost,
       }));
       console.error("Error commenting post:", error);
-      toast.error(error.response?.data?.message || "Failed to comment on post");
+      showApiError(error, "Failed to comment on post");
     }
   },
   deleteComment: async (postId, commentId) => {
@@ -349,9 +350,7 @@ export const useFeedStore = create((set, get) => ({
       toast.success("Comment deleted");
     } catch (error) {
       console.error("Error deleting comment:", error);
-      toast.error(
-        error.response?.data?.message || "Failed to delete comment on post"
-      );
+      showApiError(error, "Failed to delete comment on post");
     }
   },
   getSuggestedUsers: async () => {

@@ -1,6 +1,7 @@
 import axios from "axios";
 import { create } from "zustand";
 import toast from "react-hot-toast";
+import { showApiError } from "@/utils/showApiError";
 
 const API_URL = process.env.NEXT_PUBLIC_BASE_API_URL;
 axios.defaults.withCredentials = true;
@@ -25,9 +26,7 @@ export const useFounderStore = create((set, get) => ({
     } catch (error) {
       console.error("Error fetching founder profile:", error);
       if (error.response?.status !== 404) {
-        toast.error(
-          error.response?.data?.message || "Failed to load founder profile"
-        );
+        showApiError(error, "Failed to load founder profile");
       }
       return error.response?.data || { success: false };
     } finally {
@@ -56,7 +55,7 @@ export const useFounderStore = create((set, get) => ({
       return res.data;
     } catch (error) {
       console.error("Error updating founder profile:", error);
-      toast.error(error.response?.data?.message || "Failed to update profile");
+      showApiError(error, "Failed to update profile");
       return error.response?.data || { success: false };
     } finally {
       set({ saving: false });
@@ -99,7 +98,7 @@ export const useFounderStore = create((set, get) => ({
       return res.data;
     } catch (error) {
       console.error("Error uploading founder media:", error);
-      toast.error(error.response?.data?.message || "Upload failed");
+      showApiError(error, "Upload failed");
       return error.response?.data || { success: false };
     } finally {
       set({ uploading: false });
@@ -132,7 +131,7 @@ export const useFounderStore = create((set, get) => ({
       return res.data;
     } catch (error) {
       console.error("Error deleting founder media:", error);
-      toast.error(error.response?.data?.message || "Failed to delete media");
+      showApiError(error, "Failed to delete media");
       return error.response?.data || { success: false };
     }
   },

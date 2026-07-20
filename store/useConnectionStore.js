@@ -3,6 +3,7 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 import socket from "@/lib/socket";
 import { useAuthStore } from "./useAuthStore";
+import { showApiError } from "@/utils/showApiError";
 
 const API_URL = process.env.NEXT_PUBLIC_BASE_API_URL;
 axios.defaults.withCredentials = true;
@@ -39,10 +40,7 @@ export const useConnectionStore = create((set, get) => ({
       return newConnection;
     } catch (error) {
       console.error("Error send connection request:", error);
-      toast.error(
-        error?.response?.data?.message ||
-          "Failed to send connection request. Please try again."
-      );
+      showApiError(error, "Couldn't send the connection request. Please try again.");
     }
   },
 
@@ -64,10 +62,7 @@ export const useConnectionStore = create((set, get) => ({
       return updated;
     } catch (error) {
       console.error("Error accepting request:", error);
-      toast.error(
-        error?.response?.data?.message ||
-          "Failed to accept request. Please try again."
-      );
+      showApiError(error, "Couldn't accept the request. Please try again.");
     }
   },
 
@@ -89,10 +84,7 @@ export const useConnectionStore = create((set, get) => ({
       return updated;
     } catch (error) {
       console.error("Error rejecting request:", error);
-      toast.error(
-        error?.response?.data?.message ||
-          "Failed to reject request. Please try again."
-      );
+      showApiError(error, "Couldn't reject the request. Please try again.");
     }
   },
 
@@ -110,10 +102,7 @@ export const useConnectionStore = create((set, get) => ({
       return deletedRequest;
     } catch (error) {
       console.error("Error deleting request:", error);
-      toast.error(
-        error?.response?.data?.message ||
-          "Failed to deleting request. Please try again."
-      );
+      showApiError(error, "Couldn't delete that connection. Please try again.");
     }
   },
 

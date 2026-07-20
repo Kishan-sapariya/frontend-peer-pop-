@@ -1,4 +1,5 @@
 import socket from "@/lib/socket";
+import { showApiError } from "@/utils/showApiError";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { create } from "zustand";
@@ -50,7 +51,7 @@ export const useAuthStore = create((set, get) => ({
       set({ signedUpEmail: user.email });
       return parsedRes;
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Signup failed");
+      showApiError(error, "Signup failed");
       return {
         success: false,
         message: error?.response?.data?.message || "Signup failed",
@@ -76,7 +77,7 @@ export const useAuthStore = create((set, get) => ({
       }
     } catch (error) {
       console.error("Login error:", error);
-      toast.error(error?.response?.data?.message || "Login failed");
+      showApiError(error, "Login failed");
       return { success: false, message: "Login failed" };
     }
   },
@@ -152,7 +153,7 @@ export const useAuthStore = create((set, get) => ({
 
       return parsedRes;
     } catch (error) {
-      toast.error(error?.response?.data?.message || "OTP verification failed");
+      showApiError(error, "OTP verification failed");
       return {
         success: false,
         message: error?.response?.data?.message || "OTP verification failed",
@@ -191,7 +192,7 @@ export const useAuthStore = create((set, get) => ({
       // Still clear state even if API call fails
       set({ isAuthenticated: false, user: null, signedUpEmail: "" });
       socket.disconnect();
-      toast.error(error?.response?.data?.message || "Logout failed");
+      showApiError(error, "Logout failed");
     }
   },
 
@@ -232,7 +233,7 @@ export const useAuthStore = create((set, get) => ({
       return response.data;
     } catch (error) {
       console.error(error);
-      toast.error(error?.response?.data?.message || "Upload image failed");
+      showApiError(error, "Upload image failed");
     }
   },
   deleteImage: async () => {
@@ -250,7 +251,7 @@ export const useAuthStore = create((set, get) => ({
       return response.data;
     } catch (error) {
       console.error(error);
-      toast.error(error?.response?.data?.message || "image deletion failed");
+      showApiError(error, "Image deletion failed");
     }
   },
   uploadCoverImage: async (imageFile) => {
@@ -279,9 +280,7 @@ export const useAuthStore = create((set, get) => ({
       return response.data;
     } catch (error) {
       console.error(error);
-      toast.error(
-        error?.response?.data?.message || "Upload cover image failed"
-      );
+      showApiError(error, "Upload cover image failed");
     }
   },
 
@@ -394,7 +393,7 @@ export const useAuthStore = create((set, get) => ({
       });
     } catch (err) {
       console.error("Search error:", err);
-      toast.error(err.response?.data?.message || "Failed to search users");
+      showApiError(err, "Failed to search users");
     } finally {
       set({ loading: false });
     }
@@ -473,7 +472,7 @@ export const useAuthStore = create((set, get) => ({
       });
     } catch (err) {
       console.error("Load more search error:", err);
-      toast.error(err.response?.data?.message || "Failed to load more results");
+      showApiError(err, "Failed to load more results");
     } finally {
       set({ loading: false });
     }

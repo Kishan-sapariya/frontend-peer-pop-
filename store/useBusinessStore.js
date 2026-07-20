@@ -1,3 +1,4 @@
+import { showApiError } from "@/utils/showApiError";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { create } from "zustand";
@@ -17,7 +18,7 @@ export const useBusinessStore = create((set, get) => ({
       set({ businessProfileDetails: res.data.user });
     } catch (error) {
       console.error("Error fetching business details:", error);
-      toast.error("Error getting data");
+      showApiError(error, "Couldn't load this business. Please try again.");
     }
   },
 
@@ -59,11 +60,7 @@ export const useBusinessStore = create((set, get) => ({
       toast.success("Profile details updated ✅");
     } catch (error) {
       console.error("Update business profile error:", error);
-      toast.error(
-        error.response?.data?.message ||
-          error.message ||
-          "Something went wrong while updating profile"
-      );
+      showApiError(error, "Couldn't update your profile. Please try again.");
     }
   },
 
@@ -93,7 +90,7 @@ export const useBusinessStore = create((set, get) => ({
     } catch (err) {
       console.error("Error updating business info:", err);
       set({ loading: false });
-      toast.error(err.response?.data?.message || "Failed to update info");
+      showApiError(err, "Failed to update info");
     }
   },
 
@@ -123,7 +120,7 @@ export const useBusinessStore = create((set, get) => ({
     } catch (err) {
       console.error("Error updating socials:", err);
       set({ loading: false });
-      toast.error(err.response?.data?.message || "Failed to update socials");
+      showApiError(err, "Failed to update socials");
     }
   },
 
@@ -159,11 +156,7 @@ export const useBusinessStore = create((set, get) => ({
       return res.data.profile;
     } catch (err) {
       console.error("Error reuploading documents:", err);
-      toast.error(
-        err.response?.data?.message ||
-          err.message ||
-          "Failed to re-upload documents"
-      );
+      showApiError(err, "Couldn't re-upload your documents. Please try again.");
       throw err;
     }
   },
@@ -187,7 +180,7 @@ export const useBusinessStore = create((set, get) => ({
       return res.data.profile;
     } catch (err) {
       console.error("Error updating services:", err);
-      toast.error(err.response?.data?.message || "Failed to update services");
+      showApiError(err, "Failed to update services");
       throw err;
     }
   },
@@ -211,9 +204,7 @@ export const useBusinessStore = create((set, get) => ({
       return res.data.profile;
     } catch (err) {
       console.error("Error updating achievements:", err);
-      toast.error(
-        err.response?.data?.message || "Failed to update achievements"
-      );
+      showApiError(err, "Failed to update achievements");
       throw err;
     }
   },
@@ -230,7 +221,7 @@ export const useBusinessStore = create((set, get) => ({
       toast.success("Service deleted ✅");
     } catch (err) {
       console.error("Error deleting service:", err);
-      toast.error(err.response?.data?.message || "Failed to delete service");
+      showApiError(err, "Failed to delete service");
     }
   },
 
@@ -248,9 +239,7 @@ export const useBusinessStore = create((set, get) => ({
       toast.success("Achievement deleted ✅");
     } catch (err) {
       console.error("Error deleting achievement:", err);
-      toast.error(
-        err.response?.data?.message || "Failed to delete achievement"
-      );
+      showApiError(err, "Failed to delete achievement");
     }
   },
 }));

@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import axios from "axios";
 import { toast } from "react-hot-toast";
+import { showApiError } from "@/utils/showApiError";
 
 const API_URL = process.env.NEXT_PUBLIC_BASE_API_URL;
 axios.defaults.withCredentials = true;
@@ -20,10 +21,7 @@ export const useDancerStore = create((set) => ({
       return createdProfile;
     } catch (error) {
       console.error("Error creating YouTube profile:", error);
-      toast.error(
-        error?.response?.data?.message ||
-          "Failed to create Dancer profile. Please try again."
-      );
+      showApiError(error, "Failed to create Dancer profile. Please try again.");
     }
   },
 
@@ -37,9 +35,9 @@ export const useDancerStore = create((set) => ({
       return profile;
     } catch (error) {
       console.error("Error fetching Dancer profile by username:", error);
-      toast.error(
-        error?.response?.data?.message ||
-          "Failed to fetch Dancer profile by username. Please try again."
+      showApiError(
+        error,
+        "Failed to fetch Dancer profile by username. Please try again."
       );
     }
   },

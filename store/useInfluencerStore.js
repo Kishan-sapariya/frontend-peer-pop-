@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import axios from "axios";
 import { toast } from "react-hot-toast";
+import { showApiError } from "@/utils/showApiError";
 
 const API_URL = process.env.NEXT_PUBLIC_BASE_API_URL;
 axios.defaults.withCredentials = true;
@@ -20,9 +21,9 @@ export const useInfluencerStore = create((set, get) => ({
       return createdProfile;
     } catch (error) {
       console.error("Error creating YouTube profile:", error);
-      toast.error(
-        error?.response?.data?.message ||
-          "Failed to create Influencer profile. Please try again."
+      showApiError(
+        error,
+        "Failed to create Influencer profile. Please try again."
       );
     }
   },
@@ -37,9 +38,9 @@ export const useInfluencerStore = create((set, get) => ({
       return profile;
     } catch (error) {
       console.error("Error fetching influencer profile by username:", error);
-      toast.error(
-        error?.response?.data?.message ||
-          "Failed to fetch influencer profile by username. Please try again."
+      showApiError(
+        error,
+        "Failed to fetch influencer profile by username. Please try again."
       );
     }
   },
@@ -74,10 +75,7 @@ export const useInfluencerStore = create((set, get) => ({
       return response.data;
     } catch (error) {
       console.error("Error uploading content:", error);
-      toast.error(
-        error?.response?.data?.message ||
-          "Failed to upload content. Please try again."
-      );
+      showApiError(error, "Failed to upload content. Please try again.");
     }
   },
   deleteRecentContent: async (id) => {
@@ -105,10 +103,7 @@ export const useInfluencerStore = create((set, get) => ({
       toast.success(res.data?.message || "Content deleted successfully!");
     } catch (error) {
       console.error("Error deleting content:", error);
-      toast.error(
-        error?.response?.data?.message ||
-          "Failed to delete content. Please try again."
-      );
+      showApiError(error, "Failed to delete content. Please try again.");
     }
   },
 
@@ -135,10 +130,7 @@ export const useInfluencerStore = create((set, get) => ({
       toast.success(res.data?.message || "Campaign added successfully!");
     } catch (error) {
       console.error("Error adding campaign:", error);
-      toast.error(
-        error?.response?.data?.message ||
-          "Failed to add campaign. Please try again."
-      );
+      showApiError(error, "Failed to add campaign. Please try again.");
     }
   },
 
@@ -182,9 +174,9 @@ export const useInfluencerStore = create((set, get) => ({
       return updatedProfile;
     } catch (error) {
       console.error("Error updating influencer profile:", error);
-      toast.error(
-        error?.response?.data?.message ||
-          "Failed to update influencer profile. Please try again."
+      showApiError(
+        error,
+        "Failed to update influencer profile. Please try again."
       );
     }
   },
