@@ -124,10 +124,7 @@ export default function ComedianOnboarding() {
   const validateForm = () => {
     const requiredFields = {
       firstName: "First Name",
-      lastName: "Last Name",
       email: "Email Address",
-      yearsPerforming: "Years Performing",
-      bio: "Comedy Bio",
     };
     const missingFields = [];
     for (const [field, label] of Object.entries(requiredFields)) {
@@ -299,6 +296,12 @@ export default function ComedianOnboarding() {
               <p className="text-gray-600">Let's set up your comedy profile</p>
             </div>
 
+            <div className="rounded-lg border border-yellow-200 bg-yellow-50 px-4 py-3 text-sm text-gray-700">
+              Only your <span className="font-semibold text-gray-900">name</span> and{" "}
+              <span className="font-semibold text-gray-900">email</span> are required —
+              everything else is optional and you can add it anytime from your profile.
+            </div>
+
             <OnboardingImageUpload />
 
             <div className="grid grid-cols-2 gap-4">
@@ -314,7 +317,7 @@ export default function ComedianOnboarding() {
                 />
               </div>
               <div>
-                <Label htmlFor="lastName">Last Name *</Label>
+                <Label htmlFor="lastName">Last Name</Label>
                 <Input
                   id="lastName"
                   value={formData.lastName}
@@ -362,7 +365,7 @@ export default function ComedianOnboarding() {
             />
 
             <div>
-              <Label htmlFor="bio">Comedy Bio *</Label>
+              <Label htmlFor="bio">Comedy Bio</Label>
               <Textarea
                 id="bio"
                 value={formData.bio}
@@ -404,7 +407,7 @@ export default function ComedianOnboarding() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="yearsPerforming">Years Performing *</Label>
+                <Label htmlFor="yearsPerforming">Years Performing</Label>
                 <Select
                   value={formData.yearsPerforming}
                   onValueChange={(value) =>
@@ -554,7 +557,7 @@ export default function ComedianOnboarding() {
             </div>
 
             <div>
-              <Label>Comedy Style *</Label>
+              <Label>Comedy Style</Label>
               <p className="text-sm text-gray-500 mb-3">
                 Select all styles that describe your comedy
               </p>

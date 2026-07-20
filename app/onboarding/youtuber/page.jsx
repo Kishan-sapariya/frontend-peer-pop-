@@ -172,13 +172,7 @@ export default function YouTuberOnboarding() {
   const validateForm = () => {
     const requiredFields = {
       firstName: "First Name",
-      lastName: "Last Name",
-      channelHandle: "Channel Handle",
       email: "Email Address",
-      state: "State",
-      subscriberCount: "Subscriber Count",
-      totalViews: "Total Views",
-      primaryNiche: "Primary Niche",
     };
 
     const missingFields = [];
@@ -368,6 +362,12 @@ export default function YouTuberOnboarding() {
               </p>
             </div>
 
+            <div className="rounded-lg border border-yellow-200 bg-yellow-50 px-4 py-3 text-sm text-gray-700">
+              Only your <span className="font-semibold text-gray-900">name</span> and{" "}
+              <span className="font-semibold text-gray-900">email</span> are required —
+              everything else is optional and you can add it anytime from your profile.
+            </div>
+
             <OnboardingImageUpload />
 
             <div className="space-y-4">
@@ -403,7 +403,7 @@ export default function YouTuberOnboarding() {
                 />
               </div>
               <div>
-                <Label htmlFor="lastName">Last Name *</Label>
+                <Label htmlFor="lastName">Last Name</Label>
                 <Input
                   id="lastName"
                   value={formData.lastName}
@@ -416,7 +416,7 @@ export default function YouTuberOnboarding() {
             </div>
 
             <div>
-              <Label htmlFor="channelHandle">Channel Handle *</Label>
+              <Label htmlFor="channelHandle">Channel Handle</Label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
                   @
@@ -457,7 +457,7 @@ export default function YouTuberOnboarding() {
             />
 
             <div>
-              <Label htmlFor="bio">Channel Description *</Label>
+              <Label htmlFor="bio">Channel Description</Label>
               <Textarea
                 id="bio"
                 value={formData.bio}
@@ -502,7 +502,7 @@ export default function YouTuberOnboarding() {
             {/* Manual Form Fields */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="subscriberCount">Subscriber Count *</Label>
+                <Label htmlFor="subscriberCount">Subscriber Count</Label>
                 <Input
                   id="subscriberCount"
                   value={formData.subscriberCount}
@@ -516,7 +516,7 @@ export default function YouTuberOnboarding() {
                 />
               </div>
               <div>
-                <Label htmlFor="totalViews">Total Views *</Label>
+                <Label htmlFor="totalViews">Total Views</Label>
                 <Input
                   id="totalViews"
                   value={formData.totalViews}
@@ -606,7 +606,7 @@ export default function YouTuberOnboarding() {
             </div>
 
             <div>
-              <Label>Primary Niche *</Label>
+              <Label>Primary Niche</Label>
               <Select
                 value={formData.primaryNiche}
                 onValueChange={(value) =>

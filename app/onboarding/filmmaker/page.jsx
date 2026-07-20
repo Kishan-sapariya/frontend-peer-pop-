@@ -261,13 +261,7 @@ export default function FilmmakerOnboardingForm() {
   const validateForm = () => {
     const requiredFields = {
       firstName: "First Name",
-      lastName: "Last Name",
       email: "Email Address",
-      location: "Location",
-      bio: "Professional Bio",
-      primaryRole: "Primary Role",
-      experience: "Experience",
-      specializations: "Specializations",
     };
     const missingFields = [];
     for (const [field, label] of Object.entries(requiredFields)) {
@@ -383,6 +377,12 @@ export default function FilmmakerOnboardingForm() {
               </p>
             </div>
 
+            <div className="rounded-lg border border-yellow-200 bg-yellow-50 px-4 py-3 text-sm text-gray-700">
+              Only your <span className="font-semibold text-gray-900">name</span> and{" "}
+              <span className="font-semibold text-gray-900">email</span> are required —
+              everything else is optional and you can add it anytime from your profile.
+            </div>
+
             <OnboardingImageUpload />
 
             <div className="grid grid-cols-2 gap-4">
@@ -398,7 +398,7 @@ export default function FilmmakerOnboardingForm() {
                 />
               </div>
               <div>
-                <Label htmlFor="lastName">Last Name *</Label>
+                <Label htmlFor="lastName">Last Name</Label>
                 <Input
                   id="lastName"
                   value={formData.lastName}
@@ -451,7 +451,7 @@ export default function FilmmakerOnboardingForm() {
                 />
               </div>
               <div>
-                <Label htmlFor="location">Location *</Label>
+                <Label htmlFor="location">Location</Label>
                 <Input
                   id="location"
                   value={formData.location}
@@ -476,7 +476,7 @@ export default function FilmmakerOnboardingForm() {
             </div>
 
             <div>
-              <Label htmlFor="bio">Professional Bio *</Label>
+              <Label htmlFor="bio">Professional Bio</Label>
               <Textarea
                 id="bio"
                 value={formData.bio}
@@ -506,7 +506,7 @@ export default function FilmmakerOnboardingForm() {
             </div>
 
             <div>
-              <Label htmlFor="primaryRole">Primary Role *</Label>
+              <Label htmlFor="primaryRole">Primary Role</Label>
               <Select
                 value={formData.primaryRole}
                 onValueChange={(value) =>
@@ -567,7 +567,7 @@ export default function FilmmakerOnboardingForm() {
             </div>
 
             <div>
-              <Label htmlFor="experience">Years of Experience *</Label>
+              <Label htmlFor="experience">Years of Experience</Label>
               <Select
                 value={formData.experience}
                 onValueChange={(value) =>
@@ -588,7 +588,7 @@ export default function FilmmakerOnboardingForm() {
             </div>
 
             <div>
-              <Label>Specializations *</Label>
+              <Label>Specializations</Label>
               <p className="text-sm text-gray-500 mb-3">
                 What types of content do you create?
               </p>
@@ -979,7 +979,7 @@ export default function FilmmakerOnboardingForm() {
 
                       <div className="grid grid-cols-2 gap-4 mb-4">
                         <div>
-                          <Label>Project Title *</Label>
+                          <Label>Project Title</Label>
                           <Input
                             value={item.title}
                             onChange={(e) =>
@@ -993,7 +993,7 @@ export default function FilmmakerOnboardingForm() {
                           />
                         </div>
                         <div>
-                          <Label>Project Type *</Label>
+                          <Label>Project Type</Label>
                           <Select
                             value={item.type}
                             onValueChange={(value) =>
@@ -1030,7 +1030,7 @@ export default function FilmmakerOnboardingForm() {
 
                       <div className="grid grid-cols-2 gap-4 mb-4">
                         <div>
-                          <Label>Your Role *</Label>
+                          <Label>Your Role</Label>
                           <Input
                             value={item.role}
                             onChange={(e) =>
@@ -1044,7 +1044,7 @@ export default function FilmmakerOnboardingForm() {
                           />
                         </div>
                         <div>
-                          <Label>Year *</Label>
+                          <Label>Year</Label>
                           <Input
                             value={item.year}
                             onChange={(e) =>

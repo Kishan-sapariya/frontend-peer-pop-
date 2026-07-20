@@ -233,6 +233,12 @@ export default function MusicianOnboarding() {
               <p className="text-gray-600">Let's create your music profile</p>
             </div>
 
+            <div className="rounded-lg border border-yellow-200 bg-yellow-50 px-4 py-3 text-sm text-gray-700">
+              Only your <span className="font-semibold text-gray-900">name</span> and{" "}
+              <span className="font-semibold text-gray-900">email</span> are required —
+              everything else is optional and you can add it anytime from your profile.
+            </div>
+
             <OnboardingImageUpload />
 
             <div className="grid grid-cols-2 gap-4">
@@ -248,7 +254,7 @@ export default function MusicianOnboarding() {
                 />
               </div>
               <div>
-                <Label htmlFor="lastName">Last Name *</Label>
+                <Label htmlFor="lastName">Last Name</Label>
                 <Input
                   id="lastName"
                   value={formData.lastName}
@@ -286,7 +292,7 @@ export default function MusicianOnboarding() {
                 />
               </div>
               <div>
-                <Label htmlFor="location">Location *</Label>
+                <Label htmlFor="location">Location</Label>
                 <Input
                   id="location"
                   value={formData.location}
@@ -299,7 +305,7 @@ export default function MusicianOnboarding() {
             </div>
 
             <div>
-              <Label htmlFor="bio">Musical Bio *</Label>
+              <Label htmlFor="bio">Musical Bio</Label>
               <Textarea
                 id="bio"
                 value={formData.bio}
@@ -342,7 +348,7 @@ export default function MusicianOnboarding() {
             </div>
 
             <div>
-              <Label>Primary Genre *</Label>
+              <Label>Primary Genre</Label>
               <Select
                 value={formData.primaryGenre}
                 onValueChange={(value) =>
@@ -400,7 +406,7 @@ export default function MusicianOnboarding() {
             </div>
 
             <div>
-              <Label>Primary Instrument *</Label>
+              <Label>Primary Instrument</Label>
               <Select
                 value={formData.primaryInstrument}
                 onValueChange={(value) =>
@@ -466,7 +472,7 @@ export default function MusicianOnboarding() {
             </div>
 
             <div>
-              <Label htmlFor="musicalRole">Musical Role *</Label>
+              <Label htmlFor="musicalRole">Musical Role</Label>
               <Select
                 value={formData.musicalRole}
                 onValueChange={(value) =>
@@ -520,7 +526,7 @@ export default function MusicianOnboarding() {
                 />
               </div>
               <div>
-                <Label htmlFor="experience">Experience Level *</Label>
+                <Label htmlFor="experience">Experience Level</Label>
                 <Select
                   value={formData.experience}
                   onValueChange={(value) =>

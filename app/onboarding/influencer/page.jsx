@@ -130,10 +130,7 @@ export default function InfluencerOnboarding() {
   const validateForm = () => {
     const requiredFields = {
       firstName: "First Name",
-      lastName: "Last Name",
-      displayName: "Display Name",
       email: "Email Address",
-      bio: "Bio",
     };
     const missingFields = [];
     for (const [field, label] of Object.entries(requiredFields)) {
@@ -338,6 +335,12 @@ export default function InfluencerOnboarding() {
               </p>
             </div>
 
+            <div className="rounded-lg border border-yellow-200 bg-yellow-50 px-4 py-3 text-sm text-gray-700">
+              Only your <span className="font-semibold text-gray-900">name</span> and{" "}
+              <span className="font-semibold text-gray-900">email</span> are required —
+              everything else is optional and you can add it anytime from your profile.
+            </div>
+
             <OnboardingImageUpload />
 
             <div className="grid grid-cols-2 gap-4">
@@ -353,7 +356,7 @@ export default function InfluencerOnboarding() {
                 />
               </div>
               <div>
-                <Label htmlFor="lastName">Last Name *</Label>
+                <Label htmlFor="lastName">Last Name</Label>
                 <Input
                   id="lastName"
                   value={formData.lastName}
@@ -366,7 +369,7 @@ export default function InfluencerOnboarding() {
             </div>
 
             <div>
-              <Label htmlFor="displayName">Instagram username *</Label>
+              <Label htmlFor="displayName">Instagram username</Label>
               <Input
                 id="displayName"
                 value={formData.displayName}
@@ -402,7 +405,7 @@ export default function InfluencerOnboarding() {
             />
 
             <div>
-              <Label htmlFor="bio">Bio *</Label>
+              <Label htmlFor="bio">Bio</Label>
               <Textarea
                 id="bio"
                 value={formData.bio}
@@ -445,7 +448,7 @@ export default function InfluencerOnboarding() {
             </div>
 
             <div>
-              <Label>Primary Niche *</Label>
+              <Label>Primary Niche</Label>
               <Select
                 value={formData.primaryNiche}
                 onValueChange={(value) =>
@@ -617,7 +620,7 @@ export default function InfluencerOnboarding() {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="instagramLink">Instagram Link *</Label>
+                <Label htmlFor="instagramLink">Instagram Link</Label>
                 <div className="relative">
                   <Input
                     id="instagramLink"
@@ -640,7 +643,7 @@ export default function InfluencerOnboarding() {
                 </div>
               </div>
               <div>
-                <Label htmlFor="instagramFollowers">Followers *</Label>
+                <Label htmlFor="instagramFollowers">Followers</Label>
                 <Input
                   id="instagramFollowers"
                   value={formData.socialPlatforms.instagram.followers}

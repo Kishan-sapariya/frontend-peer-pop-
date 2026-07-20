@@ -56,33 +56,16 @@ export default function BusinessOnboardingForm() {
   const validateStep = (step) => {
     switch (step) {
       case 1:
-        if (!formData.about || !formData.website) {
-          toast.error("Please fill out all required company details.");
+        if (!formData.about) {
+          toast.error("Please add a short description about your company.");
           return false;
         }
-        break;
-
-      case 2:
-        if (
-          !formData.businessType ||
-          !formData.state ||
-          (!formData.city && !formData.customCity)
-        ) {
-          toast.error(
-            "Please complete your business info and headquarters location."
-          );
+        if (!formData.email) {
+          toast.error("Please provide a contact email.");
           return false;
         }
-        break;
-
-      case 4:
-        if (
-          !formData.gstNumber ||
-          !formData.gstFile ||
-          !formData.panNumber ||
-          !formData.panFile
-        ) {
-          toast.error("GST and PAN details are required to continue.");
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+          toast.error("Please enter a valid email address.");
           return false;
         }
         break;
@@ -171,6 +154,12 @@ export default function BusinessOnboardingForm() {
               Provide your company’s basic information.
             </p>
 
+            <div className="rounded-lg border border-yellow-200 bg-yellow-50 px-4 py-3 text-sm text-gray-700">
+              Only your <span className="font-semibold text-gray-900">company details</span>{" "}
+              and <span className="font-semibold text-gray-900">email</span> are required —
+              everything else is optional and you can add it anytime from your profile.
+            </div>
+
             <OnboardingImageUpload />
 
             <div>
@@ -187,9 +176,7 @@ export default function BusinessOnboardingForm() {
             </div>
 
             <div>
-              <Label htmlFor="website">
-                Company Website <span className="text-red-500">*</span>
-              </Label>
+              <Label htmlFor="website">Company Website</Label>
               <Input
                 id="website"
                 required
@@ -212,7 +199,9 @@ export default function BusinessOnboardingForm() {
               </div>
 
               <div>
-                <Label htmlFor="email">Support Email</Label>
+                <Label htmlFor="email">
+                  Support Email <span className="text-red-500">*</span>
+                </Label>
                 <Input
                   id="email"
                   type="email"
@@ -236,9 +225,7 @@ export default function BusinessOnboardingForm() {
             </p>
 
             <div>
-              <Label>
-                Type of Business <span className="text-red-500">*</span>
-              </Label>
+              <Label>Type of Business</Label>
               <Select
                 value={formData.businessType}
                 onValueChange={(v) => handleChange("businessType", v)}
@@ -339,9 +326,7 @@ export default function BusinessOnboardingForm() {
             </p>
 
             <div>
-              <Label>
-                GST Number <span className="text-red-500">*</span>
-              </Label>
+              <Label>GST Number</Label>
               <Input
                 placeholder="Enter GST number"
                 required
@@ -351,9 +336,7 @@ export default function BusinessOnboardingForm() {
             </div>
 
             <div>
-              <Label>
-                Upload GST Certificate <span className="text-red-500">*</span>
-              </Label>
+              <Label>Upload GST Certificate</Label>
               <Input
                 type="file"
                 accept=".pdf,.jpg,.jpeg,.png"
@@ -363,9 +346,7 @@ export default function BusinessOnboardingForm() {
             </div>
 
             <div>
-              <Label>
-                PAN Number <span className="text-red-500">*</span>
-              </Label>
+              <Label>PAN Number</Label>
               <Input
                 placeholder="Enter PAN number"
                 required
@@ -375,9 +356,7 @@ export default function BusinessOnboardingForm() {
             </div>
 
             <div>
-              <Label>
-                Upload PAN Document <span className="text-red-500">*</span>
-              </Label>
+              <Label>Upload PAN Document</Label>
               <Input
                 type="file"
                 accept=".pdf,.jpg,.jpeg,.png"

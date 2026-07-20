@@ -223,6 +223,12 @@ export default function DancerOnboarding() {
               <p className="text-gray-600">Let's create your dance profile</p>
             </div>
 
+            <div className="rounded-lg border border-yellow-200 bg-yellow-50 px-4 py-3 text-sm text-gray-700">
+              Only your <span className="font-semibold text-gray-900">name</span> and{" "}
+              <span className="font-semibold text-gray-900">email</span> are required —
+              everything else is optional and you can add it anytime from your profile.
+            </div>
+
             <OnboardingImageUpload />
 
             <div className="grid grid-cols-2 gap-4">
@@ -238,7 +244,7 @@ export default function DancerOnboarding() {
                 />
               </div>
               <div>
-                <Label htmlFor="lastName">Last Name *</Label>
+                <Label htmlFor="lastName">Last Name</Label>
                 <Input
                   id="lastName"
                   value={formData.lastName}
@@ -276,7 +282,7 @@ export default function DancerOnboarding() {
                 />
               </div>
               <div>
-                <Label htmlFor="location">Location *</Label>
+                <Label htmlFor="location">Location</Label>
                 <Input
                   id="location"
                   value={formData.location}
@@ -289,7 +295,7 @@ export default function DancerOnboarding() {
             </div>
 
             <div>
-              <Label htmlFor="bio">Dance Bio *</Label>
+              <Label htmlFor="bio">Dance Bio</Label>
               <Textarea
                 id="bio"
                 value={formData.bio}
@@ -332,7 +338,7 @@ export default function DancerOnboarding() {
             </div>
 
             <div>
-              <Label>Primary Dance Style *</Label>
+              <Label>Primary Dance Style</Label>
               <Select
                 value={formData.primaryStyle}
                 onValueChange={(value) =>
@@ -391,7 +397,7 @@ export default function DancerOnboarding() {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="experience">Years of Experience *</Label>
+                <Label htmlFor="experience">Years of Experience</Label>
                 <Select
                   value={formData.experience}
                   onValueChange={(value) =>
@@ -1162,15 +1168,7 @@ export default function DancerOnboarding() {
 
   // Basic validation (optional, can be expanded)
   const validateForm = () => {
-    const requiredFields = [
-      "firstName",
-      "lastName",
-      "email",
-      "location",
-      "bio",
-      "primaryStyle",
-      "experience",
-    ];
+    const requiredFields = ["firstName", "email"];
     for (const field of requiredFields) {
       if (
         !formData[field] ||
