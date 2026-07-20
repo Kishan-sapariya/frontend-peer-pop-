@@ -172,6 +172,8 @@ export default function YouTuberOnboarding() {
   const validateForm = () => {
     const requiredFields = {
       firstName: "First Name",
+      lastName: "Last Name",
+      channelHandle: "Channel Handle",
       email: "Email Address",
     };
 
@@ -363,9 +365,11 @@ export default function YouTuberOnboarding() {
             </div>
 
             <div className="rounded-lg border border-yellow-200 bg-yellow-50 px-4 py-3 text-sm text-gray-700">
-              Only your <span className="font-semibold text-gray-900">name</span> and{" "}
-              <span className="font-semibold text-gray-900">email</span> are required —
-              everything else is optional and you can add it anytime from your profile.
+              Only your <span className="font-semibold text-gray-900">name</span>,{" "}
+              <span className="font-semibold text-gray-900">email</span>, and{" "}
+              <span className="font-semibold text-gray-900">channel handle</span>{" "}
+              are required — everything else is optional and you can add it
+              anytime from your profile.
             </div>
 
             <OnboardingImageUpload />
@@ -403,7 +407,7 @@ export default function YouTuberOnboarding() {
                 />
               </div>
               <div>
-                <Label htmlFor="lastName">Last Name</Label>
+                <Label htmlFor="lastName">Last Name *</Label>
                 <Input
                   id="lastName"
                   value={formData.lastName}
@@ -416,7 +420,7 @@ export default function YouTuberOnboarding() {
             </div>
 
             <div>
-              <Label htmlFor="channelHandle">Channel Handle</Label>
+              <Label htmlFor="channelHandle">Channel Handle *</Label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
                   @
