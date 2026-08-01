@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { showApiError } from "@/utils/showApiError";
 
 const API_URL = process.env.NEXT_PUBLIC_BASE_API_URL;
 
@@ -120,6 +121,23 @@ export const useAdminStore = create((set, get) => ({
     set((state) => ({
       usersFilters: { ...state.usersFilters, page },
     }));
+  },
+
+  // Manually (re)send the welcome email to an existing user (admin only)
+  sendWelcomeMail: async (userId) => {
+    try {
+      const response = await axios.post(
+        `${API_URL}/admin/users/${userId}/welcome-email`,
+        {},
+        { withCredentials: true }
+      );
+      toast.success(response.data?.message || "Welcome email sent");
+      return true;
+    } catch (error) {
+      console.error("Error sending welcome email:", error);
+      showApiError(error, "Couldn't send the welcome email. Please try again.");
+      return false;
+    }
   },
 
   // Promote/demote the singleton founder (admin only)

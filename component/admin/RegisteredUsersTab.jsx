@@ -30,6 +30,7 @@ import {
   UserCheck,
   Building2,
   MailCheck,
+  Mail,
 } from "lucide-react";
 import StatCard from "./StatCard";
 import SignupChart from "./SignupChart";
@@ -66,9 +67,17 @@ export default function RegisteredUsersTab() {
     fetchUserStats,
     statsMonths,
     setStatsMonths,
+    sendWelcomeMail,
   } = useAdminStore();
 
   const [searchTerm, setSearchTerm] = useState("");
+  const [sendingId, setSendingId] = useState(null);
+
+  const handleSendWelcome = async (userId) => {
+    setSendingId(userId);
+    await sendWelcomeMail(userId);
+    setSendingId(null);
+  };
 
   useEffect(() => {
     fetchUsers();
@@ -236,6 +245,7 @@ export default function RegisteredUsersTab() {
                       <TableHead className="font-semibold text-gray-600 text-xs uppercase tracking-wider py-3 px-6 text-center">Role</TableHead>
                       <TableHead className="font-semibold text-gray-600 text-xs uppercase tracking-wider py-3 px-6 text-center">Status</TableHead>
                       <TableHead className="font-semibold text-gray-600 text-xs uppercase tracking-wider py-3 px-6">Joined At</TableHead>
+                      <TableHead className="font-semibold text-gray-600 text-xs uppercase tracking-wider py-3 px-6 text-right">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -273,6 +283,25 @@ export default function RegisteredUsersTab() {
                           )}
                         </TableCell>
                         <TableCell className="text-gray-500 text-sm py-4 px-6">{formatDate(u.createdAt)}</TableCell>
+                        <TableCell className="py-4 px-6 text-right">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            disabled={sendingId === u.id}
+                            onClick={() => handleSendWelcome(u.id)}
+                            className="h-8 px-3 border-yellow-200 bg-yellow-50 hover:bg-yellow-100 text-yellow-800 hover:text-yellow-900 font-medium"
+                          >
+                            {sendingId === u.id ? (
+                              <>
+                                <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" /> Sending...
+                              </>
+                            ) : (
+                              <>
+                                <Mail className="w-3.5 h-3.5 mr-1.5" /> Send welcome mail
+                              </>
+                            )}
+                          </Button>
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
