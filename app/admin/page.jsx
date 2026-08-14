@@ -5,9 +5,10 @@ import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/useAuthStore";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Loader2, LayoutDashboard, ShieldAlert, ClipboardList, UsersRound } from "lucide-react";
+import { Loader2, LayoutDashboard, ShieldAlert, ClipboardList, UsersRound, Mail } from "lucide-react";
 import WaitlistTab from "@/component/admin/WaitlistTab";
 import RegisteredUsersTab from "@/component/admin/RegisteredUsersTab";
+import SendEmailTab from "@/component/admin/SendEmailTab";
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -79,6 +80,13 @@ export default function AdminDashboard() {
               <UsersRound className="w-4 h-4 mr-1.5" />
               Registered Users
             </TabsTrigger>
+            <TabsTrigger
+              value="send-email"
+              className="px-5 data-[state=active]:bg-yellow-500 data-[state=active]:text-black rounded-lg"
+            >
+              <Mail className="w-4 h-4 mr-1.5" />
+              Send Email
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="waitlist">
@@ -86,6 +94,9 @@ export default function AdminDashboard() {
           </TabsContent>
           <TabsContent value="registered">
             <RegisteredUsersTab />
+          </TabsContent>
+          <TabsContent value="send-email">
+            <SendEmailTab />
           </TabsContent>
         </Tabs>
       </div>

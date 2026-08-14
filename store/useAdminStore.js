@@ -34,6 +34,11 @@ export const useAdminStore = create((set, get) => ({
     limit: 10,
   },
 
+  // Email composer state
+  recipients: [],
+  recipientsLoading: false,
+  sendingEmail: false,
+
   // Fetch waitlist aggregated stats
   fetchWaitlistStats: async (months) => {
     try {
@@ -121,6 +126,54 @@ export const useAdminStore = create((set, get) => ({
     set((state) => ({
       usersFilters: { ...state.usersFilters, page },
     }));
+  },
+
+  // Load every user matching filters (no pagination) for the email composer
+  fetchRecipients: async ({ role = "", search = "" } = {}) => {
+    try {
+      set({ recipientsLoading: true });
+      const params = new URLSearchParams();
+      if (role) params.append("role", role);
+      if (search) params.append("search", search);
+
+      const response = await axios.get(
+        `${API_URL}/admin/recipients?${params.toString()}`,
+        { withCredentials: true }
+      );
+      if (response.data.success) {
+        set({ recipients: response.data.recipients });
+      }
+      return response.data?.recipients || [];
+    } catch (error) {
+      console.error("Error fetching recipients:", error);
+      showApiError(error, "Couldn't load recipients. Please try again.");
+      return [];
+    } finally {
+      set({ recipientsLoading: false });
+    }
+  },
+
+  // Send an admin-composed email to the selected users (admin only)
+  sendBulkEmail: async ({ userIds, subject, message, regards }) => {
+    try {
+      set({ sendingEmail: true });
+      const response = await axios.post(
+        `${API_URL}/admin/send-email`,
+        { userIds, subject, message, regards },
+        { withCredentials: true }
+      );
+      if (response.data.success) {
+        toast.success(response.data.message || "Email sent");
+        return response.data;
+      }
+      return response.data;
+    } catch (error) {
+      console.error("Error sending email:", error);
+      showApiError(error, "Couldn't send the email. Please try again.");
+      return { success: false };
+    } finally {
+      set({ sendingEmail: false });
+    }
   },
 
   // Manually (re)send the welcome email to an existing user (admin only)
